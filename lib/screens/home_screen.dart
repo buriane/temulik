@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/item.dart';
 import '../providers/items_provider.dart';
 import '../widgets/item_card.dart';
+import '../services/auth_service.dart';
+import 'report_item_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final user = authService.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Temulik'),
@@ -17,11 +28,54 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: ItemSearchDelegate(),
+                delegate: ItemSearchDelegate(Provider.of<ItemsProvider>(context, listen: false).items),
               );
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () async {
+              final navigator = Navigator.of(context);
+              await authService.signOut();
+              if (mounted) {
+                navigator.pushReplacementNamed('/login');
+              }
+            },
+          ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text(user?.displayName ?? 'User'),
+              accountEmail: Text(user?.email ?? ''),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: user?.photoURL != null
+                    ? NetworkImage(user!.photoURL!)
+                    : null,
+                child: user?.photoURL == null
+                    ? const Icon(Icons.person)
+                    : null,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                // Navigate to settings screen
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Help'),
+              onTap: () {
+                // Navigate to help screen
+              },
+            ),
+          ],
+        ),
       ),
       body: Consumer<ItemsProvider>(
         builder: (context, itemsProvider, child) {
@@ -42,24 +96,40 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.pushNamed(context, '/report');
-        },
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'reportLost',
+            child: const Icon(Icons.report_problem),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReportItemScreen(isLostItem: true)),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            heroTag: 'reportFound',
+            child: const Icon(Icons.find_in_page),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReportItemScreen(isLostItem: false)),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 }
 
 class ItemSearchDelegate extends SearchDelegate<String> {
-  final List<String> searchTerms = [
-    'Lost Wallet',
-    'Found Keys',
-    'Missing Book',
-    'Lost Phone',
-    'Found Bag',
-  ];
+  final List<Item> items;
+
+  ItemSearchDelegate(this.items);
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -85,12 +155,18 @@ class ItemSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final results = searchTerms.where((term) => term.toLowerCase().contains(query.toLowerCase())).toList();
+    final results = items.where((item) =>
+        item.title.toLowerCase().contains(query.toLowerCase())).toList();
+
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(results[index]),
+        final item = results[index];
+        return ItemCard(
+          title: item.title,
+          description: item.description,
+          location: item.location,
+          date: item.date.toString(),
         );
       },
     );
@@ -98,14 +174,17 @@ class ItemSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = searchTerms.where((term) => term.toLowerCase().contains(query.toLowerCase())).toList();
+    final suggestions = items.where((item) =>
+        item.title.toLowerCase().contains(query.toLowerCase())).toList();
+
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
+        final item = suggestions[index];
         return ListTile(
-          title: Text(suggestions[index]),
+          title: Text(item.title),
           onTap: () {
-            query = suggestions[index];
+            query = item.title;
             showResults(context);
           },
         );

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/item.dart';
 import '../services/api_service.dart';
+import '../utils/logger.dart';
 
 class ItemsProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -17,7 +18,7 @@ class ItemsProvider with ChangeNotifier {
     try {
       _items = await _apiService.getItems();
     } catch (error) {
-      print('Error fetching items: $error');
+      logger.e('Error fetching items: $error');
     }
 
     _isLoading = false;
@@ -32,12 +33,12 @@ class ItemsProvider with ChangeNotifier {
       await _apiService.addItem(item);
       _items.add(item);
     } catch (error) {
-      print('Error adding item: $error');
+      logger.e('Error adding item: $error');
     }
 
     _isLoading = false;
     notifyListeners();
   }
 
-// Add more methods as needed (e.g., removeItem, updateItem)
+// Add more methods as needed
 }

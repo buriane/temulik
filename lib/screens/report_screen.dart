@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/report_form.dart';
+import '../utils/logger.dart';
 
 class ReportScreen extends StatelessWidget {
   const ReportScreen({super.key});
@@ -15,7 +16,7 @@ class ReportScreen extends StatelessWidget {
         child: ReportForm(
           onSubmit: (title, description, location) {
             // Handle form submission here
-            print('Submitted: $title, $description, $location');
+            logger.i('Submitted: $title, $description, $location');
             // You would typically save this data or send it to a server
           },
         ),
