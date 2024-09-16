@@ -1,4 +1,4 @@
-package com.soeara.temulik
+package com.example.temulik
 
 import io.flutter.embedding.android.FlutterActivity
 
