@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "613061731298",
+    "project_id": "temulik-2cef4",
+    "storage_bucket": "temulik-2cef4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613061731298:android:669b7194cd53eff5960fbb",
+        "android_client_info": {
+          "package_name": "com.example.temul"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613061731298-n7aierm7fh4rt3okufsca2srpcvea8e3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.temul",
+            "certificate_hash": "8c5250e0995ccde007be9936a21200c949d3d6ae"
+          }
+        },
+        {
+          "client_id": "613061731298-9n4j15ci16gu8ds4quj1stq8lsd40sec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFVzzXjg_I6_fhjJZk1F8cOb3odC06Tmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613061731298-9n4j15ci16gu8ds4quj1stq8lsd40sec.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613061731298-ocf12gbdo90k3rqq5ir3k35dsesr7dpj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.temulik"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:613061731298:android:467b86caa9173613960fbb",
+        "android_client_info": {
+          "package_name": "com.example.temulik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "613061731298-njapi17s3or1mgfeqjl33erpafaktsm0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.temulik",
+            "certificate_hash": "8c5250e0995ccde007be9936a21200c949d3d6ae"
+          }
+        },
+        {
+          "client_id": "613061731298-9n4j15ci16gu8ds4quj1stq8lsd40sec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFVzzXjg_I6_fhjJZk1F8cOb3odC06Tmg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "613061731298-9n4j15ci16gu8ds4quj1stq8lsd40sec.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "613061731298-ocf12gbdo90k3rqq5ir3k35dsesr7dpj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.temulik"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
