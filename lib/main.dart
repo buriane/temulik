@@ -19,9 +19,10 @@ class MainApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => AuthBloc(),
       child: MaterialApp(
-        title: 'Firebase Auth Demo',
+        title: 'Temulik',
         theme: ThemeData(primarySwatch: Colors.blue),
         home: LoginPage(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
