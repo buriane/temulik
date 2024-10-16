@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,27 +39,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (!_isAllowedDomain(googleUser.email)) {
         emit(AuthError('Only @mhs.unsoed.ac.id, @fk.unsoed.ac.id, or @unsoed.ac.id domains are allowed'));
+        await _googleSignIn.signOut();
         return;
       }
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      // final credential = GoogleAuthProvider.credential(
-      //   accessToken: googleAuth.accessToken,
-      //   idToken: googleAuth.idToken,
-      // );
 
       if (kDebugMode) {
         print('Got Google credentials. Signing in with Firebase...');
       }
 
-      // final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      final UserCredential userCredential = await _signInWithGoogle(googleAuth);
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-      if (kDebugMode) {
-        print('Firebase sign in successful. User: ${userCredential.user?.displayName}');
+      final userCredential = await _auth.signInWithCredential(credential);
+      final user = userCredential.user;
+      
+      if (user == null) {
+        emit(AuthError('Failed to sign in with Google'));
+        return;
       }
 
-      emit(AuthAuthenticated(userCredential.user!));
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({
+          'email': user.email,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        emit(AuthNeedsProfile(user));
+        return;
+      }
+
+      final userData = userDoc.data() as Map<String, dynamic>;
+      if (_isProfileComplete(userData)) {
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(AuthNeedsProfile(user));
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error during sign in: $e');
@@ -67,18 +93,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<UserCredential> _signInWithGoogle(GoogleSignInAuthentication googleAuth) async {
-    try {
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      print('Error in _signInWithGoogle: $e');
-      rethrow;
-    }
+  bool _isProfileComplete(Map<String, dynamic> data) {
+    return data['photoUrl'] != null &&
+           data['fullName'] != null &&
+           data['nim'] != null &&
+           data['faculty'] != null &&
+           data['department'] != null &&
+           data['year'] != null &&
+           data['whatsapp'] != null &&
+           data['address'] != null;
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {

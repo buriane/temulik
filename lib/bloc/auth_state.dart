@@ -20,6 +20,15 @@ class AuthAuthenticated extends AuthState {
   List<Object> get props => [user];
 }
 
+class AuthNeedsProfile extends AuthState {
+  final User user;
+
+  AuthNeedsProfile(this.user);
+
+  @override
+  List<Object> get props => [user];
+}
+
 class AuthError extends AuthState {
   final String message;
 

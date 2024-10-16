@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
+import 'complete_profile_page.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class LoginPage extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('bg-login.png'),
+            image: AssetImage('assets/bg-login.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -19,6 +20,10 @@ class LoginPage extends StatelessWidget {
             if (state is AuthAuthenticated) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => HomePage()),
+              );
+            } else if (state is AuthNeedsProfile) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => CompleteProfilePage()),
               );
             } else if (state is AuthError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -64,7 +69,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 60),
-                  Image.asset('logo.png', width: 150, height: 150),
+                  Image.asset('assets/logo.png', width: 150, height: 150),
                   SizedBox(height: 60),
                   if (state is AuthLoading)
                     CircularProgressIndicator()

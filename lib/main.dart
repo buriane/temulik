@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 import 'bloc/auth_bloc.dart';
+import 'bloc/profile_bloc.dart';
 import 'ui/login_page.dart';
 
 void main() async {
@@ -16,8 +17,15 @@ void main() async {
 class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(),
+        ),
+      ],
       child: MaterialApp(
         title: 'Temulik',
         theme: ThemeData(primarySwatch: Colors.blue),
