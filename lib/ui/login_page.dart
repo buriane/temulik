@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
+import '../bloc/profile_bloc.dart';
 import 'complete_profile_page.dart';
 import 'home_page.dart';
 
@@ -18,6 +19,7 @@ class LoginPage extends StatelessWidget {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
+              context.read<ProfileBloc>().add(LoadProfile());
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => HomePage()),
               );

@@ -41,7 +41,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(ProfileIncomplete(UserProfile.fromMap(data)));
           }
         } else {
-          emit(ProfileIncomplete(UserProfile(email: user.email ?? '')));
+          emit(ProfileError('User document does not exist in Firestore'));
         }
       } else {
         emit(ProfileError('User not authenticated'));
@@ -50,7 +50,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (kDebugMode) {
         print('Error loading profile: $e');
       }
-      emit(ProfileError(e.toString()));
+      emit(ProfileError('Failed to load profile: ${e.toString()}'));
     }
   }
 
@@ -132,8 +132,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
       emit(ProfileUpdating());
-
-      // Ensure user is authenticated
       if (!(await user.getIdToken() != null)) {
         await user.reload();
         if (!(await user.getIdToken() != null)) {
@@ -142,19 +140,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
       }
 
-      // Upload to Firebase Storage
       final ref = _storage.ref().child('users/${user.uid}/profile.jpg');
       await ref.putData(event.imageData);
       
-      // Get download URL
       final photoUrl = await ref.getDownloadURL();
-
-      // Update Firestore document
       await _firestore.collection('users').doc(user.uid).update({
         'photoUrl': photoUrl,
       });
 
-      // Fetch the updated user data
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
       final updatedProfile = UserProfile.fromMap(userDoc.data() as Map<String, dynamic>);
       

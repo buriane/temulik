@@ -118,10 +118,15 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         initialValue: _profile.fullName,
         decoration: InputDecoration(labelText: 'Nama Lengkap'),
         validator: (value) {
-          if (value == null || value.isEmpty)
+          if (value == null || value.isEmpty) {
             return 'Masukkan nama lengkap Anda';
-          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value))
+          }
+          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
             return 'Nama lengkap hanya boleh mengandung huruf';
+          }
+          if (value.length > 20) {
+            return 'Nama lengkap tidak boleh lebih dari 20 karakter';
+          }
           return null;
         },
         onSaved: (value) => _profile = _profile.copyWith(fullName: value),
@@ -172,14 +177,11 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
             : (_departments[_profile.faculty] ?? []).map((String department) {
                 return DropdownMenuItem(
                   value: department,
-                  child: Container(
-                    color: Colors.white,
-                    child: Text(
-                      department,
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 13,
-                      ),
+                  child: Text(
+                    department,
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 13,
                     ),
                   ),
                 );
