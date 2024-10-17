@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/ui/complete_profile_page.dart';
+import 'app_theme.dart';
 import 'firebase_options.dart';
 import 'bloc/auth_bloc.dart';
 import 'bloc/profile_bloc.dart';
@@ -28,8 +30,8 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Temulik',
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: LoginPage(),
+        theme: AppTheme.lightTheme,
+        home: CompleteProfilePage(),
         debugShowCheckedModeBanner: false,
       ),
     );

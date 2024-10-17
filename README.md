@@ -4,6 +4,7 @@ A new Flutter project.
 
 ## Firestore Data Structure
 
+```
 users (collection)
 ├── {userId} (document - automatically created from Firebase Auth UID)
     ├── email (string)
@@ -16,3 +17,4 @@ users (collection)
     ├── whatsapp (string)
     ├── address (string)
     └── createdAt (timestamp)
+```

@@ -5,34 +5,94 @@ import '../bloc/profile_bloc.dart';
 import 'home_page.dart';
 
 final List<String> _faculties = [
+  'Fakultas Pertanian',
+  'Fakultas Biologi',
+  'Fakultas Ekonomi dan Bisnis',
+  'Fakultas Peternakan',
+  'Fakultas Hukum',
+  'Fakultas Ilmu Sosial dan Politik',
   'Fakultas Kedokteran',
   'Fakultas Teknik',
-  'Fakultas Ilmu Sosial dan Politik',
-  'Fakultas Ekonomi dan Bisnis',
-  'Fakultas Biologi',
-  'Fakultas Hukum',
-  'Fakultas Pertanian',
-  'Fakultas Peternakan',
-  'Fakultas MIPA',
-  // Add other faculties as needed
+  'Fakultas Ilmu Budaya',
+  'Fakultas Ilmu-Ilmu Kesehatan',
+  'Fakultas Matermatika dan Ilmu Pengetahuan Alam',
+  'Fakultas Perikanan dan Ilmu Kelautan',
 ];
 
 final Map<String, List<String>> _departments = {
+  'Fakultas Pertanian': [
+    'Agribisnis',
+    'Agroteknologi',
+    'Teknik Pertanian',
+    'Ilmu Tanah',
+    'Proteksi Tanaman',
+    'Teknologi Pangan',
+  ],
+  'Fakultas Biologi': [
+    'Biologi',
+  ],
+  'Fakultas Ekonomi dan Bisnis': [
+    'Akuantansi',
+    'Manajemen',
+    'Ekonomi Pembangunan',
+    'Administrasi Perkantoran',
+    'Ilmu Ekonomi',
+  ],
+  'Fakultas Peternakan': [
+    'Peternakan',
+  ],
+  'Fakultas Hukum': [
+    'Ilmu Hukum',
+  ],
+  'Fakultas Ilmu Sosial dan Politik': [
+    'Ilmu Politik',
+    'Ilmu Komunikasi',
+    'Administrasi Negara',
+    'Sosiologi',
+    'Hubungan Internasional',
+  ],
+  'Fakultas Kedokteran': [
+    'Pendidikan Dokter',
+    'Pendidikan Dokter Gigi',
+  ],
   'Fakultas Teknik': [
-    'Teknik Informatika',
+    'Informatika',
     'Teknik Elektro',
     'Teknik Sipil',
     'Teknik Industri',
-    // Add other departments
+    'Teknik Geologi',
+    'Teknik Mesin',
+    'Teknik Komputer',
   ],
-  'Fakultas MIPA': [
+  'Fakultas Ilmu Budaya': [
+    'Sastra Inggris',
+    'Sastra Indonesia',
+    'Sastra Jepang',
+    'Sastra Mandarin',
+    'Pendidikan Bahasa Inggris',
+    'Pendidikan Bahasa Indonesia',
+  ],
+  'Fakultas Ilmu-Ilmu Kesehatan': [
+    'Keperawatan',
+    'Keperawatan Internasional',
+    'Ilmu Gizi',
+    'Kesehatan Masyarakat',
+    'Farmasi',
+    'Pendidikan Jasmani, Kesehatan, dan Rekreasi',
+  ],
+  'Fakultas Matermatika dan Ilmu Pengetahuan Alam': [
     'Matematika',
     'Fisika',
     'Kimia',
-    'Biologi',
-    // Add other departments
+    'Statistika',
+    'Aktuaria',
   ],
-  // Add departments for other faculties
+  'Fakultas Perikanan dan Ilmu Kelautan': [
+    'Perikanan',
+    'Kelautan',
+    'Akuakultur',
+    'Management Sumberdaya Perairan',
+  ],
 };
 
 class CompleteProfilePage extends StatefulWidget {
@@ -51,10 +111,180 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
     _profile = context.read<ProfileBloc>().state.profile;
   }
 
+  List<Widget> _buildFormFields(ProfileState state) {
+    return [
+      _buildPhotoUploadWidget(state),
+      TextFormField(
+        initialValue: _profile.fullName,
+        decoration: InputDecoration(labelText: 'Nama Lengkap'),
+        validator: (value) {
+          if (value == null || value.isEmpty)
+            return 'Masukkan nama lengkap Anda';
+          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value))
+            return 'Nama lengkap hanya boleh mengandung huruf';
+          return null;
+        },
+        onSaved: (value) => _profile = _profile.copyWith(fullName: value),
+      ),
+      TextFormField(
+        initialValue: _profile.nim,
+        decoration: InputDecoration(labelText: 'NIM'),
+        validator: (value) {
+          if (value == null || value.isEmpty) return 'Masukkan NIM Anda';
+          if (!RegExp(r'^[A-Z][0-9][A-Z][0-9]{6}$').hasMatch(value))
+            return 'Format NIM tidak valid';
+          return null;
+        },
+        onSaved: (value) => _profile = _profile.copyWith(nim: value),
+      ),
+      DropdownButtonFormField<String>(
+        value: _profile.faculty,
+        decoration: InputDecoration(labelText: 'Fakultas'),
+        items: _faculties.map((String faculty) {
+          return DropdownMenuItem(
+            value: faculty,
+            child: Text(
+              faculty,
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 13,
+              ),
+            ),
+          );
+        }).toList(),
+        validator: (value) => value == null ? 'Pilih fakultas Anda' : null,
+        onChanged: (String? newValue) {
+          setState(() {
+            _profile = _profile.copyWith(
+              faculty: newValue,
+              department: null,
+            );
+          });
+        },
+        onSaved: (value) => _profile = _profile.copyWith(faculty: value),
+      ),
+      DropdownButtonFormField<String>(
+        value: _profile.department,
+        decoration: InputDecoration(labelText: 'Jurusan'),
+        dropdownColor: Colors.white,
+        items: _profile.faculty == null
+            ? []
+            : (_departments[_profile.faculty] ?? []).map((String department) {
+                return DropdownMenuItem(
+                  value: department,
+                  child: Container(
+                    color: Colors.white,
+                    child: Text(
+                      department,
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+        validator: (value) => value == null ? 'Pilih Jurusan Anda' : null,
+        onChanged: _profile.faculty == null
+            ? null
+            : (String? newValue) {
+                setState(() {
+                  _profile = _profile.copyWith(department: newValue);
+                });
+              },
+        onSaved: (value) => _profile = _profile.copyWith(department: value),
+      ),
+      TextFormField(
+        initialValue: _profile.year?.toString(),
+        decoration: InputDecoration(labelText: 'Angkatan'),
+        keyboardType: TextInputType.number,
+        validator: (value) {
+          if (value == null || value.isEmpty)
+            return 'Masukkan tahun angkatan Anda';
+          final year = int.tryParse(value);
+          if (year == null || year < 2010 || year > DateTime.now().year) {
+            return 'Masukkan tahun yang valid antara 2010 hingga ${DateTime.now().year}';
+          }
+          return null;
+        },
+        onSaved: (value) =>
+            _profile = _profile.copyWith(year: int.parse(value!)),
+      ),
+      TextFormField(
+        initialValue: _profile.whatsapp,
+        decoration: InputDecoration(labelText: 'No. WhatsApp'),
+        keyboardType: TextInputType.phone,
+        validator: (value) {
+          if (value == null || value.isEmpty)
+            return 'Masukkan nomor WhatsApp Anda';
+          if (!RegExp(r'^62\d{9,12}$').hasMatch(value))
+            return 'Format nomor WhatsApp tidak valid';
+          return null;
+        },
+        onSaved: (value) => _profile = _profile.copyWith(whatsapp: value),
+      ),
+      TextFormField(
+        initialValue: _profile.address,
+        decoration: InputDecoration(labelText: 'Alamat Rumah/Kos'),
+        validator: (value) {
+          if (value == null || value.isEmpty)
+            return 'Masukkan alamat rumah/kos Anda';
+          return null;
+        },
+        onSaved: (value) => _profile = _profile.copyWith(address: value),
+      ),
+      CheckboxListTile(
+        title: RichText(
+          text: TextSpan(
+            text: 'Dengan klik tombol ini, kamu menyetujui ',
+            style: TextStyle(color: Colors.black87, fontSize: 12),
+            children: [
+              TextSpan(
+                text: 'Syarat & Ketentuan',
+                style:
+                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              ),
+              TextSpan(
+                text: ' serta ',
+                style: TextStyle(color: Colors.black87, fontSize: 12),
+              ),
+              TextSpan(
+                text: 'Kebijakan Privasi',
+                style:
+                    TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              ),
+              TextSpan(
+                text: ' lapor barang hilang di Temulik.',
+                style: TextStyle(color: Colors.black87, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+        value: _termsAccepted,
+        onChanged: (value) => setState(() => _termsAccepted = value!),
+        controlAffinity: ListTileControlAffinity.leading,
+      ),
+      SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          child: Text('Update'),
+          onPressed: _termsAccepted ? _submitForm : null,
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lengkapi Profil')),
+      appBar: AppBar(
+        title: Center(
+          child: Text(
+            'Lengkapi Profil',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileComplete) {
@@ -70,152 +300,18 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
           }
         },
         builder: (context, state) {
-          return Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  // Photo upload widget
-                  _buildPhotoUploadWidget(state),
-                  // Full name input
-                  TextFormField(
-                    initialValue: _profile.fullName,
-                    decoration: InputDecoration(labelText: 'Full Name'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter your full name';
-                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value))
-                        return 'Please enter only letters';
-                      return null;
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(fullName: value),
-                  ),
-                  // NIM input
-                  TextFormField(
-                    initialValue: _profile.nim,
-                    decoration: InputDecoration(labelText: 'NIM'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter your NIM';
-                      if (!RegExp(r'^[A-Z][0-9][A-Z][0-9]{6}$').hasMatch(value))
-                        return 'Invalid NIM format';
-                      return null;
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(nim: value),
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: _profile.faculty,
-                    decoration: InputDecoration(labelText: 'Faculty'),
-                    items: _faculties.map((String faculty) {
-                      return DropdownMenuItem(
-                        value: faculty,
-                        child: Text(faculty),
-                      );
-                    }).toList(),
-                    validator: (value) =>
-                        value == null ? 'Please select your faculty' : null,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _profile = _profile.copyWith(
-                          faculty: newValue,
-                          department:
-                              null, // Reset department when faculty changes
-                        );
-                      });
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(faculty: value),
-                  ),
-                  SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _profile.department,
-                    decoration: InputDecoration(labelText: 'Department'),
-                    items: _profile.faculty == null
-                        ? []
-                        : (_departments[_profile.faculty] ?? [])
-                            .map((String department) {
-                            return DropdownMenuItem(
-                              value: department,
-                              child: Text(department),
-                            );
-                          }).toList(),
-                    validator: (value) =>
-                        value == null ? 'Please select your department' : null,
-                    onChanged: _profile.faculty == null
-                        ? null
-                        : (String? newValue) {
-                            setState(() {
-                              _profile =
-                                  _profile.copyWith(department: newValue);
-                            });
-                          },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(department: value),
-                  ),
-                  // Year input
-                  TextFormField(
-                    initialValue: _profile.year?.toString(),
-                    decoration: InputDecoration(labelText: 'Year'),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter your year';
-                      final year = int.tryParse(value);
-                      if (year == null ||
-                          year < 2010 ||
-                          year > DateTime.now().year) {
-                        return 'Please enter a valid year between 2010 and ${DateTime.now().year}';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(year: int.parse(value!)),
-                  ),
-                  // WhatsApp number input
-                  TextFormField(
-                    initialValue: _profile.whatsapp,
-                    decoration: InputDecoration(labelText: 'WhatsApp Number'),
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter your WhatsApp number';
-                      if (!RegExp(r'^62\d{9,12}$').hasMatch(value))
-                        return 'Invalid WhatsApp number format';
-                      return null;
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(whatsapp: value),
-                  ),
-                  // Address input
-                  TextFormField(
-                    initialValue: _profile.address,
-                    decoration: InputDecoration(labelText: 'Home Address'),
-                    maxLines: 3,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Please enter your home address';
-                      return null;
-                    },
-                    onSaved: (value) =>
-                        _profile = _profile.copyWith(address: value),
-                  ),
-                  // Terms and conditions checkbox
-                  CheckboxListTile(
-                    title: Text(
-                        'I agree to the Terms & Conditions and Privacy Policy'),
-                    value: _termsAccepted,
-                    onChanged: (value) =>
-                        setState(() => _termsAccepted = value!),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    child: Text('Update Profile'),
-                    onPressed: _termsAccepted ? _submitForm : null,
-                  ),
-                ],
+          return SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Wrap(
+                  runSpacing: 10.0,
+                  children: [
+                    Center(child: _buildPhotoUploadWidget(state)),
+                    ...(_buildFormFields(state).sublist(1))
+                  ],
+                ),
               ),
             ),
           );
@@ -308,7 +404,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                'Add Profile Photo',
+                'Tambah Foto Profil',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
@@ -325,13 +421,13 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Select Photo Source'),
+          title: const Text('Pilih Sumber Foto'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Gallery'),
+                title: const Text('Galeri'),
                 onTap: () {
                   Navigator.pop(context);
                   context.read<ProfileBloc>().add(
@@ -342,7 +438,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('Camera'),
+                title: const Text('Kamera'),
                 onTap: () {
                   Navigator.pop(context);
                   context.read<ProfileBloc>().add(
