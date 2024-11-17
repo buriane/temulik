@@ -6,6 +6,7 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:temulik/ui/components/laptop_section.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -213,7 +214,7 @@ class _HomePageState extends State<HomePage> {
                           // Banner Section
                           Container(
                             padding: EdgeInsets.only(
-                                left: 16, right: 16, top: 26, bottom: 46),
+                                left: 16, right: 16, top: 26, bottom: 56),
                             decoration: BoxDecoration(
                               color: Color(0xFFE0FBD2),
                             ),
@@ -276,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Transform.translate(
                               offset: Offset(0,
-                                  -30), // Move the container up to overlap with the banner
+                                  -40), // Move the container up to overlap with the banner
                               child: Container(
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -284,10 +285,10 @@ class _HomePageState extends State<HomePage> {
                                   borderRadius: BorderRadius.circular(12),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
+                                      color: Colors.black.withOpacity(0.2),
                                       blurRadius: 12,
                                       offset: Offset(0, 4),
-                                      spreadRadius: 0,
+                                      spreadRadius: 1,
                                     ),
                                   ],
                                 ),
@@ -537,6 +538,59 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 onPressed: () {},
+                              ),
+                            ),
+                          ),
+
+                          // Banner Image Section
+                          Transform.translate(
+                            offset: Offset(0, -50),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 280,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                      image: AssetImage('ads.png'),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          LaptopSection(), // Section Laptop
+
+                          // Tombol Tampilkan Lebih Banyak
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 20),
+                            child: Container(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.green,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: const Text(
+                                  'Tampilkan Lebih Banyak',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
