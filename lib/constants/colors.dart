@@ -9,4 +9,8 @@ class AppColors {
   static const Color lightGrey = Color(0xFFF0F0F0);
   static const Color darkGrey = Color(0xFF868B89);
   static const Color blue = Color(0xFF1B6DF4);
+  static const Color coral = Color(0xFF7087A7);
+  static const Color sky = Color(0xFF8AA9C9);
+  static const Color gold = Color(0xFFDFA632);
+  static const Color lavender = Color(0xFFECC7FF);
 }
