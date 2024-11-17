@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/ui/activity_page.dart';
+import 'package:temulik/ui/leaderboard_page.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
@@ -93,7 +95,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInitial) {
@@ -108,8 +109,8 @@ class _HomePageState extends State<HomePage> {
             _buildProfileContent(), // Beranda
             Center(child: Text('Cari')), // Halaman Cari
             Center(child: Text('Lapor')), // Halaman Lapor
-            Center(child: Text('Aktivitas')), // Halaman Aktivitas
-            Center(child: Text('Peringkat')), // Halaman Peringkat
+            ActivityPage(), // Halaman Aktivitas
+            LeaderboardPage(), // Halaman Peringkat
           ],
         ),
       ),
@@ -136,9 +137,9 @@ class _HomePageState extends State<HomePage> {
                         ? [
                             BoxShadow(
                               color: Colors.green.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: Offset(0, 6),
-                              spreadRadius: 3,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                              spreadRadius: 1,
                             ),
                           ]
                         : [],
