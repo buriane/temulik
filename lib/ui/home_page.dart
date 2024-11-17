@@ -90,10 +90,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildGridItem(String title, String imagePath, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap, // Aksi yang dipanggil saat item ditekan
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            imagePath,
+            width: 63,
+            height: 63,
+          ),
+          SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInitial) {
@@ -105,11 +127,428 @@ class _HomePageState extends State<HomePage> {
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            _buildProfileContent(), // Beranda
-            Center(child: Text('Cari')), // Halaman Cari
-            Center(child: Text('Lapor')), // Halaman Lapor
-            Center(child: Text('Aktivitas')), // Halaman Aktivitas
-            Center(child: Text('Peringkat')), // Halaman Peringkat
+            // Halaman Beranda
+            SafeArea(
+              child: Column(
+                children: [
+                  // Search and Profile Header
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    color: Colors.green,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  'searchbar.svg',
+                                  height: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Dompet',
+                                      border: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(left: 8),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        BlocBuilder<ProfileBloc, ProfileState>(
+                          builder: (context, profileState) {
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Lingkaran putih sebagai border luar
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: profileState
+                                              is ProfileComplete &&
+                                          profileState.profile.photoUrl != null
+                                      ? NetworkImage(
+                                          profileState.profile.photoUrl!)
+                                      : null,
+                                  child: profileState is! ProfileComplete ||
+                                          profileState.profile.photoUrl == null
+                                      ? Icon(Icons.person)
+                                      : null,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Main Content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Banner Section
+                          Container(
+                            padding: EdgeInsets.only(
+                                left: 16, right: 16, top: 26, bottom: 46),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFE0FBD2),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(left: 16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Temukan barang hilang',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        'dapatkan reward-nya',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text('Bantu teman kita sekarang'),
+                                          SizedBox(width: 4),
+                                          SvgPicture.asset(
+                                            'next.svg',
+                                            width: 16,
+                                            height: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Gambar di sebelah kanan
+                                Container(
+                                  margin: EdgeInsets.only(right: 16),
+                                  child: SizedBox(
+                                    width: 184,
+                                    height: 136,
+                                    child: Image.asset(
+                                      'reward.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Location Stats
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Transform.translate(
+                              offset: Offset(0, -30), // Move the container up to overlap with the banner
+                              child: Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 4),
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Header section with location
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Lokasi kamu',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                Image.asset(
+                                                  'location.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  'PURWOKERTO UTARA',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Rank kamu',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                Image.asset(
+                                                  'rank.png',
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  '98',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 16),
+                                    // Divider
+                                    Container(
+                                      height: 1,
+                                      color: Colors.grey[200],
+                                    ),
+                                    SizedBox(height: 16),
+                                    // Stats section
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        // Kehilangan di sisi kiri
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'lost.png',
+                                              width: 37,
+                                              height: 37,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Kehilangan',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  '4 kali',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        // Divider vertikal
+                                        Container(
+                                          height: 32,
+                                          width: 1,
+                                          color: Colors.grey[300],
+                                        ),
+                                        // Penemuan di sisi kanan
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'find.png',
+                                              width: 37,
+                                              height: 37,
+                                            ),
+                                            SizedBox(width: 8),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Penemuan',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  '12 kali',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Grid of Items
+                          Transform.translate(
+                            offset: Offset(0, -30),
+                            child: GridView.count(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              crossAxisCount: 4,
+                              padding: EdgeInsets.all(16),
+                              children: [
+                                _buildGridItem('Laptop', 'laptop.png', () {
+                                  print('Laptop tapped');
+                                }),
+                                _buildGridItem('Headset', 'headset.png', () {
+                                  print('Headset tapped');
+                                }),
+                                _buildGridItem('Motor', 'motor.png', () {
+                                  print('Motor tapped');
+                                }),
+                                _buildGridItem('Charger', 'charger.png', () {
+                                  print('Charger tapped');
+                                }),
+                                _buildGridItem('Handphone', 'handphone.png',
+                                    () {
+                                  print('Handphone tapped');
+                                }),
+                                _buildGridItem('Dompet', 'dompet.png', () {
+                                  print('Dompet tapped');
+                                }),
+                                _buildGridItem('Kunci', 'kunci.png', () {
+                                  print('Kunci tapped');
+                                }),
+                                _buildGridItem('Lainnya', 'lainnya.png', () {
+                                  print('Lainnya tapped');
+                                }),
+                              ],
+                            ),
+                          ),
+
+                          // WhatsApp Button
+                          Transform.translate(
+                            offset: Offset(0, -30),
+                            child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child: ElevatedButton(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                      'whatsapp.svg',
+                                      height: 22,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        'Info barang hilang terkini. Yuk, gabung grup WhatsApp!',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      'arrow.svg',
+                                      height: 22,
+                                      colorFilter: ColorFilter.mode(
+                                          Colors.white, BlendMode.srcIn),
+                                    ),
+                                  ],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.all(20),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Halaman lain
+            Center(child: Text('Cari')),
+            Center(child: Text('Lapor')),
+            Center(child: Text('Aktivitas')),
+            Center(child: Text('Peringkat')),
           ],
         ),
       ),
