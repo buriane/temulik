@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/leaderboard_components.dart';
 
 class LeaderboardPage extends StatefulWidget {
@@ -32,10 +33,27 @@ class BulanIni extends StatefulWidget {
 class _BulanIniState extends State<BulanIni> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image(
-        image: AssetImage('assets/pahlawan_gensoed.png'),
-      ),
+    return Column(
+      children: [
+        Image.asset(
+          'pahlawan_gensoed.png',
+          width: double.infinity,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
+        ),
+        Expanded(
+          child: ListView.builder(
+            physics: AlwaysScrollableScrollPhysics(),
+            itemCount: 8,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                child: LeaderboardCard(),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
