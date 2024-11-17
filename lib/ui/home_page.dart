@@ -31,66 +31,66 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Widget untuk menampilkan konten profil
-  Widget _buildProfileContent() {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, profileState) {
-        if (profileState is ProfileComplete) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: profileState.profile.photoUrl != null
-                      ? NetworkImage(profileState.profile.photoUrl!)
-                      : null,
-                  child: profileState.profile.photoUrl == null
-                      ? Icon(Icons.person, size: 50)
-                      : null,
-                ),
-                SizedBox(height: 16),
-                Text('Welcome, ${profileState.profile.fullName}!'),
-                SizedBox(height: 16),
-                Text('Email: ${profileState.profile.email}'),
-                SizedBox(height: 16),
-                Text('NIM: ${profileState.profile.nim}'),
-                SizedBox(height: 16),
-                Text('Faculty: ${profileState.profile.faculty}'),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  child: Text('Sign Out'),
-                  onPressed: () {
-                    context.read<AuthBloc>().add(SignOut());
-                  },
-                ),
-              ],
-            ),
-          );
-        } else if (profileState is ProfileLoading) {
-          return Center(child: CircularProgressIndicator());
-        } else if (profileState is ProfileError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Error loading profile: ${profileState.message}'),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  child: Text('Retry'),
-                  onPressed: () {
-                    context.read<ProfileBloc>().add(LoadProfile());
-                  },
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Center(child: Text('Unexpected state: $profileState'));
-        }
-      },
-    );
-  }
+  // // Widget untuk menampilkan konten profil
+  // Widget _buildProfileContent() {
+  //   return BlocBuilder<ProfileBloc, ProfileState>(
+  //     builder: (context, profileState) {
+  //       if (profileState is ProfileComplete) {
+  //         return Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               CircleAvatar(
+  //                 radius: 50,
+  //                 backgroundImage: profileState.profile.photoUrl != null
+  //                     ? NetworkImage(profileState.profile.photoUrl!)
+  //                     : null,
+  //                 child: profileState.profile.photoUrl == null
+  //                     ? Icon(Icons.person, size: 50)
+  //                     : null,
+  //               ),
+  //               SizedBox(height: 16),
+  //               Text('Welcome, ${profileState.profile.fullName}!'),
+  //               SizedBox(height: 16),
+  //               Text('Email: ${profileState.profile.email}'),
+  //               SizedBox(height: 16),
+  //               Text('NIM: ${profileState.profile.nim}'),
+  //               SizedBox(height: 16),
+  //               Text('Faculty: ${profileState.profile.faculty}'),
+  //               SizedBox(height: 16),
+  //               ElevatedButton(
+  //                 child: Text('Sign Out'),
+  //                 onPressed: () {
+  //                   context.read<AuthBloc>().add(SignOut());
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       } else if (profileState is ProfileLoading) {
+  //         return Center(child: CircularProgressIndicator());
+  //       } else if (profileState is ProfileError) {
+  //         return Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text('Error loading profile: ${profileState.message}'),
+  //               SizedBox(height: 16),
+  //               ElevatedButton(
+  //                 child: Text('Retry'),
+  //                 onPressed: () {
+  //                   context.read<ProfileBloc>().add(LoadProfile());
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       } else {
+  //         return Center(child: Text('Unexpected state: $profileState'));
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _buildGridItem(String title, String imagePath, VoidCallback onTap) {
     return InkWell(
@@ -129,11 +129,6 @@ class _HomePageState extends State<HomePage> {
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            _buildProfileContent(), // Beranda
-            Center(child: Text('Cari')), // Halaman Cari
-            Center(child: Text('Lapor')), // Halaman Lapor
-            ActivityPage(), // Halaman Aktivitas
-            LeaderboardPage(), // Halaman Peringkat
             // Halaman Beranda
             SafeArea(
               child: Column(
@@ -280,7 +275,8 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Transform.translate(
-                              offset: Offset(0, -30), // Move the container up to overlap with the banner
+                              offset: Offset(0,
+                                  -30), // Move the container up to overlap with the banner
                               child: Container(
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -552,10 +548,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             // Halaman lain
-            Center(child: Text('Cari')),
-            Center(child: Text('Lapor')),
-            Center(child: Text('Aktivitas')),
-            Center(child: Text('Peringkat')),
+            Center(child: Text('Cari')), // Halaman Cari
+            Center(child: Text('Lapor')), // Halaman Lapor
+            ActivityPage(), // Halaman Aktivitas
+            LeaderboardPage(), // Halaman Peringkat
           ],
         ),
       ),
