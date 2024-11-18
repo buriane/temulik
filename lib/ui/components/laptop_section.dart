@@ -87,7 +87,7 @@ class LaptopSection extends StatelessWidget {
           ),
         ),
         Container(
-          height: 320, // Sedikit lebih tinggi untuk mengakomodasi shadow
+          height: 320,
           margin: const EdgeInsets.only(bottom: 16),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -97,8 +97,7 @@ class LaptopSection extends StatelessWidget {
               final laptop = laptops[index];
               return Container(
                 width: 220,
-                margin: const EdgeInsets.only(
-                    right: 20, bottom: 8), // Tambahkan margin bottom
+                margin: const EdgeInsets.only(right: 20, bottom: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
