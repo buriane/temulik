@@ -7,6 +7,9 @@ import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:temulik/ui/components/laptop_section.dart';
+import 'package:temulik/ui/components/motorcycle_section.dart';
+import 'package:temulik/ui/components/other_page.dart';
+import 'package:temulik/ui/components/other_laptop.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -469,7 +472,11 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.all(16),
                               children: [
                                 _buildGridItem('Laptop', 'laptop.png', () {
-                                  print('Laptop tapped');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LaptopLainnya()),
+                                  );
                                 }),
                                 _buildGridItem('Headset', 'headset.png', () {
                                   print('Headset tapped');
@@ -491,7 +498,11 @@ class _HomePageState extends State<HomePage> {
                                   print('Kunci tapped');
                                 }),
                                 _buildGridItem('Lainnya', 'lainnya.png', () {
-                                  print('Lainnya tapped');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LainnyaPage()),
+                                  );
                                 }),
                               ],
                             ),
@@ -564,6 +575,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           LaptopSection(), // Section Laptop
+                          MotorcycleSection(), // Section Motor
 
                           // Tombol Tampilkan Lebih Banyak
                           Padding(

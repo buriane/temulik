@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class LaptopItem {
+class MotorcycleItem {
   final String title;
   final String image;
   final String status;
@@ -8,7 +8,7 @@ class LaptopItem {
   final String date;
   final String type;
 
-  LaptopItem({
+  MotorcycleItem({
     required this.title,
     required this.image,
     required this.status,
@@ -18,31 +18,31 @@ class LaptopItem {
   });
 }
 
-class LaptopSection extends StatelessWidget {
-  LaptopSection({Key? key}) : super(key: key);
+class MotorcycleSection extends StatelessWidget {
+  MotorcycleSection({Key? key}) : super(key: key);
 
   // Data simulasi
-  final List<LaptopItem> laptops = [
-    LaptopItem(
-        title: 'Dell Inspiron 7000 Series',
-        image: 'dell.png',
-        status: 'Kehilangan',
-        location: 'Pendopo bawah, PKM Unsoed',
-        date: '12 Agustus 2024, 14:40',
-        type: 'lost'),
-    LaptopItem(
-        title: 'Acer Nitro 5',
-        image: 'acernitro.png',
+  final List<MotorcycleItem> motorcycles = [
+    MotorcycleItem(
+        title: 'Aerox 155',
+        image: 'aerox.png',
         status: 'Penemuan',
-        location: 'PII FMIPA',
-        date: '13 Agustus 2024, 10:40',
+        location: 'PII, FMIPA',
+        date: '13 Agustus 2024, 10.40',
         type: 'found'),
-    LaptopItem(
-        title: 'HP Pavillion Gaming 15',
-        image: 'hppavillion.png',
+    MotorcycleItem(
+        title: 'Vario 150',
+        image: 'vario.png',
+        status: 'Kehilangan',
+        location: 'Wisma Soedirman, FT',
+        date: '20 September 2024, 14.40',
+        type: 'lost'),
+    MotorcycleItem(
+        title: 'Beat Street 2021',
+        image: 'beat.png',
         status: 'Penemuan',
-        location: 'FISIP',
-        date: '14 Agustus 2024, 08:40',
+        location: 'PII, FMIPA',
+        date: '13 Agustus 2024, 10.40',
         type: 'found'),
   ];
 
@@ -54,12 +54,12 @@ class LaptopSection extends StatelessWidget {
         Transform.translate(
           offset: const Offset(0, -40),
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 45),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Laptop',
+                  'Motor',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -92,9 +92,9 @@ class LaptopSection extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: laptops.length,
+            itemCount: motorcycles.length,
             itemBuilder: (context, index) {
-              final laptop = laptops[index];
+              final motorcycle = motorcycles[index];
               return Container(
                 width: 220,
                 margin: const EdgeInsets.only(right: 20, bottom: 8),
@@ -120,7 +120,7 @@ class LaptopSection extends StatelessWidget {
                             top: Radius.circular(12),
                           ),
                           child: Image.asset(
-                            laptop.image,
+                            motorcycle.image,
                             height: 160,
                             width: double.infinity,
                             fit: BoxFit.cover,
@@ -137,13 +137,13 @@ class LaptopSection extends StatelessWidget {
                                   vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: laptop.type == 'lost'
+                                  color: motorcycle.type == 'lost'
                                       ? const Color(0xFFB60000)
                                       : const Color(0xFF1B6DF4),
                                   borderRadius: BorderRadius.circular(40),
                                 ),
                                 child: Text(
-                                  laptop.status,
+                                  motorcycle.status,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -153,7 +153,7 @@ class LaptopSection extends StatelessWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                laptop.title,
+                                motorcycle.title,
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -172,7 +172,7 @@ class LaptopSection extends StatelessWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      laptop.location,
+                                      motorcycle.location,
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[600],
@@ -193,7 +193,7 @@ class LaptopSection extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    laptop.date,
+                                    motorcycle.date,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey[600],
