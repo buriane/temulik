@@ -13,4 +13,7 @@ class AppColors {
   static const Color sky = Color(0xFF8AA9C9);
   static const Color gold = Color(0xFFDFA632);
   static const Color lavender = Color(0xFFECC7FF);
+  static const Color silver = Color(0xFFC3CEE0);
+  static const Color bronze = Color(0xFFD5874A);
+  static const Color dark = Color(0xFF484C52);
 }
