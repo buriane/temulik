@@ -6,10 +6,11 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:temulik/ui/components/laptop_section.dart';
-import 'package:temulik/ui/components/motorcycle_section.dart';
-import 'package:temulik/ui/components/other_page.dart';
-import 'package:temulik/ui/components/other_laptop.dart';
+import 'package:temulik/ui/components/laptop_section_components.dart';
+import 'package:temulik/ui/components/motorcycle_section_components.dart';
+import 'package:temulik/ui/components/other_page_components.dart';
+import 'package:temulik/ui/components/other_laptop_components.dart';
+import 'package:temulik/ui/components/search_page_components.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -144,63 +145,80 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  'searchbar.svg',
-                                  height: 20,
-                                ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: 'Dompet',
-                                      border: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(left: 8),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage()),
+                              );
+                            },
+                            child: Container(
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 18),
+                                    child: SvgPicture.asset(
+                                      'searchbar.svg',
+                                      width: 20,
+                                      height: 20,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  Expanded(
+                                    child: AbsorbPointer(
+                                      child: TextField(
+                                        decoration: InputDecoration(
+                                          hintText: 'Dompet',
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          contentPadding:
+                                              EdgeInsets.only(left: 16),
+                                          hintStyle: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(width: 12),
                         BlocBuilder<ProfileBloc, ProfileState>(
                           builder: (context, profileState) {
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Lingkaran putih sebagai border luar
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
+                            return Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
                                 ),
-                                CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: profileState
-                                              is ProfileComplete &&
-                                          profileState.profile.photoUrl != null
-                                      ? NetworkImage(
-                                          profileState.profile.photoUrl!)
-                                      : null,
-                                  child: profileState is! ProfileComplete ||
-                                          profileState.profile.photoUrl == null
-                                      ? Icon(Icons.person)
-                                      : null,
-                                ),
-                              ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundImage: profileState
+                                            is ProfileComplete &&
+                                        profileState.profile.photoUrl != null
+                                    ? NetworkImage(
+                                        profileState.profile.photoUrl!)
+                                    : null,
+                                child: profileState is! ProfileComplete ||
+                                        profileState.profile.photoUrl == null
+                                    ? Icon(Icons.person, color: Colors.grey)
+                                    : null,
+                                backgroundColor: Colors.white,
+                              ),
                             );
                           },
                         ),
