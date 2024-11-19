@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:temulik/ui/components/other_laptop.dart';
+import 'package:temulik/ui/components/other_laptop_components.dart';
 
 class LainnyaPage extends StatelessWidget {
   @override
