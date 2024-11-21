@@ -96,7 +96,8 @@ class _SearchPageState extends State<SearchPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    _buildPopularCategory('Laptop', 'laptop.png', () {
+                    _buildPopularCategory('Laptop', 'categories/laptop.png',
+                        () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -104,19 +105,22 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Headset', 'headset.png', () {
+                    _buildPopularCategory('Headset', 'categories/headset.png',
+                        () {
                       // Tambahkan navigasi untuk Headset jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Motor', 'motor.png', () {
+                    _buildPopularCategory('Motor', 'categories/motor.png', () {
                       // Tambahkan navigasi untuk Motor jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Charger', 'charger.png', () {
+                    _buildPopularCategory('Charger', 'categories/charger.png',
+                        () {
                       // Tambahkan navigasi untuk Charger jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Handphone', 'handphone.png', () {
+                    _buildPopularCategory(
+                        'Handphone', 'categories/handphone.png', () {
                       // Tambahkan navigasi untuk Handphone jika diperlukan
                     }),
                   ],

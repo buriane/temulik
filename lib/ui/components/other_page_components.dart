@@ -18,12 +18,18 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16), // Increased spacing
-          _buildCategoryItem(context, 'Laptop', 'laptop.png', LaptopLainnya()),
-          _buildCategoryItem(context, 'Headset', 'headset.png', Scaffold()),
-          _buildCategoryItem(context, 'Charger', 'charger.png', Scaffold()),
-          _buildCategoryItem(context, 'Handphone', 'handphone.png', Scaffold()),
-          _buildCategoryItem(context, 'Speaker', 'speaker.png', Scaffold()),
-          _buildCategoryItem(context, 'Powerbank', 'powerbank.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Laptop', 'categories/laptop.png', LaptopLainnya()),
+          _buildCategoryItem(
+              context, 'Headset', 'categories/headset.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Charger', 'categories/charger.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Handphone', 'categories/handphone.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Speaker', 'categories/speaker.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Powerbank', 'categories/powerbank.png', Scaffold()),
           SizedBox(height: 24), // Increased section spacing
 
           // Kendaraan dan Aksesori Section
@@ -32,10 +38,12 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-          _buildCategoryItem(context, 'Motor', 'motor.png', Scaffold()),
-          _buildCategoryItem(context, 'Helm', 'helm.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Kunci Kendaraan', 'kunci.png', Scaffold()),
+              context, 'Motor', 'categories/motor.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Helm', 'categories/helm.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Kunci Kendaraan', 'categories/kunci.png', Scaffold()),
           SizedBox(height: 24),
 
           // Barang Pribadi Section
@@ -44,13 +52,18 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-          _buildCategoryItem(context, 'Jam', 'jam.png', Scaffold()),
-          _buildCategoryItem(context, 'Dompet', 'dompet.png', Scaffold()),
-          _buildCategoryItem(context, 'Tas', 'tas.png', Scaffold()),
-          _buildCategoryItem(context, 'Kunci', 'kuncikos.png', Scaffold()),
-          _buildCategoryItem(context, 'Sepatu', 'sepatu.png', Scaffold()),
-          _buildCategoryItem(context, 'Sandal', 'sandal.png', Scaffold()),
-          _buildCategoryItem(context, 'Payung', 'payung.png', Scaffold()),
+          _buildCategoryItem(context, 'Jam', 'categories/jam.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Dompet', 'categories/dompet.png', Scaffold()),
+          _buildCategoryItem(context, 'Tas', 'categories/tas.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Kunci', 'categories/kuncikos.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Sepatu', 'categories/sepatu.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Sandal', 'categories/sandal.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Payung', 'categories/payung.png', Scaffold()),
           SizedBox(height: 24),
 
           // Mahkluk Hidup Section
@@ -59,8 +72,10 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-          _buildCategoryItem(context, 'Hewan', 'hewan.png', Scaffold()),
-          _buildCategoryItem(context, 'Orang', 'orang.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Hewan', 'categories/hewan.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Orang', 'categories/orang.png', Scaffold()),
           SizedBox(height: 16),
         ],
       ),

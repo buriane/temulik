@@ -25,21 +25,21 @@ class LaptopSection extends StatelessWidget {
   final List<LaptopItem> laptops = [
     LaptopItem(
         title: 'Dell Inspiron 7000 Series',
-        image: 'dell.png',
+        image: 'laptop/dell.png',
         status: 'Kehilangan',
         location: 'Pendopo bawah, PKM Unsoed',
         date: '12 Agustus 2024, 14:40',
         type: 'lost'),
     LaptopItem(
         title: 'Acer Nitro 5',
-        image: 'acernitro.png',
+        image: 'laptop/acernitro.png',
         status: 'Penemuan',
         location: 'PII FMIPA',
         date: '13 Agustus 2024, 10:40',
         type: 'found'),
     LaptopItem(
         title: 'HP Pavillion Gaming 15',
-        image: 'hppavillion.png',
+        image: 'laptop/hppavillion.png',
         status: 'Penemuan',
         location: 'FISIP',
         date: '14 Agustus 2024, 08:40',

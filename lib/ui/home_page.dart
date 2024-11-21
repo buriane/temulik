@@ -489,33 +489,41 @@ class _HomePageState extends State<HomePage> {
                               crossAxisCount: 4,
                               padding: EdgeInsets.all(16),
                               children: [
-                                _buildGridItem('Laptop', 'laptop.png', () {
+                                _buildGridItem(
+                                    'Laptop', 'categories/laptop.png', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => LaptopLainnya()),
                                   );
                                 }),
-                                _buildGridItem('Headset', 'headset.png', () {
+                                _buildGridItem(
+                                    'Headset', 'categories/headset.png', () {
                                   print('Headset tapped');
                                 }),
-                                _buildGridItem('Motor', 'motor.png', () {
+                                _buildGridItem('Motor', 'categories/motor.png',
+                                    () {
                                   print('Motor tapped');
                                 }),
-                                _buildGridItem('Charger', 'charger.png', () {
+                                _buildGridItem(
+                                    'Charger', 'categories/charger.png', () {
                                   print('Charger tapped');
                                 }),
-                                _buildGridItem('Handphone', 'handphone.png',
+                                _buildGridItem(
+                                    'Handphone', 'categories/handphone.png',
                                     () {
                                   print('Handphone tapped');
                                 }),
-                                _buildGridItem('Dompet', 'dompet.png', () {
+                                _buildGridItem(
+                                    'Dompet', 'categories/dompet.png', () {
                                   print('Dompet tapped');
                                 }),
-                                _buildGridItem('Kunci', 'kunci.png', () {
+                                _buildGridItem('Kunci', 'categories/kunci.png',
+                                    () {
                                   print('Kunci tapped');
                                 }),
-                                _buildGridItem('Lainnya', 'lainnya.png', () {
+                                _buildGridItem(
+                                    'Lainnya', 'categories/lainnya.png', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

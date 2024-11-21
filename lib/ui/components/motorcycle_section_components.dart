@@ -25,21 +25,21 @@ class MotorcycleSection extends StatelessWidget {
   final List<MotorcycleItem> motorcycles = [
     MotorcycleItem(
         title: 'Aerox 155',
-        image: 'aerox.png',
+        image: 'motor/aerox.png',
         status: 'Penemuan',
         location: 'PII, FMIPA',
         date: '13 Agustus 2024, 10.40',
         type: 'found'),
     MotorcycleItem(
         title: 'Vario 150',
-        image: 'vario.png',
+        image: 'motor/vario.png',
         status: 'Kehilangan',
         location: 'Wisma Soedirman, FT',
         date: '20 September 2024, 14.40',
         type: 'lost'),
     MotorcycleItem(
         title: 'Beat Street 2021',
-        image: 'beat.png',
+        image: 'motor/beat.png',
         status: 'Penemuan',
         location: 'PII, FMIPA',
         date: '13 Agustus 2024, 10.40',
