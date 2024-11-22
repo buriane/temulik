@@ -11,6 +11,7 @@ import 'package:temulik/ui/components/motorcycle_section_components.dart';
 import 'package:temulik/ui/components/other_page_components.dart';
 import 'package:temulik/ui/components/other_laptop_components.dart';
 import 'package:temulik/ui/components/search_page_components.dart';
+import 'package:temulik/ui/components/setting_page_components.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -195,29 +196,39 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(width: 12),
                         BlocBuilder<ProfileBloc, ProfileState>(
                           builder: (context, profileState) {
-                            return Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
+                            return GestureDetector(
+                              // Tambahkan GestureDetector untuk mendeteksi klik
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PengaturanPage()),
+                                );
+                              },
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 18,
-                                backgroundImage: profileState
-                                            is ProfileComplete &&
-                                        profileState.profile.photoUrl != null
-                                    ? NetworkImage(
-                                        profileState.profile.photoUrl!)
-                                    : null,
-                                child: profileState is! ProfileComplete ||
-                                        profileState.profile.photoUrl == null
-                                    ? Icon(Icons.person, color: Colors.grey)
-                                    : null,
-                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundImage: profileState
+                                              is ProfileComplete &&
+                                          profileState.profile.photoUrl != null
+                                      ? NetworkImage(
+                                          profileState.profile.photoUrl!)
+                                      : null,
+                                  child: profileState is! ProfileComplete ||
+                                          profileState.profile.photoUrl == null
+                                      ? Icon(Icons.person, color: Colors.grey)
+                                      : null,
+                                  backgroundColor: Colors.white,
+                                ),
                               ),
                             );
                           },
@@ -730,6 +741,7 @@ class _HomePageState extends State<HomePage> {
             icon: Container(
               height: 50,
               width: 50,
+              alignment: Alignment.center,
               margin: EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
                 color: Colors.green,
@@ -737,8 +749,9 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Image.asset(
                 'temulik.png',
-                width: 30,
-                height: 30,
+                width: 40,
+                height: 40,
+                fit: BoxFit.contain,
               ),
             ),
             label: 'Lapor',
