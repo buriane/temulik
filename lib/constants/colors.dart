@@ -16,4 +16,6 @@ class AppColors {
   static const Color silver = Color(0xFFC3CEE0);
   static const Color bronze = Color(0xFFD5874A);
   static const Color dark = Color(0xFF484C52);
+  static const Color yellow = Color(0xFFFFBE46);
+  static const Color red = Color(0xFFB60000);
 }

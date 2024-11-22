@@ -136,7 +136,10 @@ class LeaderboardCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StrokedText(text: name, fontSize: 16.0),
+        StrokedText(
+          text: name.length > 20 ? name.substring(0, 20) + '...' : name,
+          fontSize: 16.0,
+        ),
         Text(
           faculty,
           style: const TextStyle(
@@ -144,6 +147,8 @@ class LeaderboardCard extends StatelessWidget {
             color: AppColors.coral,
             fontWeight: FontWeight.w400,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -323,6 +328,8 @@ class StrokedText extends StatelessWidget {
       children: [
         Text(
           text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: fontSize,
             foreground: Paint()
