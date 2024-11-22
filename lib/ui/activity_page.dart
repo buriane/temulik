@@ -60,14 +60,7 @@ class ActivityContent extends StatelessWidget {
           itemCount: filteredActivities.length,
           itemBuilder: (context, index) {
             final data = filteredActivities[index];
-            return ActivityCard(
-              date: data['date'],
-              time: data['time'],
-              item: data['item'],
-              category: data['category'],
-              name: data['name'],
-              status: data['status'],
-            );
+            return ActivityCard(activityData: data);
           },
         ),
       ),

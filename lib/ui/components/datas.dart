@@ -85,21 +85,21 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
   },
   {
     'rank': 2,
-    'name': 'Jehian Athaya',
-    'faculty': 'Fakultas Ilmu Komputer',
-    'points': 1180,
-    'image': 'profile_picture/Jeh.png',
+    'name': 'Brian Cahya Purnama',
+    'faculty': 'Fakultas MIPA',
+    'points': 378,
+    'image': 'profile_picture/Bri.png',
     'no': '081234567890',
-    'nim': 'H1D022006'
+    'nim': 'H1D022009'
   },
   {
     'rank': 3,
-    'name': 'Adila',
-    'faculty': 'Fakultas Teknik',
-    'points': 1078,
-    'image': 'profile_picture/Adila.png',
+    'name': 'Jehian Athaya Tsani Az Zuhry',
+    'faculty': 'Fakultas Ilmu Komputer',
+    'points': 340,
+    'image': 'profile_picture/Jeh.png',
     'no': '081234567890',
-    'nim': 'H1D022008'
+    'nim': 'H1D022006'
   },
   {
     'rank': 4,
@@ -150,6 +150,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
 
 final List<Map<String, dynamic>> activities = [
   {
+    'id': 1,
     'date': '12 Agustus 2024',
     'time': '14:40',
     'item': 'Dell Inspiron 7000 Series',
@@ -160,6 +161,7 @@ final List<Map<String, dynamic>> activities = [
     'image': 'laptop/dell.png',
   },
   {
+    'id': 2,
     'date': '13 Agustus 2024',
     'time': '10:40',
     'item': 'Acer Nitro 5',
@@ -170,6 +172,7 @@ final List<Map<String, dynamic>> activities = [
     'image': 'laptop/acernitro.png',
   },
   {
+    'id': 3,
     'date': '14 Agustus 2024',
     'time': '08:40',
     'item': 'HP Pavillion Gaming',
@@ -180,6 +183,7 @@ final List<Map<String, dynamic>> activities = [
     'image': 'laptop/hppavillion.png',
   },
   {
+    'id': 4,
     'date': '11 Mei 2024',
     'time': '08:40',
     'item': 'Vario 150',
@@ -187,6 +191,6 @@ final List<Map<String, dynamic>> activities = [
     'name': 'Rafi Attariq',
     'status': 'Dibatalkan',
     'lastLocation': 'Wisma Soedirman, FT',
-    'image': 'laptop/vario.png',
+    'image': 'motor/vario.png',
   },
 ];
