@@ -35,7 +35,12 @@ class TabLeaderBoard extends StatelessWidget {
               Tab(text: tab2),
             ],
           ),
-          title: const Center(child: Text('Leaderboard')),
+          title: const Center(
+            child: Text(
+              'Leaderboard',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
           elevation: 0,
         ),
         body: TabBarView(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/detail_barang_page.dart';
 
 class TabActivity extends StatefulWidget {
   final String tab1;
@@ -26,7 +27,12 @@ class _TabActivityState extends State<TabActivity> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Center(child: Text('Aktivitas')),
+          title: const Center(
+            child: Text(
+              'Aktivitas',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
           elevation: 0,
           bottom: TabBar(
             indicatorColor: AppColors.green,
@@ -52,21 +58,11 @@ class _TabActivityState extends State<TabActivity> {
 }
 
 class ActivityCard extends StatelessWidget {
-  final String date;
-  final String time;
-  final String item;
-  final String category;
-  final String name;
-  final String status;
+  final Map<String, dynamic> activityData;
 
   const ActivityCard({
     super.key,
-    required this.date,
-    required this.time,
-    required this.item,
-    required this.name,
-    required this.status,
-    required this.category,
+    required this.activityData,
   });
 
   @override
@@ -94,9 +90,13 @@ class ActivityCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TinyMediumText(
-            text: time, color: AppColors.dark, fontWeight: FontWeight.normal),
+            text: activityData['time'],
+            color: AppColors.dark,
+            fontWeight: FontWeight.normal),
         TinyMediumText(
-            text: date, color: AppColors.dark, fontWeight: FontWeight.normal),
+            text: activityData['date'],
+            color: AppColors.dark,
+            fontWeight: FontWeight.normal),
       ],
     );
   }
@@ -106,8 +106,11 @@ class ActivityCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ItemInfo(item: item, status: status, category: category),
-        NameAndButton(name: name),
+        ItemInfo(
+            item: activityData['item'],
+            status: activityData['status'],
+            category: activityData['category']),
+        NameAndButton(activityData: activityData),
       ],
     );
   }
@@ -239,9 +242,12 @@ class ItemInfo extends StatelessWidget {
 }
 
 class NameAndButton extends StatelessWidget {
-  final String name;
+  final Map<String, dynamic> activityData;
 
-  const NameAndButton({super.key, required this.name});
+  const NameAndButton({
+    super.key,
+    required this.activityData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -252,15 +258,28 @@ class NameAndButton extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Tooltip(
-            message: name,
+            message: activityData['name'],
             child: Text(
-              name.length > 15 ? name.substring(0, 15) + '...' : name,
+              activityData['name'].length > 15
+                  ? activityData['name'].substring(0, 15) + '...'
+                  : activityData['name'],
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return DetailBarangPage(
+                      activityData: activityData,
+                    );
+                  },
+                ),
+              );
+            },
             child: const Text('Lihat Detail'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.green,
