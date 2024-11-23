@@ -132,37 +132,37 @@ class ItemInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     String _getCategoryImage() {
       switch (category) {
-        case 'laptop':
+        case 'Laptop':
           return 'categories/laptop.png';
-        case 'handphone':
+        case 'Handphone':
           return 'categories/handphone.png';
-        case 'dompet':
+        case 'Dompet':
           return 'categories/dompet.png';
-        case 'helm':
+        case 'Helm':
           return 'categories/helm.png';
-        case 'hewan':
+        case 'Hewan':
           return 'categories/hewan.png';
-        case 'jam':
+        case 'Jam':
           return 'categories/jam.png';
-        case 'kunci':
+        case 'Kunci':
           return 'categories/kunci.png';
-        case 'kuncikos':
+        case 'Kuncikos':
           return 'categories/kuncikos.png';
-        case 'motor':
+        case 'Motor':
           return 'categories/motor.png';
-        case 'orang':
+        case 'Orang':
           return 'categories/orang.png';
-        case 'powerbank':
+        case 'Powerbank':
           return 'categories/powerbank.png';
-        case 'payung':
+        case 'Payung':
           return 'categories/payung.png';
-        case 'sandal':
+        case 'Sandal':
           return 'categories/sandal.png';
-        case 'sepatu':
+        case 'Sepatu':
           return 'categories/sepatu.png';
-        case 'speaker':
+        case 'Speaker':
           return 'categories/speaker.png';
-        case 'tas':
+        case 'Tas':
           return 'categories/tas.png';
         default:
           return 'categories/lainnya.png';

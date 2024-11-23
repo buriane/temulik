@@ -71,7 +71,7 @@ class LeaderboardContent extends StatelessWidget {
                   faculty: data['faculty'],
                   points: data['points'],
                   image: data['image'],
-                  onTap: () => _showLeaderboardDetail(context, data),
+                  onTap: () => _showUserDetail(context, data),
                 );
               },
             ),
@@ -81,8 +81,7 @@ class LeaderboardContent extends StatelessWidget {
     );
   }
 
-  void _showLeaderboardDetail(
-      BuildContext context, Map<String, dynamic> userData) {
+  void _showUserDetail(BuildContext context, Map<String, dynamic> userData) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -93,15 +92,15 @@ class LeaderboardContent extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.5,
       ),
-      builder: (context) => LeaderboardDetail(userData: userData),
+      builder: (context) => UserDetail(userData: userData),
     );
   }
 }
 
-class LeaderboardDetail extends StatelessWidget {
+class UserDetail extends StatelessWidget {
   final Map<String, dynamic> userData;
 
-  const LeaderboardDetail({
+  const UserDetail({
     super.key,
     required this.userData,
   });
