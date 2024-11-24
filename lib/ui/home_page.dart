@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/ui/activity_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
+import 'package:temulik/ui/map_page.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
@@ -651,7 +652,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             // Halaman lain
-            Center(child: Text('Cari')), // Halaman Cari
+            MapPage(),
             Center(child: Text('Lapor')), // Halaman Lapor
             ActivityPage(), // Halaman Aktivitas
             LeaderboardPage(), // Halaman Peringkat
