@@ -52,7 +52,7 @@ class LeaderboardContent extends StatelessWidget {
     return Column(
       children: [
         Image.asset(
-          'pahlawan_gensoed.png',
+          'assets/pahlawan_gensoed.png',
           width: double.infinity,
           fit: BoxFit.cover,
           filterQuality: FilterQuality.high,

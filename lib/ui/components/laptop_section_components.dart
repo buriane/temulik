@@ -25,21 +25,21 @@ class LaptopSection extends StatelessWidget {
   final List<LaptopItem> laptops = [
     LaptopItem(
         title: 'Dell Inspiron 7000 Series',
-        image: 'laptop/dell.png',
+        image: 'assets/laptop/dell.png',
         status: 'Kehilangan',
         location: 'Pendopo bawah, PKM Unsoed',
         date: '12 Agustus 2024, 14:40',
         type: 'lost'),
     LaptopItem(
         title: 'Acer Nitro 5',
-        image: 'laptop/acernitro.png',
+        image: 'assets/laptop/acernitro.png',
         status: 'Penemuan',
         location: 'PII FMIPA',
         date: '13 Agustus 2024, 10:40',
         type: 'found'),
     LaptopItem(
         title: 'HP Pavillion Gaming 15',
-        image: 'laptop/hppavillion.png',
+        image: 'assets/laptop/hppavillion.png',
         status: 'Penemuan',
         location: 'FISIP',
         date: '14 Agustus 2024, 08:40',
@@ -165,7 +165,7 @@ class LaptopSection extends StatelessWidget {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'loct.png',
+                                    'assets/loct.png',
                                     width: 14,
                                     height: 14,
                                   ),
@@ -187,7 +187,7 @@ class LaptopSection extends StatelessWidget {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'calendar.png',
+                                    'assets/calendar.png',
                                     width: 14,
                                     height: 14,
                                   ),

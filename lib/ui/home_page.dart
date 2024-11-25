@@ -14,6 +14,7 @@ import 'package:temulik/ui/components/other_laptop_components.dart';
 import 'package:temulik/ui/components/search_page_components.dart';
 import 'package:temulik/ui/components/setting_page_components.dart';
 
+
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,86 +23,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // Daftar path icon SVG
   final List<String> _iconPaths = [
-    'home.svg',
-    'search.svg',
-    'temulik.png',
-    'clock.svg',
-    'peringkat.svg',
+    'assets/home.svg',
+    'assets/search.svg',
+    'assets/temulik.png',
+    'assets/clock.svg',
+    'assets/peringkat.svg',
   ];
 
-  // Fungsi untuk menangani perubahan tab
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  // // Widget untuk menampilkan konten profil
-  // Widget _buildProfileContent() {
-  //   return BlocBuilder<ProfileBloc, ProfileState>(
-  //     builder: (context, profileState) {
-  //       if (profileState is ProfileComplete) {
-  //         return Center(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               CircleAvatar(
-  //                 radius: 50,
-  //                 backgroundImage: profileState.profile.photoUrl != null
-  //                     ? NetworkImage(profileState.profile.photoUrl!)
-  //                     : null,
-  //                 child: profileState.profile.photoUrl == null
-  //                     ? Icon(Icons.person, size: 50)
-  //                     : null,
-  //               ),
-  //               SizedBox(height: 16),
-  //               Text('Welcome, ${profileState.profile.fullName}!'),
-  //               SizedBox(height: 16),
-  //               Text('Email: ${profileState.profile.email}'),
-  //               SizedBox(height: 16),
-  //               Text('NIM: ${profileState.profile.nim}'),
-  //               SizedBox(height: 16),
-  //               Text('Faculty: ${profileState.profile.faculty}'),
-  //               SizedBox(height: 16),
-  //               ElevatedButton(
-  //                 child: Text('Sign Out'),
-  //                 onPressed: () {
-  //                   context.read<AuthBloc>().add(SignOut());
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       } else if (profileState is ProfileLoading) {
-  //         return Center(child: CircularProgressIndicator());
-  //       } else if (profileState is ProfileError) {
-  //         return Center(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               Text('Error loading profile: ${profileState.message}'),
-  //               SizedBox(height: 16),
-  //               ElevatedButton(
-  //                 child: Text('Retry'),
-  //                 onPressed: () {
-  //                   context.read<ProfileBloc>().add(LoadProfile());
-  //                 },
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       } else {
-  //         return Center(child: Text('Unexpected state: $profileState'));
-  //       }
-  //     },
-  //   );
-  // }
-
   Widget _buildGridItem(String title, String imagePath, VoidCallback onTap) {
     return InkWell(
-      onTap: onTap, // Aksi yang dipanggil saat item ditekan
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -110,11 +48,11 @@ class _HomePageState extends State<HomePage> {
             width: 63,
             height: 63,
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -166,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 18),
                                     child: SvgPicture.asset(
-                                      'searchbar.svg',
+                                      'assets/searchbar.svg',
                                       width: 20,
                                       height: 20,
                                     ),
@@ -246,57 +184,59 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           // Banner Section
                           Container(
-                            padding: EdgeInsets.only(
-                                left: 16, right: 16, top: 26, bottom: 56),
+                            padding: EdgeInsets.only(left: 16, right: 16, top: 26, bottom: 56),
                             decoration: BoxDecoration(
                               color: Color(0xFFE0FBD2),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Container(
-                                  margin: EdgeInsets.only(left: 16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Temukan barang hilang',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'dapatkan reward-nya',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          Text('Bantu teman kita sekarang'),
-                                          SizedBox(width: 4),
-                                          SvgPicture.asset(
-                                            'next.svg',
-                                            width: 16,
-                                            height: 16,
+                                Expanded(
+                                  flex: 3,
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: 7),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Temukan barang hilang',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
-                                      ),
-                                    ],
+                                        ),
+                                        Text(
+                                          'dapatkan reward-nya',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Text('Bantu teman kita sekarang'),
+                                            SizedBox(width: 4),
+                                            SvgPicture.asset(
+                                              'assets/next.svg',
+                                              width: 16,
+                                              height: 16,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                // Gambar di sebelah kanan
-                                Container(
-                                  margin: EdgeInsets.only(right: 16),
-                                  child: SizedBox(
-                                    width: 184,
-                                    height: 136,
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    alignment: Alignment.center,
                                     child: Image.asset(
-                                      'reward.png',
+                                      'assets/reward.png',
+                                      width: 184,
+                                      height: 136,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -304,13 +244,11 @@ class _HomePageState extends State<HomePage> {
                               ],
                             ),
                           ),
-
                           // Location Stats
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Transform.translate(
-                              offset: Offset(0,
-                                  -40), // Move the container up to overlap with the banner
+                              offset: Offset(0, -40),
                               child: Container(
                                 padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -328,7 +266,6 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Header section with location
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -348,7 +285,7 @@ class _HomePageState extends State<HomePage> {
                                             Row(
                                               children: [
                                                 Image.asset(
-                                                  'location.png',
+                                                  'assets/location.png',
                                                   width: 20,
                                                   height: 20,
                                                 ),
@@ -379,7 +316,7 @@ class _HomePageState extends State<HomePage> {
                                             Row(
                                               children: [
                                                 Image.asset(
-                                                  'rank.png',
+                                                  'assets/rank.png',
                                                   width: 20,
                                                   height: 20,
                                                 ),
@@ -416,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Image.asset(
-                                              'lost.png',
+                                              'assets/lost.png',
                                               width: 37,
                                               height: 37,
                                             ),
@@ -456,7 +393,7 @@ class _HomePageState extends State<HomePage> {
                                               CrossAxisAlignment.center,
                                           children: [
                                             Image.asset(
-                                              'find.png',
+                                              'assets/find.png',
                                               width: 37,
                                               height: 37,
                                             ),
@@ -502,7 +439,7 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.all(16),
                               children: [
                                 _buildGridItem(
-                                    'Laptop', 'categories/laptop.png', () {
+                                    'Laptop', 'assets/categories/laptop.png', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -510,32 +447,32 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }),
                                 _buildGridItem(
-                                    'Headset', 'categories/headset.png', () {
+                                    'Headset', 'assets/categories/headset.png', () {
                                   print('Headset tapped');
                                 }),
-                                _buildGridItem('Motor', 'categories/motor.png',
+                                _buildGridItem('Motor', 'assets/categories/motor.png',
                                     () {
                                   print('Motor tapped');
                                 }),
                                 _buildGridItem(
-                                    'Charger', 'categories/charger.png', () {
+                                    'Charger', 'assets/categories/charger.png', () {
                                   print('Charger tapped');
                                 }),
                                 _buildGridItem(
-                                    'Handphone', 'categories/handphone.png',
+                                    'Handphone', 'assets/categories/handphone.png',
                                     () {
                                   print('Handphone tapped');
                                 }),
                                 _buildGridItem(
-                                    'Dompet', 'categories/dompet.png', () {
+                                    'Dompet', 'assets/categories/dompet.png', () {
                                   print('Dompet tapped');
                                 }),
-                                _buildGridItem('Kunci', 'categories/kunci.png',
+                                _buildGridItem('Kunci', 'assets/categories/kunci.png',
                                     () {
                                   print('Kunci tapped');
                                 }),
                                 _buildGridItem(
-                                    'Lainnya', 'categories/lainnya.png', () {
+                                    'Lainnya', 'assets/categories/lainnya.png', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -553,35 +490,44 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.all(16),
                               child: ElevatedButton(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    SvgPicture.asset(
-                                      'whatsapp.svg',
-                                      height: 22,
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 4),
+                                      child: SvgPicture.asset(
+                                        'assets/whatsapp.svg',
+                                        height: 22,
+                                      ),
                                     ),
-                                    SizedBox(width: 12),
+                                    SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        'Info barang hilang terkini. Yuk, gabung grup WhatsApp!',
+                                        'Gabung grup WA Temulik info barang hilang!',
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
+                                        maxLines: 1,
                                       ),
                                     ),
-                                    SvgPicture.asset(
-                                      'arrow.svg',
-                                      height: 22,
-                                      colorFilter: ColorFilter.mode(
-                                          Colors.white, BlendMode.srcIn),
+                                    SizedBox(width: 4),
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 4),
+                                      child: SvgPicture.asset(
+                                        'assets/arrow.svg',
+                                        height: 22,
+                                        colorFilter: ColorFilter.mode(
+                                            Colors.white, BlendMode.srcIn),
+                                      ),
                                     ),
                                   ],
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -590,7 +536,6 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ),
-
                           // Banner Image Section
                           Transform.translate(
                             offset: Offset(0, -50),
@@ -604,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                     image: DecorationImage(
-                                      image: AssetImage('ads.png'),
+                                      image: AssetImage('assets/ads.png'),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -749,7 +694,7 @@ class _HomePageState extends State<HomePage> {
                 shape: BoxShape.circle,
               ),
               child: Image.asset(
-                'temulik.png',
+                'assets/temulik.png',
                 width: 40,
                 height: 40,
                 fit: BoxFit.contain,

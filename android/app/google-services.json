@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "613061731298-qqs11g68gukj74o9fv04o7j4j3cmq4av.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.temul",
+            "certificate_hash": "bf3d8eb9ab417ab0aaab593563198d2cb0fb68f2"
+          }
+        },
+        {
           "client_id": "613061731298-9n4j15ci16gu8ds4quj1stq8lsd40sec.apps.googleusercontent.com",
           "client_type": 3
         }

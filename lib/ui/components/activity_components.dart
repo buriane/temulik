@@ -133,39 +133,39 @@ class ItemInfo extends StatelessWidget {
     String _getCategoryImage() {
       switch (category) {
         case 'Laptop':
-          return 'categories/laptop.png';
+          return 'assets/categories/laptop.png';
         case 'Handphone':
-          return 'categories/handphone.png';
+          return 'assets/categories/handphone.png';
         case 'Dompet':
-          return 'categories/dompet.png';
+          return 'assets/categories/dompet.png';
         case 'Helm':
-          return 'categories/helm.png';
+          return 'assets/categories/helm.png';
         case 'Hewan':
-          return 'categories/hewan.png';
+          return 'assets/categories/hewan.png';
         case 'Jam':
-          return 'categories/jam.png';
+          return 'assets/categories/jam.png';
         case 'Kunci':
-          return 'categories/kunci.png';
+          return 'assets/categories/kunci.png';
         case 'Kuncikos':
-          return 'categories/kuncikos.png';
+          return 'assets/categories/kuncikos.png';
         case 'Motor':
-          return 'categories/motor.png';
+          return 'assets/categories/motor.png';
         case 'Orang':
-          return 'categories/orang.png';
+          return 'assets/categories/orang.png';
         case 'Powerbank':
-          return 'categories/powerbank.png';
+          return 'assets/categories/powerbank.png';
         case 'Payung':
-          return 'categories/payung.png';
+          return 'assets/categories/payung.png';
         case 'Sandal':
-          return 'categories/sandal.png';
+          return 'assets/categories/sandal.png';
         case 'Sepatu':
-          return 'categories/sepatu.png';
+          return 'assets/categories/sepatu.png';
         case 'Speaker':
-          return 'categories/speaker.png';
+          return 'assets/categories/speaker.png';
         case 'Tas':
-          return 'categories/tas.png';
+          return 'assets/categories/tas.png';
         default:
-          return 'categories/lainnya.png';
+          return 'assets/categories/lainnya.png';
       }
     }
 

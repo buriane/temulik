@@ -55,7 +55,7 @@ class _SearchPageState extends State<SearchPage> {
                 Padding(
                   padding: EdgeInsets.only(left: 12),
                   child: SvgPicture.asset(
-                    'searchbar.svg',
+                    'assets/searchbar.svg',
                     width: 20,
                     height: 20,
                   ),
@@ -96,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    _buildPopularCategory('Laptop', 'categories/laptop.png',
+                    _buildPopularCategory('Laptop', 'assets/categories/laptop.png',
                         () {
                       Navigator.push(
                         context,
@@ -105,22 +105,22 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Headset', 'categories/headset.png',
+                    _buildPopularCategory('Headset', 'assets/categories/headset.png',
                         () {
                       // Tambahkan navigasi untuk Headset jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Motor', 'categories/motor.png', () {
+                    _buildPopularCategory('Motor', 'assets/categories/motor.png', () {
                       // Tambahkan navigasi untuk Motor jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Charger', 'categories/charger.png',
+                    _buildPopularCategory('Charger', 'assets/categories/charger.png',
                         () {
                       // Tambahkan navigasi untuk Charger jika diperlukan
                     }),
                     SizedBox(width: 32),
                     _buildPopularCategory(
-                        'Handphone', 'categories/handphone.png', () {
+                        'Handphone', 'assets/categories/handphone.png', () {
                       // Tambahkan navigasi untuk Handphone jika diperlukan
                     }),
                   ],

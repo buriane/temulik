@@ -4,7 +4,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Dzakwan Irfan R.',
     'faculty': 'FSRD',
     'points': 390,
-    'image': 'profile_picture/dzakwan.jpg',
+    'image': 'assets/profile_picture/dzakwan.jpg',
     'no': '081234567890',
     'nim': 'H1D022043'
   },
@@ -13,7 +13,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Brian Cahya Purnama',
     'faculty': 'Fakultas MIPA',
     'points': 378,
-    'image': 'profile_picture/Bri.png',
+    'image': 'assets/profile_picture/Bri.png',
     'no': '081234567890',
     'nim': 'H1D022009'
   },
@@ -22,7 +22,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Jehian Athaya Tsani Az Zuhry',
     'faculty': 'Fakultas Ilmu Komputer',
     'points': 340,
-    'image': 'profile_picture/Jeh.png',
+    'image': 'assets/profile_picture/Jeh.png',
     'no': '081234567890',
     'nim': 'H1D022006'
   },
@@ -31,7 +31,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Fahmi',
     'faculty': 'Fakultas Peternakan',
     'points': 320,
-    'image': 'profile_picture/Fahmi.png',
+    'image': 'assets/profile_picture/Fahmi.png',
     'no': '081234567890',
     'nim': 'H1D022007'
   },
@@ -40,7 +40,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Adila',
     'faculty': 'Fakultas Teknik',
     'points': 278,
-    'image': 'profile_picture/Adila.png',
+    'image': 'assets/profile_picture/Adila.png',
     'no': '081234567890',
     'nim': 'H1D022008'
   },
@@ -49,7 +49,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Muthia',
     'faculty': 'Fakultas Teknik',
     'points': 277,
-    'image': 'profile_picture/Muthia.png',
+    'image': 'assets/profile_picture/Muthia.png',
     'no': '081234567890',
     'nim': 'H1D022010'
   },
@@ -58,7 +58,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Malika Azra',
     'faculty': 'FEB',
     'points': 256,
-    'image': 'profile_picture/Malika.png',
+    'image': 'assets/profile_picture/Malika.png',
     'no': '081234567890',
     'nim': 'H1D022011'
   },
@@ -67,7 +67,7 @@ final List<Map<String, dynamic>> bulanIniList = [
     'name': 'Amarramitha',
     'faculty': 'Fakultas Teknik',
     'points': 189,
-    'image': 'profile_picture/Ammara.png',
+    'image': 'assets/profile_picture/Ammara.png',
     'no': '081234567890',
     'nim': 'H1D022012'
   },
@@ -79,7 +79,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Malika Azra',
     'faculty': 'FEB',
     'points': 1256,
-    'image': 'profile_picture/Malika.png',
+    'image': 'assets/profile_picture/Malika.png',
     'no': '081234567890',
     'nim': 'H1D022011'
   },
@@ -88,7 +88,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Brian Cahya Purnama',
     'faculty': 'Fakultas MIPA',
     'points': 378,
-    'image': 'profile_picture/Bri.png',
+    'image': 'assets/profile_picture/Bri.png',
     'no': '081234567890',
     'nim': 'H1D022009'
   },
@@ -97,7 +97,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Jehian Athaya Tsani Az Zuhry',
     'faculty': 'Fakultas Ilmu Komputer',
     'points': 340,
-    'image': 'profile_picture/Jeh.png',
+    'image': 'assets/profile_picture/Jeh.png',
     'no': '081234567890',
     'nim': 'H1D022006'
   },
@@ -106,7 +106,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Dzakwan Irfan R.',
     'faculty': 'FSRD',
     'points': 990,
-    'image': 'profile_picture/dzakwan.jpg',
+    'image': 'assets/profile_picture/dzakwan.jpg',
     'no': '081234567890',
     'nim': 'H1D022043'
   },
@@ -115,7 +115,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Brian Cahya',
     'faculty': 'Fakultas MIPA',
     'points': 878,
-    'image': 'profile_picture/Bri.png',
+    'image': 'assets/profile_picture/Bri.png',
     'no': '081234567890',
     'nim': 'H1D022009'
   },
@@ -124,7 +124,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Amarramitha',
     'faculty': 'Fakultas Teknik',
     'points': 789,
-    'image': 'profile_picture/Ammara.png',
+    'image': 'assets/profile_picture/Ammara.png',
     'no': '081234567890',
     'nim': 'H1D022012'
   },
@@ -133,7 +133,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Fahmi',
     'faculty': 'Fakultas Peternakan',
     'points': 720,
-    'image': 'profile_picture/Fahmi.png',
+    'image': 'assets/profile_picture/Fahmi.png',
     'no': '081234567890',
     'nim': 'H1D022007'
   },
@@ -142,7 +142,7 @@ final List<Map<String, dynamic>> keseluruhanWaktuList = [
     'name': 'Muthia',
     'faculty': 'Fakultas Teknik',
     'points': 677,
-    'image': 'profile_picture/Muthia.png',
+    'image': 'assets/profile_picture/Muthia.png',
     'no': '081234567890',
     'nim': 'H1D022010'
   },
@@ -159,9 +159,9 @@ final List<Map<String, dynamic>> activities = [
     'status': 'Dalam proses',
     'lastLocation': 'Pendopo bawah, PKM Unsoed',
     'image': [
-      'laptop/dell.png',
-      'laptop/dell2.jpg',
-      'laptop/dell3.jpg',
+      'assets/laptop/dell.png',
+      'assets/laptop/dell2.jpg',
+      'assets/laptop/dell3.jpg',
     ],
     'statusBarang': 'Kehilangan',
     'user': {
@@ -169,7 +169,7 @@ final List<Map<String, dynamic>> activities = [
       'nim': 'E1D022001',
       'faculty': 'Fakultas Ilmu Budaya',
       'no': '081234567890',
-      'image': 'profile_picture/adrian.jpg',
+      'image': 'assets/profile_picture/adrian.jpg',
     },
   },
   {
@@ -182,8 +182,8 @@ final List<Map<String, dynamic>> activities = [
     'status': 'Dibatalkan',
     'lastLocation': 'PII FMIPA',
     'image': [
-      'laptop/acernitro.png',
-      'laptop/acernitro2.jpg',
+      'assets/laptop/acernitro.png',
+      'assets/laptop/acernitro2.jpg',
     ],
     'statusBarang': 'Ditemukan',
     'user': {
@@ -191,7 +191,7 @@ final List<Map<String, dynamic>> activities = [
       'nim': 'E1D022002',
       'faculty': 'Fakultas Peternakan',
       'no': '081234567890',
-      'image': 'profile_picture/Fahmi.png',
+      'image': 'assets/profile_picture/Fahmi.png',
     },
   },
   {
@@ -204,10 +204,10 @@ final List<Map<String, dynamic>> activities = [
     'status': 'Selesai',
     'lastLocation': 'FISIP',
     'image': [
-      'laptop/hppavillion.png',
-      'laptop/hppavillion2.jpg',
-      'laptop/hppavillion3.jpg',
-      'laptop/hppavillion4.jpg',
+      'assets/laptop/hppavillion.png',
+      'assets/laptop/hppavillion2.jpg',
+      'assets/laptop/hppavillion3.jpg',
+      'assets/laptop/hppavillion4.jpg',
     ],
     'statusBarang': 'Ditemukan',
     'user': {
@@ -215,7 +215,7 @@ final List<Map<String, dynamic>> activities = [
       'nim': 'F1D022003',
       'faculty': 'Fakultas Ilmu Kesehatan',
       'no': '081234567890',
-      'image': 'profile_picture/Riko.jpg',
+      'image': 'assets/profile_picture/Riko.jpg',
     },
   },
   {
@@ -238,7 +238,7 @@ final List<Map<String, dynamic>> activities = [
       'nim': 'H1D022085',
       'faculty': 'Fakultas Teknik',
       'no': '081234567890',
-      'image': 'profile_picture/rafi.jpg',
+      'image': 'assets/profile_picture/rafi.jpg',
     },
   },
 ];

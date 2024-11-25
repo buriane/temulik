@@ -71,7 +71,7 @@ class WhatsappButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            'whatsapp.svg',
+            'assets/whatsapp.svg',
             colorFilter: ColorFilter.mode(
               AppColors.green,
               BlendMode.srcIn,

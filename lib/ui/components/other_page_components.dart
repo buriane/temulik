@@ -19,17 +19,17 @@ class LainnyaPage extends StatelessWidget {
           ),
           SizedBox(height: 16), // Increased spacing
           _buildCategoryItem(
-              context, 'Laptop', 'categories/laptop.png', LaptopLainnya()),
+              context, 'Laptop', 'assets/categories/laptop.png', LaptopLainnya()),
           _buildCategoryItem(
-              context, 'Headset', 'categories/headset.png', Scaffold()),
+              context, 'Headset', 'assets/categories/headset.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Charger', 'categories/charger.png', Scaffold()),
+              context, 'Charger', 'assets/categories/charger.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Handphone', 'categories/handphone.png', Scaffold()),
+              context, 'Handphone', 'assets/categories/handphone.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Speaker', 'categories/speaker.png', Scaffold()),
+              context, 'Speaker', 'assets/categories/speaker.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Powerbank', 'categories/powerbank.png', Scaffold()),
+              context, 'Powerbank', 'assets/categories/powerbank.png', Scaffold()),
           SizedBox(height: 24), // Increased section spacing
 
           // Kendaraan dan Aksesori Section
@@ -39,11 +39,11 @@ class LainnyaPage extends StatelessWidget {
           ),
           SizedBox(height: 16),
           _buildCategoryItem(
-              context, 'Motor', 'categories/motor.png', Scaffold()),
+              context, 'Motor', 'assets/categories/motor.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Helm', 'categories/helm.png', Scaffold()),
+              context, 'Helm', 'assets/categories/helm.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Kunci Kendaraan', 'categories/kunci.png', Scaffold()),
+              context, 'Kunci Kendaraan', 'assets/categories/kunci.png', Scaffold()),
           SizedBox(height: 24),
 
           // Barang Pribadi Section
@@ -52,18 +52,18 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-          _buildCategoryItem(context, 'Jam', 'categories/jam.png', Scaffold()),
+          _buildCategoryItem(context, 'Jam', 'assets/categories/jam.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Dompet', 'categories/dompet.png', Scaffold()),
-          _buildCategoryItem(context, 'Tas', 'categories/tas.png', Scaffold()),
+              context, 'Dompet', 'assets/categories/dompet.png', Scaffold()),
+          _buildCategoryItem(context, 'Tas', 'assets/categories/tas.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Kunci', 'categories/kuncikos.png', Scaffold()),
+              context, 'Kunci', 'assets/categories/kuncikos.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Sepatu', 'categories/sepatu.png', Scaffold()),
+              context, 'Sepatu', 'assets/categories/sepatu.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Sandal', 'categories/sandal.png', Scaffold()),
+              context, 'Sandal', 'assets/categories/sandal.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Payung', 'categories/payung.png', Scaffold()),
+              context, 'Payung', 'assets/categories/payung.png', Scaffold()),
           SizedBox(height: 24),
 
           // Mahkluk Hidup Section
@@ -73,9 +73,9 @@ class LainnyaPage extends StatelessWidget {
           ),
           SizedBox(height: 16),
           _buildCategoryItem(
-              context, 'Hewan', 'categories/hewan.png', Scaffold()),
+              context, 'Hewan', 'assets/categories/hewan.png', Scaffold()),
           _buildCategoryItem(
-              context, 'Orang', 'categories/orang.png', Scaffold()),
+              context, 'Orang', 'assets/categories/orang.png', Scaffold()),
           SizedBox(height: 16),
         ],
       ),

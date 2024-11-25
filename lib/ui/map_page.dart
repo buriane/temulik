@@ -7,7 +7,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'dart:async';
-import 'dart:html' as html;
+import 'package:temulik/services/geolocation_interface.dart';
+import 'package:temulik/services/geolocation_mobile.dart';
 import 'package:temulik/constants/colors.dart';
 
 class MapPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
+  final GeolocationService _geolocationService = GeolocationService();
   LatLng? _currentLocation;
   double _bearing = 0.0;
   bool _showCompass = false;
@@ -26,13 +28,11 @@ class _MapPageState extends State<MapPage> {
   StreamSubscription<Position>? _positionStreamSubscription;
   Timer? _locationUpdateTimer;
   bool _isHighAccuracy = false;
-  bool _isWeb = false;
   String _accuracyStatus = '';
 
   @override
   void initState() {
     super.initState();
-    _checkPlatform();
     _initializeMap();
 
     _mapController.mapEventStream.listen((event) {
@@ -43,16 +43,10 @@ class _MapPageState extends State<MapPage> {
       }
     });
 
-    _locationUpdateTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _locationUpdateTimer = Timer.periodic(const Duration(seconds: 100), (timer) {
       if (mounted) {
         _updateCurrentLocation();
       }
-    });
-  }
-
-  void _checkPlatform() {
-    setState(() {
-      _isWeb = identical(0, 0.0);
     });
   }
 
@@ -60,11 +54,7 @@ class _MapPageState extends State<MapPage> {
     try {
       bool hasPermission = await _checkLocationPermission();
       if (hasPermission) {
-        if (_isWeb) {
-          await _getCurrentLocationWeb();
-        } else {
-          await _getCurrentLocation();
-        }
+        await _getCurrentLocation();
         _listenToCompass();
       }
     } catch (e) {
@@ -86,11 +76,7 @@ class _MapPageState extends State<MapPage> {
     });
 
     try {
-      if (_isWeb) {
-        await _getCurrentLocationWeb();
-      } else {
-        await _getCurrentLocation();
-      }
+      await _getCurrentLocation();
     } catch (e) {
       print('Error updating location: $e');
       _showErrorSnackBar('Gagal memperbarui lokasi: ${e.toString()}');
@@ -105,18 +91,10 @@ class _MapPageState extends State<MapPage> {
 
   Future<bool> _checkLocationPermission() async {
     try {
-      if (_isWeb) {
-        final geolocation = html.window.navigator.geolocation;
-        if (geolocation == null) {
-          _showErrorSnackBar('Geolokasi tidak didukung di browser ini.');
-          return false;
-        }
-        return true;
-      }
-
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        _showErrorSnackBar('Layanan lokasi tidak aktif. Mohon aktifkan layanan lokasi.');
+        _showErrorSnackBar(
+            'Layanan lokasi tidak aktif. Mohon aktifkan layanan lokasi.');
         return false;
       }
 
@@ -130,7 +108,8 @@ class _MapPageState extends State<MapPage> {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        _showErrorSnackBar('Izin lokasi ditolak secara permanen. Mohon ubah pengaturan perangkat Anda.');
+        _showErrorSnackBar(
+            'Izin lokasi ditolak secara permanen. Mohon ubah pengaturan perangkat Anda.');
         return false;
       }
 
@@ -142,101 +121,34 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  Future<bool> _isLocationAvailableInBrowser() async {
-    try {
-      return html.window.navigator.geolocation != null;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Future<void> _getCurrentLocationWeb() async {
-    final completer = Completer<void>();
-
-    try {
-      html.window.navigator.geolocation.getCurrentPosition().then((position) {
-        if (mounted) {
-          final lat = position.coords!.latitude;
-          final lng = position.coords!.longitude;
-          final accuracy = position.coords!.accuracy;
-
-          print('Web Location - Lat: $lat, Lng: $lng, Accuracy: $accuracy meters');
-
-          setState(() {
-            _currentLocation = LatLng(lat!.toDouble(), lng!.toDouble());
-            _accuracyStatus = 'Akurasi: ${accuracy?.toStringAsFixed(0)}m';
-
-            if (accuracy! <= 100) {
-              _isHighAccuracy = true;
-              _accuracyStatus += ' (Akurat)';
-            } else if (accuracy <= 500) {
-              _isHighAccuracy = true;
-              _accuracyStatus += ' (Cukup Akurat)';
-            } else {
-              _isHighAccuracy = false;
-              _accuracyStatus += ' (Kurang Akurat)';
-            }
-          });
-
-          if (_currentLocation != null) {
-            _animatedMapMove(_currentLocation!, 15);
-          }
-          completer.complete();
-        }
-      }).catchError((error) {
-        String errorMessage = 'Gagal mendapatkan lokasi';
-        if (error is html.PositionError) {
-          switch (error.code) {
-            case 1:
-              errorMessage = 'Izin lokasi ditolak. Mohon izinkan akses lokasi di browser Anda.';
-              break;
-            case 2:
-              errorMessage = 'Lokasi tidak tersedia. Pastikan GPS/Location Services aktif.';
-              break;
-            case 3:
-              errorMessage = 'Waktu mendapatkan lokasi habis. Coba lagi.';
-              break;
-          }
-        }
-        _showErrorSnackBar(errorMessage);
-        completer.completeError(errorMessage);
-      }, test: (e) => e is html.PositionError);
-
-    } catch (e) {
-      final errorMessage = 'Gagal mendapatkan lokasi di browser: $e';
-      _showErrorSnackBar(errorMessage);
-      completer.completeError(errorMessage);
-    }
-
-    return completer.future;
-  }
-
   Future<void> _getCurrentLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-        timeLimit: const Duration(seconds: 5),
-      );
+      LocationData location = await _geolocationService.getCurrentLocation();
 
-      print(
-          'Native Location - Lat: ${position.latitude}, Lng: ${position.longitude}, Accuracy: ${position.accuracy} meters');
-
-      if (mounted && position.accuracy <= 20) {
-        // Hanya update jika akurasi <= 20 meter
+      if (mounted) {
         setState(() {
-          _currentLocation = LatLng(position.latitude, position.longitude);
-          _isHighAccuracy = true;
+          _currentLocation = LatLng(location.latitude, location.longitude);
+          _accuracyStatus = 'Akurasi: ${location.accuracy.toStringAsFixed(0)}m';
+
+          if (location.accuracy <= 100) {
+            _isHighAccuracy = true;
+            _accuracyStatus += ' (Akurat)';
+          } else if (location.accuracy <= 500) {
+            _isHighAccuracy = true;
+            _accuracyStatus += ' (Cukup Akurat)';
+          } else {
+            _isHighAccuracy = false;
+            _accuracyStatus += ' (Kurang Akurat)';
+          }
         });
 
-        _animatedMapMove(_currentLocation!, 15);
-      } else {
-        _showErrorSnackBar('Mencoba mendapatkan lokasi yang lebih akurat...');
+        if (_currentLocation != null) {
+          _animatedMapMove(_currentLocation!, 15);
+        }
       }
     } catch (e) {
       print('Error getting current location: $e');
-      if (mounted) {
-        _showErrorSnackBar('Gagal mendapatkan lokasi saat ini.');
-      }
+      _showErrorSnackBar('Gagal mendapatkan lokasi saat ini.');
     }
   }
 
@@ -290,12 +202,7 @@ class _MapPageState extends State<MapPage> {
     });
 
     try {
-      // Di web, gunakan getCurrentLocationWeb
-      if (await _isLocationAvailableInBrowser()) {
-        await _getCurrentLocationWeb();
-      } else {
-        await _getCurrentLocation();
-      }
+      await _getCurrentLocation();
     } catch (e) {
       if (mounted) {
         print('Error in moveToCurrentLocation: $e');
@@ -326,7 +233,8 @@ class _MapPageState extends State<MapPage> {
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              initialCenter: _currentLocation ?? const LatLng(0, 0), // Default ke koordinat 0,0
+              initialCenter: _currentLocation ??
+                  const LatLng(0, 0),
               initialZoom: 15,
               onMapReady: () {
                 if (_currentLocation != null) {
@@ -368,7 +276,8 @@ class _MapPageState extends State<MapPage> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: AppColors.blue,
-                                  border: Border.all(color: Colors.white, width: 2),
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
                                 ),
                               ),
                             ),
@@ -393,7 +302,9 @@ class _MapPageState extends State<MapPage> {
                                 _accuracyStatus,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: _isHighAccuracy ? AppColors.blue : AppColors.red,
+                                  color: _isHighAccuracy
+                                      ? AppColors.blue
+                                      : AppColors.red,
                                 ),
                               ),
                             ),
@@ -411,7 +322,6 @@ class _MapPageState extends State<MapPage> {
               backgroundColor: AppColors.blue,
               onPressed: () {
                 _moveToCurrentLocation();
-                // Menampilkan dialog petunjuk jika akurasi rendah
                 if (!_isHighAccuracy) {
                   showDialog(
                     context: context,

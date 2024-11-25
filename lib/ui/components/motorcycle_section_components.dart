@@ -25,21 +25,21 @@ class MotorcycleSection extends StatelessWidget {
   final List<MotorcycleItem> motorcycles = [
     MotorcycleItem(
         title: 'Aerox 155',
-        image: 'motor/aerox.png',
+        image: 'assets/motor/aerox.png',
         status: 'Penemuan',
         location: 'PII, FMIPA',
         date: '13 Agustus 2024, 10.40',
         type: 'found'),
     MotorcycleItem(
         title: 'Vario 150',
-        image: 'motor/vario.png',
+        image: 'assets/motor/vario.png',
         status: 'Kehilangan',
         location: 'Wisma Soedirman, FT',
         date: '20 September 2024, 14.40',
         type: 'lost'),
     MotorcycleItem(
         title: 'Beat Street 2021',
-        image: 'motor/beat.png',
+        image: 'assets/motor/beat.png',
         status: 'Penemuan',
         location: 'PII, FMIPA',
         date: '13 Agustus 2024, 10.40',
@@ -165,7 +165,7 @@ class MotorcycleSection extends StatelessWidget {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'loct.png',
+                                    'assets/loct.png',
                                     width: 14,
                                     height: 14,
                                   ),
@@ -187,7 +187,7 @@ class MotorcycleSection extends StatelessWidget {
                               Row(
                                 children: [
                                   Image.asset(
-                                    'calendar.png',
+                                    'assets/calendar.png',
                                     width: 14,
                                     height: 14,
                                   ),
