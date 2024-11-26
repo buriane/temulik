@@ -33,7 +33,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Temulik',
         theme: AppTheme.lightTheme,
-        home: LoginPage(),
+        home: HomePage(),
         debugShowCheckedModeBanner: false,
       ),
     );

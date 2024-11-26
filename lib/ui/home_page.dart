@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/activity_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
 import 'package:temulik/ui/map_page.dart';
@@ -13,7 +14,6 @@ import 'package:temulik/ui/components/other_page_components.dart';
 import 'package:temulik/ui/components/other_laptop_components.dart';
 import 'package:temulik/ui/components/search_page_components.dart';
 import 'package:temulik/ui/components/setting_page_components.dart';
-
 
 class HomePage extends StatefulWidget {
   @override
@@ -184,7 +184,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           // Banner Section
                           Container(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 26, bottom: 56),
+                            padding: EdgeInsets.only(
+                                left: 16, right: 16, top: 26, bottom: 56),
                             decoration: BoxDecoration(
                               color: Color(0xFFE0FBD2),
                             ),
@@ -197,7 +198,8 @@ class _HomePageState extends State<HomePage> {
                                   child: Container(
                                     margin: EdgeInsets.only(left: 7),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Temukan barang hilang',
@@ -439,7 +441,8 @@ class _HomePageState extends State<HomePage> {
                               padding: EdgeInsets.all(16),
                               children: [
                                 _buildGridItem(
-                                    'Laptop', 'assets/categories/laptop.png', () {
+                                    'Laptop', 'assets/categories/laptop.png',
+                                    () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -447,32 +450,35 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }),
                                 _buildGridItem(
-                                    'Headset', 'assets/categories/headset.png', () {
+                                    'Headset', 'assets/categories/headset.png',
+                                    () {
                                   print('Headset tapped');
                                 }),
-                                _buildGridItem('Motor', 'assets/categories/motor.png',
-                                    () {
+                                _buildGridItem(
+                                    'Motor', 'assets/categories/motor.png', () {
                                   print('Motor tapped');
                                 }),
                                 _buildGridItem(
-                                    'Charger', 'assets/categories/charger.png', () {
+                                    'Charger', 'assets/categories/charger.png',
+                                    () {
                                   print('Charger tapped');
                                 }),
-                                _buildGridItem(
-                                    'Handphone', 'assets/categories/handphone.png',
-                                    () {
+                                _buildGridItem('Handphone',
+                                    'assets/categories/handphone.png', () {
                                   print('Handphone tapped');
                                 }),
                                 _buildGridItem(
-                                    'Dompet', 'assets/categories/dompet.png', () {
+                                    'Dompet', 'assets/categories/dompet.png',
+                                    () {
                                   print('Dompet tapped');
                                 }),
-                                _buildGridItem('Kunci', 'assets/categories/kunci.png',
-                                    () {
+                                _buildGridItem(
+                                    'Kunci', 'assets/categories/kunci.png', () {
                                   print('Kunci tapped');
                                 }),
                                 _buildGridItem(
-                                    'Lainnya', 'assets/categories/lainnya.png', () {
+                                    'Lainnya', 'assets/categories/lainnya.png',
+                                    () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -527,7 +533,8 @@ class _HomePageState extends State<HomePage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
                                   foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 20),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -604,176 +611,139 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 8,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Column(
-              children: [
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 0),
-                  decoration: BoxDecoration(
-                    color:
-                        _selectedIndex == 0 ? Colors.green : Colors.transparent,
-                    boxShadow: _selectedIndex == 0
-                        ? [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                              spreadRadius: 1,
-                            ),
-                          ]
-                        : [],
-                  ),
-                ),
-                SizedBox(height: 8),
-                SvgPicture.asset(
-                  _iconPaths[0],
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 0 ? Colors.green : Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                  height: 24,
-                ),
-              ],
-            ),
-            label: 'Beranda',
+      floatingActionButton: GestureDetector(
+        onTap: () => _onItemTapped(2), // Index 2 untuk Lapor
+        child: Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+            color: AppColors.green,
+            shape: BoxShape.circle,
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.green.withOpacity(0.3),
+            //     blurRadius: 8,
+            //     offset: Offset(0, 4),
+            //   ),
+            // ],
           ),
-          BottomNavigationBarItem(
-            icon: Column(
-              children: [
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 0),
-                  decoration: BoxDecoration(
-                    color:
-                        _selectedIndex == 1 ? Colors.green : Colors.transparent,
-                    boxShadow: _selectedIndex == 1
-                        ? [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                              spreadRadius: 1,
-                            ),
-                          ]
-                        : [],
-                  ),
-                ),
-                SizedBox(height: 8),
-                SvgPicture.asset(
-                  _iconPaths[1],
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 1 ? Colors.green : Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                  height: 24,
-                ),
-              ],
+          child: Container(
+            padding: EdgeInsets.all(6), // White outline's padding
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white, // White border
+                width: 4, // Thickness of the white border
+              ),
             ),
-            label: 'Cari',
-          ),
-          BottomNavigationBarItem(
-            icon: Container(
-              height: 50,
-              width: 50,
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 10),
+            child: Container(
               decoration: BoxDecoration(
-                color: Colors.green,
                 shape: BoxShape.circle,
+                color: AppColors.green,
               ),
               child: Image.asset(
                 'assets/temulik.png',
-                width: 40,
-                height: 40,
+                width: 30.0,
+                height: 30.0,
                 fit: BoxFit.contain,
               ),
             ),
-            label: 'Lapor',
           ),
-          BottomNavigationBarItem(
-            icon: Column(
-              children: [
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 0),
-                  decoration: BoxDecoration(
-                    color:
-                        _selectedIndex == 3 ? Colors.green : Colors.transparent,
-                    boxShadow: _selectedIndex == 3
-                        ? [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                              spreadRadius: 1,
-                            ),
-                          ]
-                        : [],
-                  ),
-                ),
-                SizedBox(height: 8),
-                SvgPicture.asset(
-                  _iconPaths[3],
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 3 ? Colors.green : Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                  height: 24,
-                ),
-              ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: Container(
+        height: 65, // Tetapkan tinggi yang fixed
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, -5),
             ),
-            label: 'Aktivitas',
+          ],
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          selectedItemColor: AppColors.green,
+          unselectedItemColor: Color(0xFF484C52),
+          selectedLabelStyle: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
           ),
-          BottomNavigationBarItem(
-            icon: Column(
-              children: [
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 0),
-                  decoration: BoxDecoration(
-                    color:
-                        _selectedIndex == 4 ? Colors.green : Colors.transparent,
-                    boxShadow: _selectedIndex == 4
-                        ? [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                              spreadRadius: 1,
-                            ),
-                          ]
-                        : [],
-                  ),
-                ),
-                SizedBox(height: 8),
-                SvgPicture.asset(
-                  _iconPaths[4],
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 4 ? Colors.green : Colors.grey,
-                    BlendMode.srcIn,
-                  ),
-                  height: 24,
-                ),
-              ],
+          unselectedLabelStyle: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          onTap: _onItemTapped,
+          items: [
+            // Item Beranda
+            _buildNavigationBarItem(0, _iconPaths[0], 'Beranda'),
+            // Item Cari
+            _buildNavigationBarItem(1, _iconPaths[1], 'Cari'),
+            // Item Tengah (Spacer untuk FAB)
+            BottomNavigationBarItem(
+              icon: SizedBox(height: 16),
+              label: 'Lapor',
             ),
-            label: 'Peringkat',
+            // Item Aktivitas
+            _buildNavigationBarItem(3, _iconPaths[3], 'Aktivitas'),
+            // Item Peringkat
+            _buildNavigationBarItem(4, _iconPaths[4], 'Peringkat'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavigationBarItem(
+      int index, String iconPath, String label) {
+    return BottomNavigationBarItem(
+      icon: Stack(
+        children: [
+          // Active line positioned absolutely with drop shadow effect
+          Transform.translate(
+            offset: Offset(0, -12), // Shift the line upwards by 4 units
+            child: Container(
+              height: 2.5,
+              decoration: BoxDecoration(
+                color: _selectedIndex == index
+                    ? AppColors.green
+                    : Colors.transparent,
+                boxShadow: _selectedIndex == index
+                    ? [
+                        BoxShadow(
+                          color: AppColors.green, // Green color with opacity
+                          blurRadius: 12, // Blur effect
+                          offset: Offset(0, 4),
+                          spreadRadius: 0, // No spread for shadow
+                        ),
+                      ]
+                    : [],
+              ),
+            ),
+          ),
+          // Icon centered within the stack
+          Align(
+            alignment: Alignment.center,
+            child: SvgPicture.asset(
+              iconPath,
+              colorFilter: ColorFilter.mode(
+                _selectedIndex == index ? AppColors.green : Color(0xFF484C52),
+                BlendMode.srcIn,
+              ),
+              height: 24,
+            ),
           ),
         ],
       ),
+      label: label,
     );
   }
 }
