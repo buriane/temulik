@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
+import 'package:temulik/ui/components/form_selesai_components.dart';
 
 class DetailBarangPage extends StatelessWidget {
   final Map<String, dynamic> activityData;
@@ -71,7 +72,7 @@ class DetailBarangPage extends StatelessWidget {
         const SizedBox(height: 12.0),
         _buildReward(),
         const SizedBox(height: 20.0),
-        _buildButtons(),
+        _buildButtons(context),
       ],
     );
   }
@@ -182,12 +183,17 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(BuildContext context) {
     return Column(
       children: [
         WhatsappButton(onPressed: () {}),
         const SizedBox(height: 12.0),
-        DoneButton(onPressed: () {}),
+        DoneButton(onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FormPage()),
+          );
+        }),
       ],
     );
   }
