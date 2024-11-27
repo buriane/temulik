@@ -568,6 +568,39 @@ class AdvertisementBanner extends StatelessWidget {
   }
 }
 
+// Custom Page Route Animation
+class CustomPageRoute extends PageRouteBuilder {
+  final Widget child;
+
+  CustomPageRoute({required this.child})
+      : super(
+          transitionDuration: Duration(milliseconds: 400),
+          reverseTransitionDuration: Duration(milliseconds: 400),
+          pageBuilder: (context, animation, secondaryAnimation) => child,
+        );
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: Offset(1.0, 0.0),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOutCubic,
+        ),
+      ),
+      child: FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+    );
+  }
+}
+
+// Modified CustomFloatingActionButton
 class CustomFloatingActionButton extends StatefulWidget {
   final VoidCallback onTap;
 
@@ -584,7 +617,11 @@ class CustomFloatingActionButton extends StatefulWidget {
 class _CustomFloatingActionButtonState extends State<CustomFloatingActionButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  late Animation<double> _rotationAnimation;
+  late Animation<double> _scaleAnimation;
   bool isExpanded = false;
+  final GlobalKey _overlayKey = GlobalKey();
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -593,169 +630,278 @@ class _CustomFloatingActionButtonState extends State<CustomFloatingActionButton>
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
+
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.785398, // 45 degrees in radians
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutBack,
+      ),
+    );
   }
 
   @override
   void dispose() {
+    _removeOverlay();
     _animationController.dispose();
     super.dispose();
   }
 
-  void _toggleMenu() {
+  void _createOverlay(BuildContext context) {
+    if (!mounted) return;
+
+    _removeOverlay();
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) {
+        final RenderBox? renderBox =
+            _overlayKey.currentContext?.findRenderObject() as RenderBox?;
+
+        if (renderBox == null) return const SizedBox.shrink();
+
+        final position = renderBox.localToGlobal(Offset.zero);
+
+        return Stack(
+          children: [
+            // Background overlay for dismissing
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _toggleMenu,
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+            // Kehilangan Button
+            Positioned(
+              left: position.dx - 30,
+              top: position.dy - 140,
+              child: AnimatedBuilder(
+                animation: _scaleAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, 50 * (1 - _scaleAnimation.value)),
+                    child: Opacity(
+                      opacity: _scaleAnimation.value,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(22.5),
+                    onTap: () {
+                      _toggleMenu();
+                      Navigator.push(
+                        context,
+                        CustomPageRoute(child: KehilanganFormPage()),
+                      );
+                    },
+                    child: Ink(
+                      height: 45,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.red,
+                        borderRadius: BorderRadius.circular(22.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.red.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Kehilangan',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Penemuan Button
+            Positioned(
+              left: position.dx - 30,
+              top: position.dy - 80,
+              child: AnimatedBuilder(
+                animation: _scaleAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, 30 * (1 - _scaleAnimation.value)),
+                    child: Opacity(
+                      opacity: _scaleAnimation.value,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(22.5),
+                    onTap: () {
+                      _toggleMenu();
+                      Navigator.push(
+                        context,
+                        CustomPageRoute(child: PenemuanFormPage()),
+                      );
+                    },
+                    child: Ink(
+                      height: 45,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.blue,
+                        borderRadius: BorderRadius.circular(22.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.blue.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Penemuan',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  Future<void> _toggleMenu() async {
+    if (!mounted) return;
+
     setState(() {
       isExpanded = !isExpanded;
-      if (isExpanded) {
-        _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
     });
+
+    try {
+      if (isExpanded) {
+        await _animationController.forward();
+        _createOverlay(context);
+      } else {
+        _removeOverlay();
+        await _animationController.reverse();
+      }
+    } catch (e) {
+      print('Error in toggle menu: $e');
+      _removeOverlay();
+      if (mounted) {
+        setState(() {
+          isExpanded = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      // Tambahkan Material widget di level teratas
+      key: _overlayKey,
       color: Colors.transparent,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Tombol Penemuan (Biru)
-          if (isExpanded)
-            Positioned(
-              bottom: 80,
-              left: -30,
-              child: TextButton(
-                // Ganti ke TextButton
-                onPressed: () {
-                  print("Penemuan diklik"); // Debug print
-                  _toggleMenu();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PenemuanFormPage()),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  backgroundColor: AppColors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22.5),
-                  ),
+      child: GestureDetector(
+        onTap: () async {
+          await _toggleMenu();
+          widget.onTap();
+        },
+        child: TweenAnimationBuilder(
+          duration: Duration(milliseconds: 300),
+          tween: Tween<double>(begin: 0, end: isExpanded ? 1.1 : 1.0),
+          builder: (context, double scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: child,
+            );
+          },
+          child: Container(
+            height: 65.0,
+            width: 65.0,
+            decoration: BoxDecoration(
+              color: AppColors.green,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.green.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
                 ),
-                child: SizedBox(
-                  height: 45,
-                  width: 120,
-                  child: Center(
-                    child: Text(
-                      'Penemuan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              ],
             ),
-
-          // Tombol Kehilangan (Merah)
-          if (isExpanded)
-            Positioned(
-              bottom: 140,
-              left: -30,
-              child: TextButton(
-                // Ganti ke TextButton
-                onPressed: () {
-                  print("Kehilangan diklik"); // Debug print
-                  _toggleMenu();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => KehilanganFormPage()),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  backgroundColor: AppColors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(22.5),
-                  ),
-                ),
-                child: SizedBox(
-                  height: 45,
-                  width: 120,
-                  child: Center(
-                    child: Text(
-                      'Kehilangan',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-          // Tombol utama tetap sama seperti sebelumnya
-          GestureDetector(
-            onTap: () {
-              _toggleMenu();
-              widget.onTap();
-            },
             child: Container(
-              height: 60,
-              width: 60,
+              padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: AppColors.green,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+                border: Border.all(
+                  color: Colors.white,
+                  width: 4,
+                ),
               ),
               child: Container(
-                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 4,
-                  ),
+                  color: AppColors.green,
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.green,
-                  ),
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        angle: _animationController.value * 0.785398,
-                        child: isExpanded
-                            ? Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 30,
-                              )
-                            : Image.asset(
-                                'assets/temulik.png',
-                                width: 30.0,
-                                height: 30.0,
-                                fit: BoxFit.contain,
-                              ),
-                      );
-                    },
-                  ),
+                child: AnimatedBuilder(
+                  animation: _rotationAnimation,
+                  builder: (context, child) {
+                    return Transform.rotate(
+                      angle: _rotationAnimation.value,
+                      child: isExpanded
+                          ? Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 45.0,
+                            )
+                          : Image.asset(
+                              'assets/temulik.png',
+                              width: 30.0,
+                              height: 30.0,
+                              fit: BoxFit.contain,
+                            ),
+                    );
+                  },
                 ),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -852,7 +998,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           _buildNavigationBarItem(0, iconPaths[0], 'Beranda'),
           _buildNavigationBarItem(1, iconPaths[1], 'Cari'),
           BottomNavigationBarItem(
-            icon: SizedBox(height: 16),
+            icon: SizedBox(height: 24.0),
             label: 'Lapor',
           ),
           _buildNavigationBarItem(3, iconPaths[3], 'Aktivitas'),
