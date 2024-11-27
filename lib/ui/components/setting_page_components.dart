@@ -10,8 +10,6 @@ class PengaturanPage extends StatelessWidget {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 1,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
@@ -20,7 +18,8 @@ class PengaturanPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: Image.asset('assets/profile.png',
+                leading: Image.asset(
+                  'assets/profile.png',
                   width: 32,
                   height: 32,
                   fit: BoxFit.contain,
@@ -29,8 +28,8 @@ class PengaturanPage extends StatelessWidget {
                   "Profil",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                trailing:
-                    Image.asset('assets/forward.png', width: 9, fit: BoxFit.contain),
+                trailing: Image.asset('assets/forward.png',
+                    width: 9, fit: BoxFit.contain),
                 onTap: () {
                   // Tambahkan navigasi ke halaman profil jika diperlukan
                 },
@@ -39,7 +38,8 @@ class PengaturanPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: Image.asset('assets/bookmark.png',
+                leading: Image.asset(
+                  'assets/bookmark.png',
                   width: 32,
                   height: 32,
                   fit: BoxFit.contain,
@@ -68,7 +68,8 @@ class PengaturanPage extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Image.asset('assets/locked.png',
+                          Image.asset(
+                            'assets/locked.png',
                             width: 12,
                             height: 12,
                             fit: BoxFit.contain,
@@ -83,7 +84,8 @@ class PengaturanPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                trailing: Image.asset('assets/forward-grey.png',
+                trailing: Image.asset(
+                  'assets/forward-grey.png',
                   width: 9,
                   fit: BoxFit.contain,
                 ),
@@ -93,7 +95,8 @@ class PengaturanPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                leading: Image.asset('assets/bantuan.png',
+                leading: Image.asset(
+                  'assets/bantuan.png',
                   width: 32,
                   height: 32,
                   fit: BoxFit.contain,
@@ -122,7 +125,8 @@ class PengaturanPage extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Image.asset('assets/locked.png',
+                          Image.asset(
+                            'assets/locked.png',
                             width: 12,
                             height: 12,
                             fit: BoxFit.contain,
@@ -137,7 +141,8 @@ class PengaturanPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                trailing: Image.asset('assets/forward-grey.png',
+                trailing: Image.asset(
+                  'assets/forward-grey.png',
                   width: 9,
                   fit: BoxFit.contain,
                 ),
@@ -149,7 +154,8 @@ class PengaturanPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 52.0),
               child: Row(
                 children: [
-                  Image.asset('assets/logout.png',
+                  Image.asset(
+                    'assets/logout.png',
                     width: 32,
                     height: 32,
                     fit: BoxFit.contain,
