@@ -8,6 +8,8 @@ import 'package:temulik/ui/components/other_page_components.dart';
 import 'package:temulik/ui/components/other_laptop_components.dart';
 import 'package:temulik/ui/components/search_page_components.dart';
 import 'package:temulik/ui/components/setting_page_components.dart';
+import 'package:temulik/ui/kehilangan_form_page.dart';
+import 'package:temulik/ui/penemuan_form_page.dart';
 import '../../bloc/profile_bloc.dart';
 
 class HomeContent extends StatelessWidget {
@@ -566,7 +568,7 @@ class AdvertisementBanner extends StatelessWidget {
   }
 }
 
-class CustomFloatingActionButton extends StatelessWidget {
+class CustomFloatingActionButton extends StatefulWidget {
   final VoidCallback onTap;
 
   const CustomFloatingActionButton({
@@ -575,38 +577,185 @@ class CustomFloatingActionButton extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomFloatingActionButton> createState() =>
+      _CustomFloatingActionButtonState();
+}
+
+class _CustomFloatingActionButtonState extends State<CustomFloatingActionButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  bool isExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _toggleMenu() {
+    setState(() {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 60,
-        width: 60,
-        decoration: BoxDecoration(
-          color: AppColors.green,
-          shape: BoxShape.circle,
-        ),
-        child: Container(
-          padding: EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white,
-              width: 4,
+    return Material(
+      // Tambahkan Material widget di level teratas
+      color: Colors.transparent,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Tombol Penemuan (Biru)
+          if (isExpanded)
+            Positioned(
+              bottom: 80,
+              left: -30,
+              child: TextButton(
+                // Ganti ke TextButton
+                onPressed: () {
+                  print("Penemuan diklik"); // Debug print
+                  _toggleMenu();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PenemuanFormPage()),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  backgroundColor: AppColors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22.5),
+                  ),
+                ),
+                child: SizedBox(
+                  height: 45,
+                  width: 120,
+                  child: Center(
+                    child: Text(
+                      'Penemuan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // Tombol Kehilangan (Merah)
+          if (isExpanded)
+            Positioned(
+              bottom: 140,
+              left: -30,
+              child: TextButton(
+                // Ganti ke TextButton
+                onPressed: () {
+                  print("Kehilangan diklik"); // Debug print
+                  _toggleMenu();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => KehilanganFormPage()),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  backgroundColor: AppColors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22.5),
+                  ),
+                ),
+                child: SizedBox(
+                  height: 45,
+                  width: 120,
+                  child: Center(
+                    child: Text(
+                      'Kehilangan',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // Tombol utama tetap sama seperti sebelumnya
+          GestureDetector(
+            onTap: () {
+              _toggleMenu();
+              widget.onTap();
+            },
+            child: Container(
+              height: 60,
+              width: 60,
+              decoration: BoxDecoration(
+                color: AppColors.green,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Container(
+                padding: EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 4,
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.green,
+                  ),
+                  child: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      return Transform.rotate(
+                        angle: _animationController.value * 0.785398,
+                        child: isExpanded
+                            ? Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 30,
+                              )
+                            : Image.asset(
+                                'assets/temulik.png',
+                                width: 30.0,
+                                height: 30.0,
+                                fit: BoxFit.contain,
+                              ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.green,
-            ),
-            child: Image.asset(
-              'assets/temulik.png',
-              width: 30.0,
-              height: 30.0,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }

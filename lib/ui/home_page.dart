@@ -27,9 +27,13 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    // Ubah fungsi ini
+    if (index != 2) {
+      // Jika bukan tombol temulik
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -48,14 +52,18 @@ class _HomePageState extends State<HomePage> {
           children: [
             HomeContent(selectedIndex: _selectedIndex),
             MapPage(),
-            Center(child: Text('Lapor')),
+            Container(), // Kosongkan saja, karena kita tidak akan pindah ke sini
             ActivityPage(),
             LeaderboardPage(),
           ],
         ),
       ),
-      floatingActionButton: CustomFloatingActionButton(
-        onTap: () => _onItemTapped(2),
+      floatingActionButton: Builder(
+        builder: (context) => CustomFloatingActionButton(
+          onTap: () {
+            // Tidak perlu melakukan apa-apa di sini
+          },
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomBottomNavigationBar(
