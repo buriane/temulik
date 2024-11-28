@@ -369,7 +369,7 @@ class _FormPageState extends State<FormPage> {
                           ),
                         ),
                         TextSpan(
-                          text: " lapor barang hilang di Temulik.",
+                          text: " pengajuan barang di Temulik.",
                           style: TextStyle(
                             color: Colors.black,
                           ),

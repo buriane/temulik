@@ -315,17 +315,14 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () {
           Navigator.of(context).pop();
         },
-        icon: Icon(
-          Icons.close,
-          color: AppColors.darkest,
-          size: 20.0,
+        icon: SvgPicture.asset(
+          'assets/cancel.svg',
+          width: 17.0,
         ),
       ),
-      title: Center(
-        child: TextBold(
-          text: title,
-          color: AppColors.darkest,
-        ),
+      title: TextBold(
+        text: title,
+        color: AppColors.darkest,
       ),
       actions: [
         Padding(
@@ -337,6 +334,8 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(64.0),
               ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             ),
             child: TextSmallMedium(
               text: 'Kirim',
@@ -349,7 +348,7 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(60);
 }
 
 class InputForm extends StatelessWidget {
@@ -669,6 +668,7 @@ class ImagePickerForm extends StatelessWidget {
   final String hintText;
   final String? imagePath;
   final Function(String?)? onImageSelected;
+  final VoidCallback? onTap; // Tambahkan parameter onTap
 
   const ImagePickerForm({
     super.key,
@@ -676,6 +676,7 @@ class ImagePickerForm extends StatelessWidget {
     required this.hintText,
     this.imagePath,
     this.onImageSelected,
+    this.onTap, // Tambahkan ke konstruktor
   });
 
   @override
@@ -685,9 +686,7 @@ class ImagePickerForm extends StatelessWidget {
       children: [
         TextSmallMedium(text: label),
         InkWell(
-          onTap: () {
-            // Implementasi pemilihan foto akan ditambahkan
-          },
+          onTap: onTap, // Gunakan onTap yang diterima dari konstruktor
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(

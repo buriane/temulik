@@ -86,3 +86,5 @@ flutter:
     - assets/attach.png
     - assets/date.png
     - assets/time.png
+    - assets/question.png
+    - assets/loupe.png

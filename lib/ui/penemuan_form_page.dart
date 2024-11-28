@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:temulik/ui/components/components.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:temulik/constants/colors.dart';
 
 class PenemuanFormPage extends StatefulWidget {
   const PenemuanFormPage({super.key});
@@ -10,9 +12,24 @@ class PenemuanFormPage extends StatefulWidget {
 
 class _PenemuanFormPageState extends State<PenemuanFormPage> {
   String? selectedValue;
+  String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String? _selectedImagePath;
+  bool _isChecked = false;
+
+  Future<void> _pickImageFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        _selectedFileName = result.files.single.name;
+        _selectedImagePath = result.files.single.path;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,19 +81,20 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                 SizedBox(height: 16.0),
                 ImagePickerForm(
                   label: 'Foto Barang',
-                  hintText: 'Unggah Foto',
+                  hintText: _selectedFileName ?? "Unggah Foto",
                   imagePath: _selectedImagePath,
                   onImageSelected: (String? path) {
                     setState(() {
                       _selectedImagePath = path;
                     });
                   },
+                  onTap: _pickImageFile,
                 ),
                 SizedBox(height: 16.0),
                 DatePickerForm(
                   label: 'Tanggal Kehilangan Barang',
                   hintText: 'Pilih Tanggal',
-                  selectedDate: _selectedDate, // DateTime? variable
+                  selectedDate: _selectedDate,
                   onChanged: (date) {
                     setState(() {
                       _selectedDate = date;
@@ -101,14 +119,69 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
-                  label: 'no. WhatsApp',
+                  label: 'No. WhatsApp',
                   hintText: 'format: 08xxxxxxxxxx',
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
                   label: 'Imbalan',
-                  hintText: 'ex: Rp. 500.000 (opsional)',
+                  hintText: 'ex: Rp500.000,00 (opsional)',
                 ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _isChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isChecked = value!;
+                        });
+                      },
+                      activeColor: AppColors.blue,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Dengan klik tombol ini, kamu menyetujui ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13.0,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "Syarat & Ketentuan",
+                              style: TextStyle(
+                                color: AppColors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text: " serta ",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Kebijakan Privasi",
+                              style: TextStyle(
+                                color: AppColors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text: " lapor barang temuan di Temulik.",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
               ],
             ),
           ),

@@ -712,25 +712,30 @@ class _CustomFloatingActionButtonState extends State<CustomFloatingActionButton>
                     },
                     child: Ink(
                       height: 45,
-                      width: 120,
+                      width: 150,
                       decoration: BoxDecoration(
                         color: AppColors.red,
                         borderRadius: BorderRadius.circular(22.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.red.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                        border: Border.all(color: Colors.white, width: 3),
                       ),
                       child: Center(
-                        child: Text(
-                          'Kehilangan',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/question.png',
+                              height: 30,
+                              width: 30,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Kehilangan',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -766,25 +771,30 @@ class _CustomFloatingActionButtonState extends State<CustomFloatingActionButton>
                     },
                     child: Ink(
                       height: 45,
-                      width: 120,
+                      width: 150,
                       decoration: BoxDecoration(
                         color: AppColors.blue,
                         borderRadius: BorderRadius.circular(22.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.blue.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+                        border: Border.all(color: Colors.white, width: 3),
                       ),
                       child: Center(
-                        child: Text(
-                          'Penemuan',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/loupe.png',
+                              height: 25,
+                              width: 25,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Penemuan',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
