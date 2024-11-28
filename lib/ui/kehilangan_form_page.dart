@@ -12,6 +12,7 @@ class KehilanganFormPage extends StatefulWidget {
 
 class _KehilanganFormPageState extends State<KehilanganFormPage> {
   String? selectedValue;
+  String? selectedValueFakultas;
   String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -110,6 +111,31 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
                   onChanged: (time) {
                     setState(() {
                       _selectedTime = time;
+                    });
+                  },
+                ),
+                SizedBox(height: 16.0),
+                SelectForm(
+                  label: 'Lokasi Terakhir Dilihat',
+                  hintText: 'Pilih Lokasi',
+                  items: [
+                    'Fakultas Pertanian',
+                    'Fakultas Biologi',
+                    'Fakultas Ekonomi dan Bisnis',
+                    'Fakultas Peternakan',
+                    'Fakultas Hukum',
+                    'Fakultas Ilmu Sosial dan Politik',
+                    'Fakultas Kedokteran',
+                    'Fakultas Teknik',
+                    'Fakultas Ilmu Budaya',
+                    'Fakultas Ilmu-Ilmu Kesehatan',
+                    'Fakultas Matematika dan Ilmu Pengetahuan Alam',
+                    'Fakultas Perikanan dan Ilmu Kelautan',
+                  ],
+                  value: selectedValueFakultas,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedValueFakultas = newValue;
                     });
                   },
                 ),
