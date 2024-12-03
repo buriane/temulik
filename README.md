@@ -18,3 +18,10 @@ users (collection)
     ├── address (string)
     └── createdAt (timestamp)
 ```
+
+kalo ngebug coba run:
+```
+flutter clean
+flutter pub get
+flutter run
+```
