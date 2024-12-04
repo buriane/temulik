@@ -105,9 +105,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {
-    await _auth.signOut();
-    await _googleSignIn.signOut();
-    emit(AuthInitial());
+    try {
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError('Logout failed: ${e.toString()}'));
+    }
   }
 
   bool _isAllowedDomain(String email) {
