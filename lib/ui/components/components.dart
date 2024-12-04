@@ -305,7 +305,11 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
 class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  const LaporAppBar({super.key, required this.title});
+  final VoidCallback? onSubmit; // Tambahkan parameter onSubmit
+
+  const LaporAppBar(
+      {super.key, required this.title, this.onSubmit // Tambahkan ke konstruktor
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -328,9 +332,10 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: onSubmit, // Gunakan onSubmit yang diterima
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blue,
+              backgroundColor: AppColors
+                  .blue, // Bisa diganti dengan AppColors.green sesuai keinginan
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(64.0),
               ),

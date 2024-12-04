@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 // Conditional import
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:http/http.dart' as http;
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -27,7 +28,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<PickAndUploadProfilePhoto>(_onPickAndUploadProfilePhoto);
   }
 
-  Future<void> _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) async {
+  Future<void> _onLoadProfile(
+      LoadProfile event, Emitter<ProfileState> emit) async {
     emit(ProfileLoading());
     try {
       final user = _auth.currentUser;
@@ -54,18 +56,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<void> _onUpdateProfile(UpdateProfile event, Emitter<ProfileState> emit) async {
+  Future<void> _onUpdateProfile(
+      UpdateProfile event, Emitter<ProfileState> emit) async {
     emit(ProfileUpdating());
     try {
       final user = _auth.currentUser;
       if (user != null) {
         final data = event.profile.toMap();
         data['updatedAt'] = FieldValue.serverTimestamp();
-        
+
         await _firestore.collection('users').doc(user.uid).set(
-          data,
-          SetOptions(merge: true),
-        );
+              data,
+              SetOptions(merge: true),
+            );
 
         if (_isProfileComplete(data)) {
           emit(ProfileComplete(event.profile));
@@ -89,7 +92,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       if (kIsWeb) {
-        final html.FileUploadInputElement input = html.FileUploadInputElement()..accept = 'image/*';
+        final html.FileUploadInputElement input = html.FileUploadInputElement()
+          ..accept = 'image/*';
         input.click();
 
         await input.onChange.first;
@@ -132,45 +136,59 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
       emit(ProfileUpdating());
-      if (!(await user.getIdToken() != null)) {
-        await user.reload();
-        if (!(await user.getIdToken() != null)) {
-          emit(ProfileError('User authentication failed'));
-          return;
-        }
-      }
 
       final ref = _storage.ref().child('users/${user.uid}/profile.jpg');
       await ref.putData(event.imageData);
-      
+
       final photoUrl = await ref.getDownloadURL();
+      print('Generated Photo URL: $photoUrl'); // Debug print
+
+      final cleanUrl = Uri.encodeFull(photoUrl);
+      print('Cleaned URL: $cleanUrl');
+
+      await _firestore.collection('users').doc(user.uid).update({
+        'photoUrl': cleanUrl, // Use the cleaned URL
+      });
+
+      if (photoUrl.contains(' ') || photoUrl.contains('%252F')) {
+        print('Invalid URL detected: $photoUrl');
+      }
+
+      final encodedUrl = Uri.encodeFull(photoUrl);
+      print('Encoded URL: $encodedUrl');
+
+      final response = await http.head(Uri.parse(photoUrl));
+      print('URL Accessibility Status: ${response.statusCode}');
+
       await _firestore.collection('users').doc(user.uid).update({
         'photoUrl': photoUrl,
       });
 
       final userDoc = await _firestore.collection('users').doc(user.uid).get();
-      final updatedProfile = UserProfile.fromMap(userDoc.data() as Map<String, dynamic>);
-      
+      final updatedProfile =
+          UserProfile.fromMap(userDoc.data() as Map<String, dynamic>);
+
       if (_isProfileComplete(updatedProfile.toMap())) {
         emit(ProfileComplete(updatedProfile));
       } else {
         emit(ProfileIncomplete(updatedProfile));
       }
     } catch (e) {
+      print('Full upload error details: $e'); // Detailed error logging
       emit(ProfileError('Upload failed: ${e.toString()}'));
     }
   }
 
   bool _isProfileComplete(Map<String, dynamic> data) {
     return data['photoUrl'] != null &&
-           data['fullName'] != null &&
-           data['nim'] != null &&
-           data['faculty'] != null &&
-           data['department'] != null &&
-           data['year'] != null &&
-           data['whatsapp'] != null &&
-           data['address'] != null;
-  }  
+        data['fullName'] != null &&
+        data['nim'] != null &&
+        data['faculty'] != null &&
+        data['department'] != null &&
+        data['year'] != null &&
+        data['whatsapp'] != null &&
+        data['address'] != null;
+  }
 }
 
 class UserProfile {

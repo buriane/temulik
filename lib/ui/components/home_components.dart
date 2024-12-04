@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:temulik/ui/components/setting_page_components.dart';
 import 'package:temulik/ui/kehilangan_form_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import '../../bloc/profile_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeContent extends StatelessWidget {
   final int selectedIndex;
@@ -164,21 +166,40 @@ class ProfileAvatar extends StatelessWidget {
             ),
             child: CircleAvatar(
               radius: 18,
-              backgroundImage: profileState is ProfileComplete &&
-                      profileState.profile.photoUrl != null
-                  ? NetworkImage(profileState.profile.photoUrl!)
-                  : null,
-              child: profileState is! ProfileComplete ||
-                      profileState.profile.photoUrl == null
-                  ? Icon(Icons.person, color: Colors.grey)
-                  : null,
               backgroundColor: Colors.white,
+              child: _buildProfileImage(profileState),
             ),
           ),
         );
       },
     );
   }
+
+Widget _buildProfileImage(ProfileState profileState) {
+  if (profileState is ProfileComplete && profileState.profile.photoUrl != null) {
+    return Image.network(
+      profileState.profile.photoUrl!,
+      width: 44,
+      height: 44,
+      fit: BoxFit.cover,
+      headers: {
+        // If you have an auth token
+        'Authorization': 'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
+      },
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return CircularProgressIndicator();
+      },
+      errorBuilder: (context, error, stackTrace) {
+        print('Detailed image loading error: $error');
+        print('Error stacktrace: $stackTrace');
+        return Icon(Icons.person, color: Colors.grey);
+      },
+    );
+  } else {
+    return Icon(Icons.person, color: Colors.grey);
+  }
+}
 }
 
 class BannerSection extends StatelessWidget {
@@ -1025,15 +1046,22 @@ class ShowMoreButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 60),
       child: Container(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LainnyaPage(),
+              ),
+            );
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             foregroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

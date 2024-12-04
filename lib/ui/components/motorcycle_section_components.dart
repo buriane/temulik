@@ -51,22 +51,23 @@ class MotorcycleSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Transform.translate(
-          offset: const Offset(0, -40),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 45),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Motor',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+        Padding(
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, top: 45, bottom: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Motor',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-                Container(
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
@@ -82,13 +83,12 @@ class MotorcycleSection extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         Container(
           height: 320,
-          margin: const EdgeInsets.only(bottom: 16),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -97,7 +97,7 @@ class MotorcycleSection extends StatelessWidget {
               final motorcycle = motorcycles[index];
               return Container(
                 width: 220,
-                margin: const EdgeInsets.only(right: 20, bottom: 8),
+                margin: const EdgeInsets.only(right: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
