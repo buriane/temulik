@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/datas.dart';
@@ -23,7 +24,7 @@ class MonthlyLeaderboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LeaderboardContent(
-      leaderboardData: bulanIniList,
+      leaderboardData: 'monthly',
     );
   }
 }
@@ -34,15 +35,17 @@ class AllTimeLeaderboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LeaderboardContent(
-      leaderboardData: keseluruhanWaktuList,
+      leaderboardData: 'allTime',
     );
   }
 }
 
 class LeaderboardContent extends StatelessWidget {
-  final List<Map<String, dynamic>> leaderboardData;
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
+  final String leaderboardData; // 'monthly' atau 'allTime'
 
-  const LeaderboardContent({
+  LeaderboardContent({
     super.key,
     required this.leaderboardData,
   });
@@ -60,25 +63,49 @@ class LeaderboardContent extends StatelessWidget {
         Expanded(
           child: Container(
             color: AppColors.sky,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: leaderboardData.length,
-              itemBuilder: (context, index) {
-                final data = leaderboardData[index];
-                return LeaderboardCard(
-                  rank: data['rank'],
-                  name: data['name'],
-                  faculty: data['faculty'],
-                  points: data['points'],
-                  image: data['image'],
-                  onTap: () => _showUserDetail(context, data),
-                );
+            child: FutureBuilder<QuerySnapshot>(
+              future: _getLeaderboardData(), // Ambil data leaderboard
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                }
+
+                if (snapshot.hasData) {
+                  final leaderboard = snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: leaderboard.length,
+                    itemBuilder: (context, index) {
+                      var userData =
+                          leaderboard[index].data() as Map<String, dynamic>;
+                      return LeaderboardCard(
+                        rank: index + 1,
+                        name: userData['fullName'],
+                        faculty: userData['faculty'],
+                        points: userData['points'] ?? 0,
+                        image: userData['photoUrl'] ?? 'assets/profile.png',
+                        onTap: () => _showUserDetail(context, userData),
+                      );
+                    },
+                  );
+                }
+
+                return const Center(child: Text('No Data Available'));
               },
             ),
           ),
         ),
       ],
     );
+  }
+
+  Future<QuerySnapshot> _getLeaderboardData() async {
+    return users.limit(10).get(); // Ambil 10 user pertama tanpa filter
   }
 
   void _showUserDetail(BuildContext context, Map<String, dynamic> userData) {
@@ -155,7 +182,9 @@ class UserDetail extends StatelessWidget {
       ),
       child: CircleAvatar(
         radius: 40.0,
-        backgroundImage: AssetImage(userData['image']),
+        backgroundImage: userData['photoUrl'] != null
+            ? NetworkImage(userData['photoUrl'])
+            : const AssetImage('assets/profile.png') as ImageProvider,
         backgroundColor: Colors.white,
       ),
     );
@@ -170,7 +199,7 @@ class UserDetail extends StatelessWidget {
     return Column(
       children: [
         Text(
-          userData['name'],
+          userData['fullName'],
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -186,7 +215,7 @@ class UserDetail extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              userData['no'],
+              userData['no'] ?? '081234567890',
               style: textStyle.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),

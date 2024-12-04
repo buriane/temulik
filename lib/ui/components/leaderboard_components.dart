@@ -131,7 +131,7 @@ class LeaderboardCard extends StatelessWidget {
       ),
       child: CircleAvatar(
         radius: _avatarRadius,
-        backgroundImage: AssetImage(image),
+        backgroundImage: NetworkImage(image),
         backgroundColor: Colors.white,
       ),
     );
