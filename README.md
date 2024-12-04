@@ -25,3 +25,8 @@ flutter clean
 flutter pub get
 flutter run
 ```
+
+kalo run :
+```
+flutter run -d edge --web-renderer html
+```

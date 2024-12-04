@@ -90,3 +90,12 @@ flutter:
     - assets/time.png
     - assets/question.png
     - assets/loupe.png
+
+  fonts:
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/DMSans-Regular.ttf
+        - asset: assets/fonts/DMSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans-Italic.ttf
+          style: italic

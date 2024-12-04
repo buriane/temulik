@@ -39,8 +39,12 @@ class MainApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Temulik',
-        theme: AppTheme.lightTheme,
-        home: LoginPage(),
+        theme: AppTheme.lightTheme.copyWith(
+          textTheme: AppTheme.lightTheme.textTheme.apply(
+            fontFamily: 'DMSans',
+          ),
+        ),
+        home: HomePage(),
         debugShowCheckedModeBanner: false,
       ),
     );
