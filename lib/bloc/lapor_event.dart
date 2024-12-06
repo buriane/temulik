@@ -43,7 +43,7 @@ class SubmitLaporEvent extends LaporEvent {
         namaBarang,
         kategori,
         deskripsi,
-        imagePaths, // Diubah dari imageUrl ke imagePaths
+        imagePaths,
         tanggalKehilangan,
         jamKehilangan,
         lokasi,

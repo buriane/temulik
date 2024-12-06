@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/detail_barang_page.dart';
@@ -85,16 +86,49 @@ class ActivityCard extends StatelessWidget {
     );
   }
 
+  // Tambahkan fungsi helper ini di dalam file yang sama
+  String formatTanggal(String tanggal) {
+    try {
+      DateTime dateTime = DateTime.parse(tanggal);
+
+      // List nama bulan dalam bahasa Indonesia
+      List<String> namaBulan = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember'
+      ];
+
+      // Format tanggal
+      String hari = dateTime.day.toString().padLeft(2, '0');
+      String bulan = namaBulan[dateTime.month - 1];
+      String tahun = dateTime.year.toString();
+
+      return '$hari $bulan $tahun';
+    } catch (e) {
+      return tanggal; // Kembalikan format asli jika terjadi error
+    }
+  }
+
+// Kemudian ubah _buildTimeDateRow menjadi:
   Widget _buildTimeDateRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         TinyMediumText(
-            text: activityData['time'],
+            text: activityData['jamKehilangan'],
             color: AppColors.dark,
             fontWeight: FontWeight.normal),
         TinyMediumText(
-            text: activityData['date'],
+            text: formatTanggal(activityData['tanggalKehilangan']),
             color: AppColors.dark,
             fontWeight: FontWeight.normal),
       ],
@@ -107,9 +141,9 @@ class ActivityCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ItemInfo(
-            item: activityData['item'],
+            namaBarang: activityData['namaBarang'],
             status: activityData['status'],
-            category: activityData['category']),
+            kategori: activityData['kategori']),
         NameAndButton(activityData: activityData),
       ],
     );
@@ -117,21 +151,21 @@ class ActivityCard extends StatelessWidget {
 }
 
 class ItemInfo extends StatelessWidget {
-  final String item;
+  final String namaBarang;
   final String status;
-  final String category;
+  final String kategori;
 
   const ItemInfo({
     super.key,
-    required this.item,
+    required this.namaBarang,
     required this.status,
-    required this.category,
+    required this.kategori,
   });
 
   @override
   Widget build(BuildContext context) {
     String _getCategoryImage() {
-      switch (category) {
+      switch (kategori) {
         case 'Laptop':
           return 'assets/categories/laptop.png';
         case 'Handphone':
@@ -187,7 +221,9 @@ class ItemInfo extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          item.length > 20 ? item.substring(0, 20) + '...' : item,
+          namaBarang.length > 20
+              ? namaBarang.substring(0, 20) + '...'
+              : namaBarang,
           style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -213,7 +249,7 @@ class ItemInfo extends StatelessWidget {
 
   Widget _buildStatusIndicator() {
     Color _getStatusColor() {
-      if (status == 'Dalam proses') {
+      if (status == 'Dalam Proses') {
         return AppColors.yellow;
       } else if (status == 'Selesai') {
         return AppColors.green;
@@ -223,7 +259,7 @@ class ItemInfo extends StatelessWidget {
     }
 
     Icon _getStatusIcon() {
-      if (status == 'Dalam proses') {
+      if (status == 'Dalam Proses') {
         return const Icon(Icons.search, color: Colors.white, size: 12.0);
       } else if (status == 'Selesai') {
         return const Icon(Icons.check, color: Colors.white, size: 12.0);
@@ -257,15 +293,44 @@ class NameAndButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Tooltip(
-            message: activityData['name'],
-            child: Text(
-              activityData['name'].length > 10
-                  ? activityData['name'].substring(0, 10) + '...'
-                  : activityData['name'],
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+          // Menggunakan FutureBuilder untuk mengambil data user
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('users')
+                .doc(activityData['userId'])
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Text('User tidak ditemukan');
+              }
+
+              // Mengambil data user
+              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              final userName = userData['fullName'] ?? 'Nama tidak tersedia';
+
+              return Tooltip(
+                message: userName,
+                child: Text(
+                  userName.length > 10
+                      ? userName.substring(0, 10) + '...'
+                      : userName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            },
           ),
           ElevatedButton(
             onPressed: () {
@@ -283,7 +348,8 @@ class NameAndButton extends StatelessWidget {
             child: const Text('Lihat Detail'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.green,
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(80.0),
               ),

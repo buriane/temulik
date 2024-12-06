@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/activity_components.dart';
@@ -42,25 +43,45 @@ class ActivityContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter data
-    List<Map<String, dynamic>> filteredActivities =
-        activities.where((activity) {
-      if (statusFilter == 'Selesai|Dibatalkan') {
-        return activity['status'] == 'Selesai' ||
-            activity['status'] == 'Dibatalkan';
-      }
-      return activity['status'] == statusFilter;
-    }).toList();
-
     return Expanded(
       child: Container(
         color: AppColors.lightGrey,
-        child: ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: filteredActivities.length,
-          itemBuilder: (context, index) {
-            final data = filteredActivities[index];
-            return ActivityCard(activityData: data);
+        child: StreamBuilder<QuerySnapshot>(
+          stream: statusFilter == 'Selesai|Dibatalkan'
+              ? FirebaseFirestore.instance.collection('laporan').where('status',
+                  whereIn: ['Selesai', 'Dibatalkan']).snapshots()
+              : FirebaseFirestore.instance
+                  .collection('laporan')
+                  .where('status', isEqualTo: 'Dalam Proses')
+                  .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              print('Error: ${snapshot.error}'); // Tambahkan debugging
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final documents = snapshot.data?.docs ?? [];
+            print('Jumlah dokumen: ${documents.length}'); // Tambahkan debugging
+
+            if (documents.isEmpty) {
+              return const Center(child: Text('Tidak ada data'));
+            }
+
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: documents.length,
+              itemBuilder: (context, index) {
+                final data = documents[index].data() as Map<String, dynamic>;
+                // Tambahkan ID dokumen ke data
+                data['id'] = documents[index].id;
+                print('Data $index: $data'); // Tambahkan debugging
+                return ActivityCard(activityData: data);
+              },
+            );
           },
         ),
       ),

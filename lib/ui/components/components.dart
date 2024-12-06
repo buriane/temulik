@@ -179,7 +179,7 @@ class TextSmallBold extends StatelessWidget {
 }
 
 class CustomImageSlider extends StatefulWidget {
-  final List<String> imageUrls;
+  final List<dynamic> imageUrls;
   final double height;
   final Duration autoPlayDuration;
   final Duration animationDuration;
@@ -255,7 +255,7 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
+                  child: Image.network(
                     widget.imageUrls[index],
                     fit: BoxFit.cover,
                   ),
