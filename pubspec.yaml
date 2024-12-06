@@ -93,6 +93,7 @@ flutter:
     - assets/time.png
     - assets/question.png
     - assets/loupe.png
+    - assets/alert.svg
 
   fonts:
     - family: DMSans

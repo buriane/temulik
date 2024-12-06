@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/bloc/auth_bloc.dart';
+import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/complete_profile_page.dart';
 import 'package:temulik/ui/login_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PengaturanPage extends StatelessWidget {
   @override
@@ -29,29 +31,30 @@ class PengaturanPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
           child: Column(
             children: [
-                Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ListTile(
                   leading: Image.asset(
-                  'assets/profile.png',
-                  width: 32,
-                  height: 32,
-                  fit: BoxFit.contain,
+                    'assets/profile.png',
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.contain,
                   ),
                   title: Text(
-                  "Profil",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "Profil",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   trailing: Image.asset('assets/forward.png',
-                    width: 9, fit: BoxFit.contain),
+                      width: 9, fit: BoxFit.contain),
                   onTap: () {
-                  // Navigasi ke halaman profil
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => CompleteProfilePage()),
-                  );
+                    // Navigasi ke halaman profil
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => CompleteProfilePage()),
+                    );
                   },
                 ),
-                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ListTile(
@@ -73,7 +76,8 @@ class PengaturanPage extends StatelessWidget {
                       ),
                       SizedBox(width: 12),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
@@ -130,7 +134,8 @@ class PengaturanPage extends StatelessWidget {
                       ),
                       SizedBox(width: 12),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(
@@ -171,24 +176,46 @@ class PengaturanPage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 52.0),
                 child: GestureDetector(
                   onTap: () {
-                    // Tambahkan konfirmasi logout
+                    // Tampilkan dialog konfirmasi keluar
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Keluar Akun'),
-                        content: Text('Apakah Anda yakin ingin keluar?'),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                SvgPicture.asset('assets/alert.svg',
+                                    width: 24, height: 24),
+                                SizedBox(width: 8),
+                                Text('Peringatan',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: () => Navigator.of(context).pop(),
+                              child: SvgPicture.asset('assets/cancel.svg',
+                                  width: 14, height: 14),
+                            ),
+                          ],
+                        ),
+                        content: Text(
+                          'Apakah Anda yakin ingin keluar?',
+                          style: TextStyle(fontSize: 18),
+                        ),
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('Batal'),
-                          ),
-                          TextButton(
                             onPressed: () {
-                              // Panggil event logout
                               context.read<AuthBloc>().add(SignOut());
                               Navigator.of(context).pop();
                             },
-                            child: Text('Keluar'),
+                            style: TextButton.styleFrom(
+                              backgroundColor: AppColors.green,
+                            ),
+                            child: Text('Ya',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18)),
                           ),
                         ],
                       ),
@@ -211,8 +238,7 @@ class PengaturanPage extends StatelessWidget {
                         ),
                       ),
                       Text("versi 1.8.4",
-                          style: TextStyle(
-                              fontSize: 12, color: Colors.grey)),
+                          style: TextStyle(fontSize: 12, color: Colors.grey)),
                     ],
                   ),
                 ),

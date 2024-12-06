@@ -97,7 +97,7 @@ class MotorcycleSection extends StatelessWidget {
               final motorcycle = motorcycles[index];
               return Container(
                 width: 220,
-                margin: const EdgeInsets.only(right: 20),
+                margin: const EdgeInsets.only(right: 20, bottom: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),

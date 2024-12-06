@@ -569,14 +569,14 @@ class AdvertisementBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
-      offset: Offset(0, -50),
+      offset: Offset(0, -35),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: GestureDetector(
           onTap: () {},
           child: Container(
             width: double.infinity,
-            height: 280,
+            height: 230,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               image: DecorationImage(
