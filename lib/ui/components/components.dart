@@ -7,7 +7,6 @@ import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-
 import 'package:latlong2/latlong.dart';
 import 'package:temulik/ui/pin_map_page.dart';
 
@@ -687,16 +686,17 @@ class TimePickerForm extends StatelessWidget {
 class ImagePickerForm extends StatefulWidget {
   final String label;
   final String hintText;
-  final String? imagePath;
-  final Function(String?)? onImageSelected;
+  final List<String> imagePaths; // Ubah menjadi List untuk multiple images
+  final Function(List<String>)
+      onImagesSelected; // Callback untuk multiple images
   final VoidCallback? onTap;
 
   const ImagePickerForm({
     super.key,
     required this.label,
     required this.hintText,
-    this.imagePath,
-    this.onImageSelected,
+    required this.imagePaths,
+    required this.onImagesSelected,
     this.onTap,
   });
 
@@ -706,6 +706,13 @@ class ImagePickerForm extends StatefulWidget {
 
 class _ImagePickerFormState extends State<ImagePickerForm> {
   Future<void> _pickImage(BuildContext context) async {
+    if (widget.imagePaths.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Maksimal 5 gambar yang dapat dipilih')),
+      );
+      return;
+    }
+
     final ImagePicker picker = ImagePicker();
     try {
       final XFile? pickedFile = await showDialog<XFile?>(
@@ -721,13 +728,14 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
                   title: const Text('Dari Galeri'),
                   onTap: () async {
                     Navigator.pop(
-                        context,
-                        await picker.pickImage(
-                          source: ImageSource.gallery,
-                          maxWidth: 800, // Kurangi ukuran
-                          maxHeight: 800,
-                          imageQuality: 70, // Kompres lebih
-                        ));
+                      context,
+                      await picker.pickImage(
+                        source: ImageSource.gallery,
+                        maxWidth: 800,
+                        maxHeight: 800,
+                        imageQuality: 70,
+                      ),
+                    );
                   },
                 ),
                 ListTile(
@@ -735,13 +743,14 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
                   title: const Text('Dari Kamera'),
                   onTap: () async {
                     Navigator.pop(
-                        context,
-                        await picker.pickImage(
-                          source: ImageSource.camera,
-                          maxWidth: 800,
-                          maxHeight: 800,
-                          imageQuality: 70,
-                        ));
+                      context,
+                      await picker.pickImage(
+                        source: ImageSource.camera,
+                        maxWidth: 800,
+                        maxHeight: 800,
+                        imageQuality: 70,
+                      ),
+                    );
                   },
                 ),
               ],
@@ -751,14 +760,19 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
       );
 
       if (pickedFile != null) {
-        final File imageFile = File(pickedFile.path);
-        if (await imageFile.exists()) {
-          widget.onImageSelected?.call(pickedFile.path);
-        }
+        final List<String> updatedPaths = List.from(widget.imagePaths)
+          ..add(pickedFile.path);
+        widget.onImagesSelected(updatedPaths);
       }
     } catch (e) {
       print('Error picking image: $e');
     }
+  }
+
+  void _removeImage(int index) {
+    final List<String> updatedPaths = List.from(widget.imagePaths)
+      ..removeAt(index);
+    widget.onImagesSelected(updatedPaths);
   }
 
   @override
@@ -766,44 +780,112 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: const TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w500,
-            color: AppColors.darkest,
-          ),
-        ),
+        TextSmallMedium(text: widget.label),
         const SizedBox(height: 8.0),
-        InkWell(
-          onTap: () => _pickImage(context),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.grey),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  // Mencegah overflow text
-                  child: Text(
-                    widget.imagePath ?? widget.hintText,
-                    style: TextStyle(
-                      color: widget.imagePath != null
-                          ? AppColors.darkest
-                          : AppColors.darkGrey,
-                      fontSize: 16.0,
+        if (widget.imagePaths.isEmpty)
+          InkWell(
+            onTap: () => _pickImage(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.hintText,
+                      style: const TextStyle(
+                        color: AppColors.darkGrey,
+                        fontSize: 16.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    overflow: TextOverflow.ellipsis, // Menangani text panjang
                   ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.attach_file, color: AppColors.darkGrey),
-              ],
+                  const SizedBox(width: 8),
+                  const Icon(Icons.add_photo_alternate,
+                      color: AppColors.darkGrey),
+                ],
+              ),
             ),
           ),
-        ),
+        if (widget.imagePaths.isNotEmpty) ...[
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.imagePaths.length +
+                  (widget.imagePaths.length < 5 ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == widget.imagePaths.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: InkWell(
+                      onTap: () => _pickImage(context),
+                      child: Container(
+                        width: 100,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.add_photo_alternate,
+                          color: AppColors.darkGrey,
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          File(widget.imagePaths[index]),
+                          width: 100,
+                          height: 120,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 12,
+                      child: GestureDetector(
+                        onTap: () => _removeImage(index),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '${widget.imagePaths.length}/5 gambar',
+            style: const TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 12.0,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -836,7 +918,7 @@ class _PinPointInputState extends State<PinPointInput> {
       context,
       MaterialPageRoute(
         builder: (context) => PinMapPage(
-          initialLocation: _selectedLocation, 
+          initialLocation: _selectedLocation,
           selectedFaculty: widget.initialFaculty,
         ),
       ),
@@ -849,8 +931,8 @@ class _PinPointInputState extends State<PinPointInput> {
       setState(() {
         _selectedLocation = location;
         _selectedFaculty = faculty;
-        widget.controller.text = 
-          '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
+        widget.controller.text =
+            '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
       });
     }
   }
@@ -870,9 +952,7 @@ class _PinPointInputState extends State<PinPointInput> {
             ),
           ),
           child: Text(
-            _selectedLocation == null 
-              ? widget.hintText 
-              : 'Lokasi Dipilih',
+            _selectedLocation == null ? widget.hintText : 'Lokasi Dipilih',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16.0,

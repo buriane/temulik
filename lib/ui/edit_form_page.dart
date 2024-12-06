@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/components/datas.dart';
 
 class EditFormPage extends StatefulWidget {
   const EditFormPage({super.key});
@@ -17,6 +18,7 @@ class _EditFormPageState extends State<EditFormPage> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String? _selectedImagePath;
+  List<String> _selectedImages = [];
   bool _isChecked = false;
 
   Future<void> _pickImageFile() async {
@@ -59,12 +61,7 @@ class _EditFormPageState extends State<EditFormPage> {
                 SelectForm(
                   label: 'Kategori',
                   hintText: 'Pilih Kategori',
-                  items: [
-                    'Elektronik',
-                    'Buku',
-                    'Pakaian',
-                    'Lainnya',
-                  ],
+                  items: categories,
                   value: selectedValue,
                   onChanged: (String? newValue) {
                     setState(() {
@@ -84,15 +81,14 @@ class _EditFormPageState extends State<EditFormPage> {
                 ),
                 SizedBox(height: 16.0),
                 ImagePickerForm(
-                  label: 'Foto Barang',
-                  hintText: _selectedFileName ?? "Unggah Foto",
-                  imagePath: _selectedImagePath,
-                  onImageSelected: (String? path) {
+                  label: 'Upload Gambar',
+                  hintText: 'Pilih gambar (maksimal 5)',
+                  imagePaths: _selectedImages,
+                  onImagesSelected: (List<String> paths) {
                     setState(() {
-                      _selectedImagePath = path;
+                      _selectedImages = paths;
                     });
                   },
-                  onTap: _pickImageFile,
                 ),
                 SizedBox(height: 16.0),
                 DatePickerForm(

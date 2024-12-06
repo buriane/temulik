@@ -187,7 +187,7 @@ class ItemInfo extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          item.length > 25 ? item.substring(0, 25) + '...' : item,
+          item.length > 20 ? item.substring(0, 20) + '...' : item,
           style: const TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
@@ -260,8 +260,8 @@ class NameAndButton extends StatelessWidget {
           Tooltip(
             message: activityData['name'],
             child: Text(
-              activityData['name'].length > 15
-                  ? activityData['name'].substring(0, 15) + '...'
+              activityData['name'].length > 10
+                  ? activityData['name'].substring(0, 10) + '...'
                   : activityData['name'],
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -283,7 +283,7 @@ class NameAndButton extends StatelessWidget {
             child: const Text('Lihat Detail'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.green,
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(80.0),
               ),

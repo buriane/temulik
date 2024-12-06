@@ -11,7 +11,7 @@ class SubmitLaporEvent extends LaporEvent {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
-  final String imageUrl;
+  final List<String> imagePaths;
   final DateTime tanggalKehilangan;
   final TimeOfDay jamKehilangan;
   final String lokasi;
@@ -26,7 +26,7 @@ class SubmitLaporEvent extends LaporEvent {
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
-    required this.imageUrl,
+    required this.imagePaths,
     required this.tanggalKehilangan,
     required this.jamKehilangan,
     required this.lokasi,
@@ -43,7 +43,7 @@ class SubmitLaporEvent extends LaporEvent {
         namaBarang,
         kategori,
         deskripsi,
-        imageUrl,
+        imagePaths, // Diubah dari imageUrl ke imagePaths
         tanggalKehilangan,
         jamKehilangan,
         lokasi,

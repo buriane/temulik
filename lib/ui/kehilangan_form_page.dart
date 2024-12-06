@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/ui/components/components.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/components/datas.dart';
 
 class KehilanganFormPage extends StatefulWidget {
   const KehilanganFormPage({super.key});
@@ -18,7 +18,7 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
   String? selectedValueFakultas;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  String? _selectedImagePath;
+  List<String> _selectedImages = [];
   bool _isChecked = false;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -30,13 +30,13 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
 
   void _submitKehilangan() async {
     if (_validateForm()) {
-      if (_selectedImagePath != null) {
+      if (_selectedImages != null) {
         context.read<LaporBloc>().add(
               SubmitLaporEvent(
                 namaBarang: _namaBarangController.text,
                 kategori: selectedValue ?? '',
                 deskripsi: _deskripsiController.text,
-                imageUrl: _selectedImagePath!,
+                imagePaths: _selectedImages!,
                 tanggalKehilangan: _selectedDate ?? DateTime.now(),
                 jamKehilangan: _selectedTime ?? TimeOfDay.now(),
                 lokasi: selectedValueFakultas ?? '',
@@ -55,7 +55,7 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
   }
 
   bool _validateForm() {
-    if (_selectedImagePath == null) {
+    if (_selectedImages == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Silakan unggah foto barang')),
       );
@@ -123,12 +123,7 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
                   SelectForm(
                     label: 'Kategori',
                     hintText: 'Pilih Kategori',
-                    items: [
-                      'Elektronik',
-                      'Buku',
-                      'Pakaian',
-                      'Lainnya',
-                    ],
+                    items: categories,
                     value: selectedValue,
                     onChanged: (String? newValue) {
                       setState(() {
@@ -148,12 +143,12 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
                   ),
                   SizedBox(height: 16.0),
                   ImagePickerForm(
-                    label: 'Foto Barang',
-                    hintText: 'Unggah Foto',
-                    imagePath: _selectedImagePath,
-                    onImageSelected: (path) {
+                    label: 'Upload Gambar',
+                    hintText: 'Pilih gambar (maksimal 5)',
+                    imagePaths: _selectedImages,
+                    onImagesSelected: (List<String> paths) {
                       setState(() {
-                        _selectedImagePath = path;
+                        _selectedImages = paths;
                       });
                     },
                   ),

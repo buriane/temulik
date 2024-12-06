@@ -22,19 +22,34 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
     emit(LaporLoading());
     try {
       // Validasi path gambar untuk Android
-      if (!kIsWeb &&
-          (event.imageUrl.isEmpty || !File(event.imageUrl).existsSync())) {
-        throw Exception('Silakan pilih gambar terlebih dahulu');
+      if (!kIsWeb) {
+        for (String path in event.imagePaths) {
+          if (path.isEmpty || !File(path).existsSync()) {
+            throw Exception('Ada gambar yang tidak valid');
+          }
+        }
       }
 
-      // Upload gambar
-      final imageUrl = await _repository.uploadImage(event.imageUrl);
+      if (event.imagePaths.isEmpty) {
+        throw Exception('Silakan pilih minimal 1 gambar');
+      }
+
+      if (event.imagePaths.length > 5) {
+        throw Exception('Maksimal 5 gambar yang dapat diunggah');
+      }
+
+      // Upload semua gambar
+      List<String> imageUrls = [];
+      for (String path in event.imagePaths) {
+        final imageUrl = await _repository.uploadImage(path);
+        imageUrls.add(imageUrl);
+      }
 
       final penemuan = LaporModel(
         namaBarang: event.namaBarang,
         kategori: event.kategori,
         deskripsi: event.deskripsi,
-        imageUrl: imageUrl,
+        imageUrls: imageUrls, // Gunakan list URL gambar
         tanggalKehilangan: event.tanggalKehilangan,
         jamKehilangan: event.jamKehilangan,
         lokasi: event.lokasi,

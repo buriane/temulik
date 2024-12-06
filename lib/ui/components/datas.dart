@@ -242,3 +242,23 @@ final List<Map<String, dynamic>> activities = [
     },
   },
 ];
+
+final List<String> categories = [
+  'Laptop',
+  'Handphone',
+  'Dompet',
+  'Helm',
+  'Hewan',
+  'Jam',
+  'Kunci',
+  'Kuncikos',
+  'Motor',
+  'Orang',
+  'Powerbank',
+  'Payung',
+  'Sandal',
+  'Sepatu',
+  'Speaker',
+  'Tas',
+  'Lainnya',
+];

@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,13 +17,27 @@ import 'ui/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(MainApp());
+  await Firebase.initializeApp();
+
+  // Inisialisasi Firebase instances
+  final firestore = FirebaseFirestore.instance;
+  final storage = FirebaseStorage.instance;
+
+  runApp(MainApp(
+    firestore: firestore,
+    storage: storage,
+  ));
 }
 
 class MainApp extends StatelessWidget {
+  final FirebaseFirestore firestore;
+  final FirebaseStorage storage;
+
+  const MainApp({
+    Key? key,
+    required this.firestore,
+    required this.storage,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -33,7 +49,7 @@ class MainApp extends StatelessWidget {
           create: (context) => ProfileBloc(),
         ),
         BlocProvider(
-          create: (context) => LaporBloc(LaporRepository()),
+          create: (context) => LaporBloc(LaporRepository(firestore, storage)),
           child: PenemuanFormPage(),
         )
       ],

@@ -4,7 +4,7 @@ class LaporModel {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
-  final String imageUrl;
+  final List<String> imageUrls;
   final DateTime tanggalKehilangan;
   final TimeOfDay jamKehilangan;
   final String lokasi;
@@ -19,7 +19,7 @@ class LaporModel {
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.tanggalKehilangan,
     required this.jamKehilangan,
     required this.lokasi,
@@ -36,7 +36,7 @@ class LaporModel {
       'namaBarang': namaBarang,
       'kategori': kategori,
       'deskripsi': deskripsi,
-      'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'tanggalKehilangan': tanggalKehilangan.toIso8601String(),
       'jamKehilangan': '${jamKehilangan.hour}:${jamKehilangan.minute}',
       'lokasi': lokasi,
