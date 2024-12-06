@@ -1,13 +1,13 @@
-part of 'penemuan_bloc.dart';
+part of 'lapor_bloc.dart';
 
-abstract class PenemuanEvent extends Equatable {
-  const PenemuanEvent();
+abstract class LaporEvent extends Equatable {
+  const LaporEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class SubmitPenemuanEvent extends PenemuanEvent {
+class SubmitLaporEvent extends LaporEvent {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
@@ -18,8 +18,11 @@ class SubmitPenemuanEvent extends PenemuanEvent {
   final String pinPoint;
   final String noWhatsapp;
   final String? imbalan;
+  final String tipe;
+  final String userId;
+  final String status;
 
-  const SubmitPenemuanEvent({
+  const SubmitLaporEvent({
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
@@ -30,6 +33,9 @@ class SubmitPenemuanEvent extends PenemuanEvent {
     required this.pinPoint,
     required this.noWhatsapp,
     this.imbalan,
+    required this.tipe,
+    required this.userId,
+    required this.status,
   });
 
   @override
@@ -42,6 +48,9 @@ class SubmitPenemuanEvent extends PenemuanEvent {
         jamKehilangan,
         lokasi,
         pinPoint,
-        noWhatsapp
+        noWhatsapp,
+        tipe,
+        userId,
+        status,
       ];
 }

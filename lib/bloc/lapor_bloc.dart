@@ -3,23 +3,23 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import '../models/penemuan_model.dart';
-import '../repositories/penemuan_repository.dart';
+import '../models/lapor_model.dart';
+import '../repositories/lapor_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-part 'penemuan_event.dart';
-part 'penemuan_state.dart';
+part 'lapor_event.dart';
+part 'lapor_state.dart';
 
-class PenemuanBloc extends Bloc<PenemuanEvent, PenemuanState> {
-  final PenemuanRepository _repository;
+class LaporBloc extends Bloc<LaporEvent, LaporState> {
+  final LaporRepository _repository;
 
-  PenemuanBloc(this._repository) : super(PenemuanInitial()) {
-    on<SubmitPenemuanEvent>(_onSubmitPenemuan);
+  LaporBloc(this._repository) : super(LaporInitial()) {
+    on<SubmitLaporEvent>(_onSubmitLapor);
   }
 
-  Future<void> _onSubmitPenemuan(
-      SubmitPenemuanEvent event, Emitter<PenemuanState> emit) async {
-    emit(PenemuanLoading());
+  Future<void> _onSubmitLapor(
+      SubmitLaporEvent event, Emitter<LaporState> emit) async {
+    emit(LaporLoading());
     try {
       // Validasi path gambar untuk Android
       if (!kIsWeb &&
@@ -30,7 +30,7 @@ class PenemuanBloc extends Bloc<PenemuanEvent, PenemuanState> {
       // Upload gambar
       final imageUrl = await _repository.uploadImage(event.imageUrl);
 
-      final penemuan = PenemuanModel(
+      final penemuan = LaporModel(
         namaBarang: event.namaBarang,
         kategori: event.kategori,
         deskripsi: event.deskripsi,
@@ -41,13 +41,16 @@ class PenemuanBloc extends Bloc<PenemuanEvent, PenemuanState> {
         pinPoint: event.pinPoint,
         noWhatsapp: event.noWhatsapp,
         imbalan: event.imbalan,
+        tipe: event.tipe,
+        userId: event.userId,
+        status: event.status,
       );
 
-      await _repository.addPenemuan(penemuan);
-      emit(PenemuanSuccess());
+      await _repository.addLapor(penemuan);
+      emit(LaporSuccess());
     } catch (e) {
       print('Error in bloc: $e');
-      emit(PenemuanError(e.toString()));
+      emit(LaporError(e.toString()));
     }
   }
 }
