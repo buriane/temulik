@@ -3,9 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:temulik/bloc/penemuan_bloc.dart';
-import 'package:temulik/repositories/penemuan_repository.dart';
-import 'package:temulik/ui/activity_page.dart';
+import 'package:temulik/bloc/lapor_bloc.dart';
+import 'package:temulik/repositories/lapor_repository.dart';
 import 'package:temulik/ui/home_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import 'app_theme.dart';
@@ -34,7 +33,7 @@ class MainApp extends StatelessWidget {
           create: (context) => ProfileBloc(),
         ),
         BlocProvider(
-          create: (context) => PenemuanBloc(PenemuanRepository()),
+          create: (context) => LaporBloc(LaporRepository()),
           child: PenemuanFormPage(),
         )
       ],
