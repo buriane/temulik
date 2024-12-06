@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/bloc/auth_bloc.dart';
@@ -19,21 +22,8 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
   String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  // String? _selectedImagePath;
+  String? _selectedImagePath;
   bool _isChecked = false;
-
-  // Future<void> _pickImageFile() async {
-  //   final result = await FilePicker.platform.pickFiles(
-  //     type: FileType.image,
-  //   );
-  //
-  //   if (result != null && result.files.isNotEmpty) {
-  //     setState(() {
-  //       _selectedFileName = result.files.single.name;
-  //       _selectedImagePath = result.files.single.path;
-  //     });
-  //   }
-  // }
 
   final TextEditingController _namaBarangController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
@@ -41,43 +31,43 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
   final TextEditingController _noWhatsappController = TextEditingController();
   final TextEditingController _imbalanController = TextEditingController();
 
-  void _submitPenemuan() {
-    // Validasi form
+  void _submitPenemuan() async {
     if (_validateForm()) {
-      context.read<PenemuanBloc>().add(
-            SubmitPenemuanEvent(
-              namaBarang: _namaBarangController.text,
-              kategori: selectedValue ?? '',
-              deskripsi: _deskripsiController.text,
-              // fotoBarang: _selectedImagePath ?? '',
-              tanggalKehilangan: _selectedDate ?? DateTime.now(),
-              jamKehilangan: _selectedTime ?? TimeOfDay.now(),
-              lokasi: selectedValueFakultas ?? '',
-              pinPoint: _pinPointController.text,
-              noWhatsapp: _noWhatsappController.text,
-              imbalan: _imbalanController.text.isNotEmpty
-                  ? _imbalanController.text
-                  : null,
-            ),
-          );
+      if (_selectedImagePath != null) {
+        context.read<PenemuanBloc>().add(
+              SubmitPenemuanEvent(
+                namaBarang: _namaBarangController.text,
+                kategori: selectedValue ?? '',
+                deskripsi: _deskripsiController.text,
+                imageUrl: _selectedImagePath!, // Kirim path langsung
+                tanggalKehilangan: _selectedDate ?? DateTime.now(),
+                jamKehilangan: _selectedTime ?? TimeOfDay.now(),
+                lokasi: selectedValueFakultas ?? '',
+                pinPoint: _pinPointController.text,
+                noWhatsapp: _noWhatsappController.text,
+                imbalan: _imbalanController.text.isNotEmpty
+                    ? _imbalanController.text
+                    : null,
+              ),
+            );
+      }
     }
   }
 
   bool _validateForm() {
-    // if (_selectedImagePath == null) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Silakan unggah foto barang')),
-    //   );
-    //   return false;
-    // }
+    if (_selectedImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Silakan unggah foto barang')),
+      );
+      return false;
+    }
     if (selectedValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Silakan pilih kategori')),
       );
       return false;
     }
-    // Tambahkan validasi lain sesuai kebutuhan
-
+    // Validasi lainnya bisa ditambahkan
     return true;
   }
 
@@ -128,6 +118,7 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                   InputForm(
                     label: 'Nama Barang',
                     hintText: 'ex: Iphone 12 Pro Max',
+                    controller: _namaBarangController,
                   ),
                   SizedBox(height: 16.0),
                   SelectForm(
@@ -154,19 +145,19 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                     onChanged: (value) {
                       print(value);
                     },
+                    controller: _deskripsiController,
                   ),
                   SizedBox(height: 16.0),
-                  // ImagePickerForm(
-                  //   label: 'Foto Barang',
-                  //   hintText: _selectedFileName ?? "Unggah Foto",
-                  //   imagePath: _selectedImagePath,
-                  //   onImageSelected: (String? path) {
-                  //     setState(() {
-                  //       _selectedImagePath = path;
-                  //     });
-                  //   },
-                  //   onTap: _pickImageFile,
-                  // ),
+                  ImagePickerForm(
+                    label: 'Foto Barang',
+                    hintText: 'Unggah Foto',
+                    imagePath: _selectedImagePath,
+                    onImageSelected: (path) {
+                      setState(() {
+                        _selectedImagePath = path;
+                      });
+                    },
+                  ),
                   SizedBox(height: 16.0),
                   DatePickerForm(
                     label: 'Tanggal Kehilangan Barang',
@@ -218,16 +209,19 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                   PinPointInput(
                     label: 'Pin Point',
                     hintText: 'Tentukan Pin Point Lokasi',
+                    controller: _pinPointController,
                   ),
                   SizedBox(height: 16.0),
                   InputForm(
                     label: 'No. WhatsApp',
                     hintText: 'format: 08xxxxxxxxxx',
+                    controller: _noWhatsappController,
                   ),
                   SizedBox(height: 16.0),
                   InputForm(
                     label: 'Imbalan',
                     hintText: 'ex: Rp500.000,00 (opsional)',
+                    controller: _imbalanController,
                   ),
                   SizedBox(height: 16),
                   Row(

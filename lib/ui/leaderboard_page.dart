@@ -215,7 +215,7 @@ class UserDetail extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              userData['no'] ?? '081234567890',
+              userData['whatsapp'],
               style: textStyle.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 4),

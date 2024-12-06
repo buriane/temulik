@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DoneButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -359,37 +362,133 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
 class InputForm extends StatelessWidget {
   final String label;
   final String hintText;
-  const InputForm({super.key, required this.label, required this.hintText});
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+
+  const InputForm({
+    super.key,
+    required this.label,
+    required this.hintText,
+    required this.controller,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextSmallMedium(text: label),
-          TextFormField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: AppColors.darkGrey,
-                fontSize: 16.0,
-              ),
-              border: OutlineInputBorder(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextSmallMedium(text: label),
+        TextFormField(
+          controller: controller,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 16.0,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: AppColors.grey),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: AppColors.green),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TextAreaForm extends StatefulWidget {
+  final String label;
+  final String hintText;
+  final int maxLength;
+  final TextEditingController controller;
+  final void Function(String)? onChanged;
+
+  const TextAreaForm({
+    super.key,
+    required this.label,
+    required this.hintText,
+    this.maxLength = 100,
+    required this.controller,
+    this.onChanged,
+  });
+
+  @override
+  State<TextAreaForm> createState() => _TextAreaFormState();
+}
+
+class _TextAreaFormState extends State<TextAreaForm> {
+  int _textLength = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _textLength = widget.controller.text.length;
+    widget.controller.addListener(_updateTextLength);
+  }
+
+  void _updateTextLength() {
+    setState(() {
+      _textLength = widget.controller.text.length;
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_updateTextLength);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextSmallMedium(text: widget.label),
+        Stack(
+          children: [
+            TextFormField(
+              controller: widget.controller,
+              maxLength: widget.maxLength,
+              maxLines: 3,
+              onChanged: widget.onChanged,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                hintStyle: const TextStyle(
+                  color: AppColors.darkGrey,
+                  fontSize: 16.0,
+                ),
+                counterText: '',
+                border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: AppColors.grey,
-                  )),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(
-                  color: AppColors.green,
+                  borderSide: const BorderSide(color: AppColors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: AppColors.green),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+            Positioned(
+              right: 8,
+              bottom: 8,
+              child: Text(
+                '$_textLength/${widget.maxLength}',
+                style: const TextStyle(
+                  color: AppColors.darkGrey,
+                  fontSize: 14.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -453,93 +552,6 @@ class SelectForm extends StatelessWidget {
                 .toList(),
             onChanged: onChanged,
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class TextAreaForm extends StatefulWidget {
-  final String label;
-  final String hintText;
-  final int maxLength;
-  final void Function(String)? onChanged;
-
-  const TextAreaForm({
-    super.key,
-    required this.label,
-    required this.hintText,
-    this.maxLength = 100,
-    this.onChanged,
-  });
-
-  @override
-  State<TextAreaForm> createState() => _TextAreaFormState();
-}
-
-class _TextAreaFormState extends State<TextAreaForm> {
-  final TextEditingController _controller = TextEditingController();
-  int _textLength = 0;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextSmallMedium(text: widget.label),
-        Stack(
-          children: [
-            TextFormField(
-              controller: _controller,
-              maxLength: widget.maxLength,
-              maxLines: 3,
-              onChanged: (value) {
-                setState(() {
-                  _textLength = value.length;
-                });
-                if (widget.onChanged != null) {
-                  widget.onChanged!(value);
-                }
-              },
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                hintStyle: const TextStyle(
-                  color: AppColors.darkGrey,
-                  fontSize: 16.0,
-                ),
-                counterText: '', // Sembunyikan counter default
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(
-                    color: AppColors.grey,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(
-                    color: AppColors.green,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              right: 8,
-              bottom: 8,
-              child: Text(
-                '$_textLength/${widget.maxLength}',
-                style: const TextStyle(
-                  color: AppColors.darkGrey,
-                  fontSize: 14.0,
-                ),
-              ),
-            ),
-          ],
         ),
       ],
     );
@@ -668,12 +680,12 @@ class TimePickerForm extends StatelessWidget {
   }
 }
 
-class ImagePickerForm extends StatelessWidget {
+class ImagePickerForm extends StatefulWidget {
   final String label;
   final String hintText;
   final String? imagePath;
   final Function(String?)? onImageSelected;
-  final VoidCallback? onTap; // Tambahkan parameter onTap
+  final VoidCallback? onTap;
 
   const ImagePickerForm({
     super.key,
@@ -681,17 +693,86 @@ class ImagePickerForm extends StatelessWidget {
     required this.hintText,
     this.imagePath,
     this.onImageSelected,
-    this.onTap, // Tambahkan ke konstruktor
+    this.onTap,
   });
+
+  @override
+  State<ImagePickerForm> createState() => _ImagePickerFormState();
+}
+
+class _ImagePickerFormState extends State<ImagePickerForm> {
+  Future<void> _pickImage(BuildContext context) async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? pickedFile = await showDialog<XFile?>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Pilih Sumber Gambar'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Dari Galeri'),
+                  onTap: () async {
+                    Navigator.pop(
+                        context,
+                        await picker.pickImage(
+                          source: ImageSource.gallery,
+                          maxWidth: 800, // Kurangi ukuran
+                          maxHeight: 800,
+                          imageQuality: 70, // Kompres lebih
+                        ));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('Dari Kamera'),
+                  onTap: () async {
+                    Navigator.pop(
+                        context,
+                        await picker.pickImage(
+                          source: ImageSource.camera,
+                          maxWidth: 800,
+                          maxHeight: 800,
+                          imageQuality: 70,
+                        ));
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        if (await imageFile.exists()) {
+          widget.onImageSelected?.call(pickedFile.path);
+        }
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextSmallMedium(text: label),
+        Text(
+          widget.label,
+          style: const TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+            color: AppColors.darkest,
+          ),
+        ),
+        const SizedBox(height: 8.0),
         InkWell(
-          onTap: onTap, // Gunakan onTap yang diterima dari konstruktor
+          onTap: () => _pickImage(context),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
@@ -699,17 +780,21 @@ class ImagePickerForm extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  imagePath ?? hintText,
-                  style: TextStyle(
-                    color: imagePath != null
-                        ? AppColors.darkest
-                        : AppColors.darkGrey,
-                    fontSize: 16.0,
+                Expanded(
+                  // Mencegah overflow text
+                  child: Text(
+                    widget.imagePath ?? widget.hintText,
+                    style: TextStyle(
+                      color: widget.imagePath != null
+                          ? AppColors.darkest
+                          : AppColors.darkGrey,
+                      fontSize: 16.0,
+                    ),
+                    overflow: TextOverflow.ellipsis, // Menangani text panjang
                   ),
                 ),
+                const SizedBox(width: 8),
                 const Icon(Icons.attach_file, color: AppColors.darkGrey),
               ],
             ),
@@ -723,11 +808,13 @@ class ImagePickerForm extends StatelessWidget {
 class PinPointInput extends StatelessWidget {
   final String label;
   final String hintText;
+  final TextEditingController controller;
 
   const PinPointInput({
     super.key,
     required this.label,
     required this.hintText,
+    required this.controller,
   });
 
   @override
@@ -737,6 +824,7 @@ class PinPointInput extends StatelessWidget {
       children: [
         TextSmallMedium(text: label),
         TextFormField(
+          controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: const TextStyle(
@@ -745,15 +833,11 @@ class PinPointInput extends StatelessWidget {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(
-                color: Color(0xFFD9D9D9),
-              ),
+              borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(
-                color: Color(0xFF0984E3),
-              ),
+              borderSide: const BorderSide(color: Color(0xFF0984E3)),
             ),
           ),
         ),

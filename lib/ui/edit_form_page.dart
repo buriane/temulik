@@ -53,6 +53,7 @@ class _EditFormPageState extends State<EditFormPage> {
                 InputForm(
                   label: 'Nama Barang',
                   hintText: 'ex: Iphone 12 Pro Max',
+                  controller: TextEditingController(),
                 ),
                 SizedBox(height: 16.0),
                 SelectForm(
@@ -79,6 +80,7 @@ class _EditFormPageState extends State<EditFormPage> {
                   onChanged: (value) {
                     print(value);
                   },
+                  controller: TextEditingController(),
                 ),
                 SizedBox(height: 16.0),
                 ImagePickerForm(
@@ -143,16 +145,19 @@ class _EditFormPageState extends State<EditFormPage> {
                 PinPointInput(
                   label: 'Pin Point',
                   hintText: 'Tentukan Pin Point Lokasi',
+                  controller: TextEditingController(),
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
                   label: 'No. WhatsApp',
                   hintText: 'format: 08xxxxxxxxxx',
+                  controller: TextEditingController(),
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
                   label: 'Imbalan',
                   hintText: 'ex: Rp500.000,00 (opsional)',
+                  controller: TextEditingController(),
                 ),
                 SizedBox(height: 16),
                 Row(

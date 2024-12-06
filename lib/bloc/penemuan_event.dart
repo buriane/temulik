@@ -11,7 +11,7 @@ class SubmitPenemuanEvent extends PenemuanEvent {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
-  // final String fotoBarang;
+  final String imageUrl;
   final DateTime tanggalKehilangan;
   final TimeOfDay jamKehilangan;
   final String lokasi;
@@ -23,7 +23,7 @@ class SubmitPenemuanEvent extends PenemuanEvent {
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
-    // required this.fotoBarang,
+    required this.imageUrl,
     required this.tanggalKehilangan,
     required this.jamKehilangan,
     required this.lokasi,
@@ -37,7 +37,7 @@ class SubmitPenemuanEvent extends PenemuanEvent {
         namaBarang,
         kategori,
         deskripsi,
-        // fotoBarang,
+        imageUrl,
         tanggalKehilangan,
         jamKehilangan,
         lokasi,

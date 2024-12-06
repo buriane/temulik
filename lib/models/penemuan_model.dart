@@ -4,7 +4,7 @@ class PenemuanModel {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
-  // final String fotoBarang;
+  final String imageUrl;
   final DateTime tanggalKehilangan;
   final TimeOfDay jamKehilangan;
   final String lokasi;
@@ -16,7 +16,7 @@ class PenemuanModel {
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
-    // required this.fotoBarang,
+    required this.imageUrl,
     required this.tanggalKehilangan,
     required this.jamKehilangan,
     required this.lokasi,
@@ -30,7 +30,7 @@ class PenemuanModel {
       'namaBarang': namaBarang,
       'kategori': kategori,
       'deskripsi': deskripsi,
-      // 'fotoBarang': fotoBarang,
+      'imageUrl': imageUrl,
       'tanggalKehilangan': tanggalKehilangan.toIso8601String(),
       'jamKehilangan': '${jamKehilangan.hour}:${jamKehilangan.minute}',
       'lokasi': lokasi,
