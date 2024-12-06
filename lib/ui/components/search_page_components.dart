@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/other_laptop_components.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -48,7 +49,7 @@ class _SearchPageState extends State<SearchPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(37),
-              border: Border.all(color: Colors.grey.shade700),
+              border: Border.all(color: AppColors.darkest),
             ),
             child: Row(
               children: [
@@ -69,7 +70,7 @@ class _SearchPageState extends State<SearchPage> {
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      hintStyle: TextStyle(color: Colors.grey),
+                      hintStyle: TextStyle(color: AppColors.darkGrey),
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
@@ -96,8 +97,8 @@ class _SearchPageState extends State<SearchPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    _buildPopularCategory('Laptop', 'assets/categories/laptop.png',
-                        () {
+                    _buildPopularCategory(
+                        'Laptop', 'assets/categories/laptop.png', () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -105,17 +106,18 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Headset', 'assets/categories/headset.png',
-                        () {
+                    _buildPopularCategory(
+                        'Headset', 'assets/categories/headset.png', () {
                       // Tambahkan navigasi untuk Headset jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Motor', 'assets/categories/motor.png', () {
+                    _buildPopularCategory(
+                        'Motor', 'assets/categories/motor.png', () {
                       // Tambahkan navigasi untuk Motor jika diperlukan
                     }),
                     SizedBox(width: 32),
-                    _buildPopularCategory('Charger', 'assets/categories/charger.png',
-                        () {
+                    _buildPopularCategory(
+                        'Charger', 'assets/categories/charger.png', () {
                       // Tambahkan navigasi untuk Charger jika diperlukan
                     }),
                     SizedBox(width: 32),
@@ -194,15 +196,18 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.1),
+          border: Border.all(
+            color: AppColors.grey,
+            width: 1.0,
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
           tag,
           style: TextStyle(
-            color: Colors.green,
-            fontSize: 14,
-          ),
+              color: AppColors.green,
+              fontSize: 14,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );

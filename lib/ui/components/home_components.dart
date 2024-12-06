@@ -78,7 +78,7 @@ class SearchHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
-      color: Colors.green,
+      color: AppColors.green,
       child: Row(
         children: [
           Expanded(
@@ -128,7 +128,7 @@ class SearchBar extends StatelessWidget {
                     focusedBorder: InputBorder.none,
                     contentPadding: EdgeInsets.only(left: 16),
                     hintStyle: TextStyle(
-                      color: Colors.grey,
+                      color: AppColors.darkGrey,
                       fontSize: 16,
                     ),
                   ),
@@ -175,31 +175,33 @@ class ProfileAvatar extends StatelessWidget {
     );
   }
 
-Widget _buildProfileImage(ProfileState profileState) {
-  if (profileState is ProfileComplete && profileState.profile.photoUrl != null) {
-    return Image.network(
-      profileState.profile.photoUrl!,
-      width: 44,
-      height: 44,
-      fit: BoxFit.cover,
-      headers: {
-        // If you have an auth token
-        'Authorization': 'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
-      },
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return CircularProgressIndicator();
-      },
-      errorBuilder: (context, error, stackTrace) {
-        print('Detailed image loading error: $error');
-        print('Error stacktrace: $stackTrace');
-        return Icon(Icons.person, color: Colors.grey);
-      },
-    );
-  } else {
-    return Icon(Icons.person, color: Colors.grey);
+  Widget _buildProfileImage(ProfileState profileState) {
+    if (profileState is ProfileComplete &&
+        profileState.profile.photoUrl != null) {
+      return Image.network(
+        profileState.profile.photoUrl!,
+        width: 44,
+        height: 44,
+        fit: BoxFit.cover,
+        headers: {
+          // If you have an auth token
+          'Authorization':
+              'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return CircularProgressIndicator();
+        },
+        errorBuilder: (context, error, stackTrace) {
+          print('Detailed image loading error: $error');
+          print('Error stacktrace: $stackTrace');
+          return Icon(Icons.person, color: Colors.grey);
+        },
+      );
+    } else {
+      return Icon(Icons.person, color: Colors.grey);
+    }
   }
-}
 }
 
 class BannerSection extends StatelessWidget {
@@ -306,7 +308,7 @@ class LocationStatsCard extends StatelessWidget {
                         'Lokasi kamu',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: AppColors.dark,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -336,7 +338,7 @@ class LocationStatsCard extends StatelessWidget {
                         'Rank kamu',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: AppColors.dark,
                         ),
                       ),
                       SizedBox(height: 4),
@@ -353,7 +355,7 @@ class LocationStatsCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: AppColors.darkest,
                             ),
                           ),
                         ],
@@ -365,7 +367,7 @@ class LocationStatsCard extends StatelessWidget {
               SizedBox(height: 16),
               Container(
                 height: 1,
-                color: Colors.grey[200],
+                color: AppColors.grey,
               ),
               SizedBox(height: 16),
               Row(
@@ -387,7 +389,7 @@ class LocationStatsCard extends StatelessWidget {
                             'Kehilangan',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: AppColors.dark,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -405,7 +407,7 @@ class LocationStatsCard extends StatelessWidget {
                   Container(
                     height: 32,
                     width: 1,
-                    color: Colors.grey[300],
+                    color: AppColors.grey,
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -423,7 +425,7 @@ class LocationStatsCard extends StatelessWidget {
                             'Penemuan',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: AppColors.dark,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -514,7 +516,7 @@ class WhatsAppButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.green,
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 20),
             shape: RoundedRectangleBorder(
@@ -1060,7 +1062,7 @@ class ShowMoreButton extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
-            foregroundColor: Colors.green,
+            foregroundColor: AppColors.green,
             padding: const EdgeInsets.symmetric(vertical: 15),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
