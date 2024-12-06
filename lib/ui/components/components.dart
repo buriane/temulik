@@ -7,6 +7,10 @@ import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+
+import 'package:latlong2/latlong.dart';
+import 'package:temulik/ui/pin_map_page.dart';
+
 class DoneButton extends StatelessWidget {
   final VoidCallback onPressed;
   const DoneButton({super.key, required this.onPressed});
@@ -805,42 +809,103 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
   }
 }
 
-class PinPointInput extends StatelessWidget {
+class PinPointInput extends StatefulWidget {
   final String label;
   final String hintText;
   final TextEditingController controller;
+  final String? initialFaculty;
 
   const PinPointInput({
     super.key,
     required this.label,
     required this.hintText,
     required this.controller,
+    this.initialFaculty,
   });
+
+  @override
+  State<PinPointInput> createState() => _PinPointInputState();
+}
+
+class _PinPointInputState extends State<PinPointInput> {
+  LatLng? _selectedLocation;
+  String? _selectedFaculty;
+
+  void _pickLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PinMapPage(
+          initialLocation: _selectedLocation, 
+          selectedFaculty: widget.initialFaculty,
+        ),
+      ),
+    );
+
+    if (result != null && result is Map) {
+      final LatLng location = result['location'];
+      final String? faculty = result['faculty'];
+
+      setState(() {
+        _selectedLocation = location;
+        _selectedFaculty = faculty;
+        widget.controller.text = 
+          '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextSmallMedium(text: label),
-        TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: const TextStyle(
-              color: Color(0xFF7C7C7C),
+        TextSmallMedium(text: widget.label),
+        ElevatedButton(
+          onPressed: _pickLocation,
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 56),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          child: Text(
+            _selectedLocation == null 
+              ? widget.hintText 
+              : 'Lokasi Dipilih',
+            style: const TextStyle(
+              color: Colors.white,
               fontSize: 16.0,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: const BorderSide(color: Color(0xFF0984E3)),
             ),
           ),
         ),
+        if (_selectedLocation != null)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  '${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}',
+                  style: const TextStyle(
+                    color: Color(0xFF7C7C7C),
+                    fontSize: 12.0,
+                  ),
+                ),
+              ),
+              if (_selectedFaculty != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    'Fakultas: $_selectedFaculty',
+                    style: const TextStyle(
+                      color: Color(0xFF7C7C7C),
+                      fontSize: 12.0,
+                    ),
+                  ),
+                ),
+            ],
+          ),
       ],
     );
   }

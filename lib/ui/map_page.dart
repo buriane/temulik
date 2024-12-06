@@ -70,18 +70,13 @@ class _MapPageState extends State<MapPage> {
               selected: isSelected,
               onSelected: (bool value) {
                 setState(() {
-                  // Clear previous selections and add the new one
                   _selectedCategories.clear();
                   if (value) {
                     _selectedCategories.add(faculty.name);
                   }
-
-                  // Center the map on the selected faculty
                   final facultyLocation =
                       LatLng(faculty.latitude, faculty.longitude);
                   _mapController.move(facultyLocation, 17);
-
-                  // Update the bloc with selected faculties
                   context.read<MapBloc>().add(
                         FilterFacultiesEvent(_selectedCategories),
                       );
@@ -104,7 +99,6 @@ class _MapPageState extends State<MapPage> {
       child: BlocConsumer<MapBloc, MapState>(
         listener: (context, state) {
           if (state.currentLocation != null) {
-            // Only move map if it's not already set
             if (_mapController.camera.center.latitude == 0.0 &&
                 _mapController.camera.center.longitude == 0.0) {
               _mapController.move(state.currentLocation!, 15);
@@ -112,7 +106,6 @@ class _MapPageState extends State<MapPage> {
           }
         },
         builder: (context, state) {
-          // Filter faculties based on selected categories
           final filteredFaculties = state.selectedFacultyCategories.isEmpty
               ? Faculty.unsoedFaculties
               : Faculty.unsoedFaculties
@@ -129,9 +122,9 @@ class _MapPageState extends State<MapPage> {
                     initialCenter: state.currentLocation ?? const LatLng(0, 0),
                     initialZoom: 15,
                     minZoom: 2,
-                    maxZoom: 22, // Increased max zoom
+                    maxZoom: 22,
                     interactionOptions: InteractionOptions(
-                      flags: InteractiveFlag.all, // Enable all interactions
+                      flags: InteractiveFlag.all,
                     ),
                     onMapReady: () {
                       if (state.currentLocation != null) {
@@ -157,7 +150,6 @@ class _MapPageState extends State<MapPage> {
                     if (state.currentLocation != null)
                       MarkerLayer(
                         markers: [
-                          // User's current location marker
                           Marker(
                             width: 80,
                             height: 80,
@@ -212,7 +204,6 @@ class _MapPageState extends State<MapPage> {
                             ),
                           ),
 
-                          // Faculty markers
                           ...filteredFaculties.map((faculty) => Marker(
                                 width: 120,
                                 height: 80,
@@ -258,7 +249,6 @@ class _MapPageState extends State<MapPage> {
                   ],
                 ),
 
-                // Category Filter
                 Positioned(
                   top: 50,
                   left: 0,
@@ -269,13 +259,11 @@ class _MapPageState extends State<MapPage> {
                   ),
                 ),
 
-                // Location and Compass Buttons
                 Positioned(
                   right: 16,
                   bottom: 16,
                   child: Column(
                     children: [
-                      // Compass Button
                       if (state.showCompass)
                         Container(
                           margin: const EdgeInsets.only(bottom: 16),
@@ -301,9 +289,7 @@ class _MapPageState extends State<MapPage> {
                                   .add(UpdateBearingEvent(0));
                             },
                             child: Transform.rotate(
-                              angle: state.bearing *
-                                  (3.141592653589793 /
-                                      180), // Direct pi value, no import needed
+                              angle: state.bearing * (3.141592653589793 / 180),
                               child: Icon(
                                 Icons.explore,
                                 color: AppColors.dark,
@@ -320,8 +306,6 @@ class _MapPageState extends State<MapPage> {
                           if (!state.isHighAccuracy) {
                             _showAccuracyDialog();
                           }
-
-                          // Move map to current location
                           if (state.currentLocation != null) {
                             _mapController.move(state.currentLocation!, 15);
                           }

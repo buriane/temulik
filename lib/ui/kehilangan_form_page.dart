@@ -209,6 +209,7 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
                     label: 'Pin Point',
                     hintText: 'Tentukan Pin Point Lokasi',
                     controller: _pinPointController,
+                    initialFaculty: selectedValueFakultas,
                   ),
                   SizedBox(height: 16.0),
                   InputForm(

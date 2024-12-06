@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:temulik/services/geolocation_interface.dart';
 import 'package:temulik/services/geolocation_mobile.dart';
-import 'package:temulik/models/faculty.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -131,13 +130,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         if (bearing < 0) {
           bearing += 360;
         }
-
-        // Normalize bearing to 0-360 range
         bearing = bearing % 360;
-
         add(UpdateBearingEvent(bearing));
-
-        // Toggle compass visibility based on non-zero rotation
         add(ToggleCompassEvent(bearing != 0));
       }
     });

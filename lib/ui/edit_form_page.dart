@@ -146,6 +146,7 @@ class _EditFormPageState extends State<EditFormPage> {
                   label: 'Pin Point',
                   hintText: 'Tentukan Pin Point Lokasi',
                   controller: TextEditingController(),
+                  initialFaculty: selectedValueFakultas,
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
