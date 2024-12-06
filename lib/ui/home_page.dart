@@ -11,12 +11,25 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'components/home_components.dart';
 
 class HomePage extends StatefulWidget {
+  final int initialIndex;
+
+  const HomePage({
+    Key? key,
+    this.initialIndex = 0,
+  }) : super(key: key);
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   final List<String> _iconPaths = [
     'assets/home.svg',

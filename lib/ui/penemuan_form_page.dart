@@ -5,6 +5,7 @@ import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/datas.dart';
+import 'package:temulik/ui/home_page.dart';
 
 class PenemuanFormPage extends StatefulWidget {
   const PenemuanFormPage({super.key});
@@ -80,16 +81,113 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
             context: context,
             barrierDismissible: false,
             builder: (context) => Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: AppColors.green),
             ),
           );
         } else if (state is LaporSuccess) {
-          // Tutup loading dan tampilkan sukses
-          Navigator.of(context).pop(); // Tutup loading dialog
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Laporan berhasil dikirim')),
+          Navigator.of(context).pop();
+
+          // Tampilkan dialog sukses
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 340),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Success Icon
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: AppColors.green,
+                          size: 48,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Title
+                      Text(
+                        'Sukses!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkest,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Message
+                      Text(
+                        'Laporan berhasil dikirim',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.dark.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // OK Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HomePage(initialIndex: 3),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: const Text(
+                            'OK',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           );
-          // Optional: Navigasi ke halaman lain atau reset form
         } else if (state is LaporError) {
           // Tutup loading dan tampilkan error
           Navigator.of(context).pop(); // Tutup loading dialog

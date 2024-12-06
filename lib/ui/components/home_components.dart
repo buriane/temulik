@@ -12,7 +12,6 @@ import 'package:temulik/ui/components/setting_page_components.dart';
 import 'package:temulik/ui/kehilangan_form_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import '../../bloc/profile_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeContent extends StatelessWidget {
   final int selectedIndex;
@@ -178,28 +177,53 @@ class ProfileAvatar extends StatelessWidget {
   Widget _buildProfileImage(ProfileState profileState) {
     if (profileState is ProfileComplete &&
         profileState.profile.photoUrl != null) {
-      return Image.network(
-        profileState.profile.photoUrl!,
-        width: 44,
-        height: 44,
-        fit: BoxFit.cover,
-        headers: {
-          // If you have an auth token
-          'Authorization':
-              'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
-        },
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return CircularProgressIndicator();
-        },
-        errorBuilder: (context, error, stackTrace) {
-          print('Detailed image loading error: $error');
-          print('Error stacktrace: $stackTrace');
-          return Icon(Icons.person, color: Colors.grey);
-        },
+      return ClipOval(
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.grey[200], // Background color jika gambar loading
+          ),
+          child: Image.network(
+            profileState.profile.photoUrl!,
+            width: 44,
+            height: 44,
+            fit: BoxFit.cover,
+            headers: {
+              // If you have an auth token
+              'Authorization':
+                  'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              print('Detailed image loading error: $error');
+              print('Error stacktrace: $stackTrace');
+              return Icon(Icons.person, color: Colors.grey);
+            },
+          ),
+        ),
       );
     } else {
-      return Icon(Icons.person, color: Colors.grey);
+      return Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[200],
+        ),
+        child: Icon(Icons.person, color: Colors.grey),
+      );
     }
   }
 }

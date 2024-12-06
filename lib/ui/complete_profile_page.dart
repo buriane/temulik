@@ -104,10 +104,12 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
   final _formKey = GlobalKey<FormState>();
   late UserProfile _profile;
   bool _termsAccepted = false;
+  bool _isInitialLoad = true;
 
   @override
   void initState() {
     super.initState();
+    context.read<ProfileBloc>().add(LoadProfile());
     _profile = context.read<ProfileBloc>().state.profile;
   }
 
@@ -289,15 +291,29 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileComplete) {
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
+          if (state is ProfileComplete && !_isInitialLoad) {
+            // Tampilkan SnackBar ketika update berhasil
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Profil berhasil diperbarui'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
           } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is ProfileIncomplete || state is ProfileComplete) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+
+          // Update state lokal
+          if (state is ProfileIncomplete || state is ProfileComplete) {
             setState(() {
               _profile = state.profile;
+              _isInitialLoad = false;
             });
           }
         },
