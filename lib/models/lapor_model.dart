@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PenemuanModel {
+class LaporModel {
   final String namaBarang;
   final String kategori;
   final String deskripsi;
@@ -11,8 +11,11 @@ class PenemuanModel {
   final String pinPoint;
   final String noWhatsapp;
   final String? imbalan;
+  final String tipe;
+  final String userId;
+  final String status;
 
-  PenemuanModel({
+  LaporModel({
     required this.namaBarang,
     required this.kategori,
     required this.deskripsi,
@@ -23,6 +26,9 @@ class PenemuanModel {
     required this.pinPoint,
     required this.noWhatsapp,
     this.imbalan,
+    required this.tipe,
+    required this.userId,
+    required this.status,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +43,9 @@ class PenemuanModel {
       'pinPoint': pinPoint,
       'noWhatsapp': noWhatsapp,
       'imbalan': imbalan,
+      'tipe': tipe,
+      'userId': userId,
+      'status': status,
     };
   }
 }

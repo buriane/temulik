@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:temulik/constants/colors.dart';
@@ -13,208 +16,269 @@ class KehilanganFormPage extends StatefulWidget {
 class _KehilanganFormPageState extends State<KehilanganFormPage> {
   String? selectedValue;
   String? selectedValueFakultas;
-  String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String? _selectedImagePath;
   bool _isChecked = false;
 
-  Future<void> _pickImageFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _namaBarangController = TextEditingController();
+  final TextEditingController _deskripsiController = TextEditingController();
+  final TextEditingController _pinPointController = TextEditingController();
+  final TextEditingController _noWhatsappController = TextEditingController();
+  final TextEditingController _imbalanController = TextEditingController();
 
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _selectedFileName = result.files.single.name;
-        _selectedImagePath = result.files.single.path;
-      });
+  void _submitKehilangan() async {
+    if (_validateForm()) {
+      if (_selectedImagePath != null) {
+        context.read<LaporBloc>().add(
+              SubmitLaporEvent(
+                namaBarang: _namaBarangController.text,
+                kategori: selectedValue ?? '',
+                deskripsi: _deskripsiController.text,
+                imageUrl: _selectedImagePath!,
+                tanggalKehilangan: _selectedDate ?? DateTime.now(),
+                jamKehilangan: _selectedTime ?? TimeOfDay.now(),
+                lokasi: selectedValueFakultas ?? '',
+                pinPoint: _pinPointController.text,
+                noWhatsapp: _noWhatsappController.text,
+                imbalan: _imbalanController.text.isNotEmpty
+                    ? _imbalanController.text
+                    : null,
+                tipe: 'kehilangan',
+                userId: _auth.currentUser!.uid,
+                status: 'Dalam Proses',
+              ),
+            );
+      }
     }
+  }
+
+  bool _validateForm() {
+    if (_selectedImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Silakan unggah foto barang')),
+      );
+      return false;
+    }
+    if (selectedValue == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Silakan pilih kategori')),
+      );
+      return false;
+    }
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: LaporAppBar(
-        title: 'Lapor Barang Hilang',
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20.0,
-            left: 20.0,
-            right: 20.0,
-            bottom: 20.0,
-          ),
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                InputForm(
-                  label: 'Nama Barang',
-                  hintText: 'ex: Iphone 12 Pro Max',
-                  controller: TextEditingController(),
-                ),
-                SizedBox(height: 16.0),
-                SelectForm(
-                  label: 'Kategori',
-                  hintText: 'Pilih Kategori',
-                  items: [
-                    'Elektronik',
-                    'Buku',
-                    'Pakaian',
-                    'Lainnya',
-                  ],
-                  value: selectedValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedValue = newValue;
-                    });
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TextAreaForm(
-                  label: 'Deskripsi',
-                  hintText: 'ex: ukuran, ciri khas, atau tanda pengenal',
-                  maxLength: 100,
-                  onChanged: (value) {
-                    print(value);
-                  },
-                  controller: TextEditingController(),
-                ),
-                SizedBox(height: 16.0),
-                ImagePickerForm(
-                  label: 'Foto Barang',
-                  hintText: _selectedFileName ?? "Unggah Foto",
-                  imagePath: _selectedImagePath,
-                  onImageSelected: (String? path) {
-                    setState(() {
-                      _selectedImagePath = path;
-                    });
-                  },
-                  onTap: _pickImageFile,
-                ),
-                SizedBox(height: 16.0),
-                DatePickerForm(
-                  label: 'Tanggal Kehilangan Barang',
-                  hintText: 'Pilih Tanggal',
-                  selectedDate: _selectedDate,
-                  onChanged: (date) {
-                    setState(() {
-                      _selectedDate = date;
-                    });
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TimePickerForm(
-                  label: 'Jam Kehilangan Barang',
-                  hintText: 'Pilih Jam',
-                  selectedTime: _selectedTime,
-                  onChanged: (time) {
-                    setState(() {
-                      _selectedTime = time;
-                    });
-                  },
-                ),
-                SizedBox(height: 16.0),
-                SelectForm(
-                  label: 'Lokasi Terakhir Dilihat',
-                  hintText: 'Pilih Lokasi',
-                  items: [
-                    'Fakultas Pertanian',
-                    'Fakultas Biologi',
-                    'Fakultas Ekonomi dan Bisnis',
-                    'Fakultas Peternakan',
-                    'Fakultas Hukum',
-                    'Fakultas Ilmu Sosial dan Politik',
-                    'Fakultas Kedokteran',
-                    'Fakultas Teknik',
-                    'Fakultas Ilmu Budaya',
-                    'Fakultas Ilmu-Ilmu Kesehatan',
-                    'Fakultas Matematika dan Ilmu Pengetahuan Alam',
-                    'Fakultas Perikanan dan Ilmu Kelautan',
-                  ],
-                  value: selectedValueFakultas,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedValueFakultas = newValue;
-                    });
-                  },
-                ),
-                SizedBox(height: 16.0),
-                PinPointInput(
-                  label: 'Pin Point',
-                  hintText: 'Tentukan Pin Point Lokasi',
-                  controller: TextEditingController(),
-                ),
-                SizedBox(height: 16.0),
-                InputForm(
-                  label: 'No. WhatsApp',
-                  hintText: 'format: 08xxxxxxxxxx',
-                  controller: TextEditingController(),
-                ),
-                SizedBox(height: 16.0),
-                InputForm(
-                  label: 'Imbalan',
-                  hintText: 'ex: Rp500.000,00 (opsional)',
-                  controller: TextEditingController(),
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: _isChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isChecked = value!;
-                        });
-                      },
-                      activeColor: AppColors.blue,
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: RichText(
-                        text: TextSpan(
-                          text: "Dengan klik tombol ini, kamu menyetujui ",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13.0,
+    return BlocListener<LaporBloc, LaporState>(
+      listener: (context, state) {
+        if (state is LaporLoading) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state is LaporSuccess) {
+          // Tutup loading dan tampilkan sukses
+          Navigator.of(context).pop(); // Tutup loading dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Laporan berhasil dikirim')),
+          );
+          // Optional: Navigasi ke halaman lain atau reset form
+        } else if (state is LaporError) {
+          // Tutup loading dan tampilkan error
+          Navigator.of(context).pop(); // Tutup loading dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage)),
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: LaporAppBar(
+          title: 'Lapor Barang Hilang',
+          onSubmit: _submitKehilangan,
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 20.0,
+              left: 20.0,
+              right: 20.0,
+              bottom: 20.0,
+            ),
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  InputForm(
+                    label: 'Nama Barang',
+                    hintText: 'ex: Iphone 12 Pro Max',
+                    controller: _namaBarangController,
+                  ),
+                  SizedBox(height: 16.0),
+                  SelectForm(
+                    label: 'Kategori',
+                    hintText: 'Pilih Kategori',
+                    items: [
+                      'Elektronik',
+                      'Buku',
+                      'Pakaian',
+                      'Lainnya',
+                    ],
+                    value: selectedValue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedValue = newValue;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TextAreaForm(
+                    label: 'Deskripsi',
+                    hintText: 'ex: ukuran, ciri khas, atau tanda pengenal',
+                    maxLength: 100,
+                    onChanged: (value) {
+                      print(value);
+                    },
+                    controller: _deskripsiController,
+                  ),
+                  SizedBox(height: 16.0),
+                  ImagePickerForm(
+                    label: 'Foto Barang',
+                    hintText: 'Unggah Foto',
+                    imagePath: _selectedImagePath,
+                    onImageSelected: (path) {
+                      setState(() {
+                        _selectedImagePath = path;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  DatePickerForm(
+                    label: 'Tanggal Kehilangan Barang',
+                    hintText: 'Pilih Tanggal',
+                    selectedDate: _selectedDate,
+                    onChanged: (date) {
+                      setState(() {
+                        _selectedDate = date;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  TimePickerForm(
+                    label: 'Jam Kehilangan Barang',
+                    hintText: 'Pilih Jam',
+                    selectedTime: _selectedTime,
+                    onChanged: (time) {
+                      setState(() {
+                        _selectedTime = time;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  SelectForm(
+                    label: 'Lokasi Terakhir Dilihat',
+                    hintText: 'Pilih Lokasi',
+                    items: [
+                      'Fakultas Pertanian',
+                      'Fakultas Biologi',
+                      'Fakultas Ekonomi dan Bisnis',
+                      'Fakultas Peternakan',
+                      'Fakultas Hukum',
+                      'Fakultas Ilmu Sosial dan Politik',
+                      'Fakultas Kedokteran',
+                      'Fakultas Teknik',
+                      'Fakultas Ilmu Budaya',
+                      'Fakultas Ilmu-Ilmu Kesehatan',
+                      'Fakultas Matematika dan Ilmu Pengetahuan Alam',
+                      'Fakultas Perikanan dan Ilmu Kelautan',
+                    ],
+                    value: selectedValueFakultas,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedValueFakultas = newValue;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  PinPointInput(
+                    label: 'Pin Point',
+                    hintText: 'Tentukan Pin Point Lokasi',
+                    controller: _pinPointController,
+                  ),
+                  SizedBox(height: 16.0),
+                  InputForm(
+                    label: 'No. WhatsApp',
+                    hintText: 'format: 08xxxxxxxxxx',
+                    controller: _noWhatsappController,
+                  ),
+                  SizedBox(height: 16.0),
+                  InputForm(
+                    label: 'Imbalan',
+                    hintText: 'ex: Rp500.000,00 (opsional)',
+                    controller: _imbalanController,
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isChecked = value!;
+                          });
+                        },
+                        activeColor: AppColors.blue,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            text: "Dengan klik tombol ini, kamu menyetujui ",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13.0,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "Syarat & Ketentuan",
+                                style: TextStyle(
+                                  color: AppColors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: " serta ",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "Kebijakan Privasi",
+                                style: TextStyle(
+                                  color: AppColors.blue,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: " lapor barang hilang di Temulik.",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
-                          children: [
-                            TextSpan(
-                              text: "Syarat & Ketentuan",
-                              style: TextStyle(
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: " serta ",
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: "Kebijakan Privasi",
-                              style: TextStyle(
-                                color: AppColors.blue,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: " lapor barang hilang di Temulik.",
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-              ],
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
         ),

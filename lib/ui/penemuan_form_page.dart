@@ -1,12 +1,8 @@
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:temulik/bloc/auth_bloc.dart';
-import 'package:temulik/bloc/penemuan_bloc.dart';
+import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/ui/components/components.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:temulik/constants/colors.dart';
 
 class PenemuanFormPage extends StatefulWidget {
@@ -19,12 +15,12 @@ class PenemuanFormPage extends StatefulWidget {
 class _PenemuanFormPageState extends State<PenemuanFormPage> {
   String? selectedValue;
   String? selectedValueFakultas;
-  String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String? _selectedImagePath;
   bool _isChecked = false;
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _namaBarangController = TextEditingController();
   final TextEditingController _deskripsiController = TextEditingController();
   final TextEditingController _pinPointController = TextEditingController();
@@ -34,8 +30,8 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
   void _submitPenemuan() async {
     if (_validateForm()) {
       if (_selectedImagePath != null) {
-        context.read<PenemuanBloc>().add(
-              SubmitPenemuanEvent(
+        context.read<LaporBloc>().add(
+              SubmitLaporEvent(
                 namaBarang: _namaBarangController.text,
                 kategori: selectedValue ?? '',
                 deskripsi: _deskripsiController.text,
@@ -48,6 +44,9 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                 imbalan: _imbalanController.text.isNotEmpty
                     ? _imbalanController.text
                     : null,
+                tipe: 'penemuan',
+                userId: _auth.currentUser!.uid,
+                status: 'Dalam Proses',
               ),
             );
       }
@@ -73,10 +72,9 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<PenemuanBloc, PenemuanState>(
+    return BlocListener<LaporBloc, LaporState>(
       listener: (context, state) {
-        if (state is PenemuanLoading) {
-          // Tampilkan loading indicator
+        if (state is LaporLoading) {
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -84,14 +82,14 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
               child: CircularProgressIndicator(),
             ),
           );
-        } else if (state is PenemuanSuccess) {
+        } else if (state is LaporSuccess) {
           // Tutup loading dan tampilkan sukses
           Navigator.of(context).pop(); // Tutup loading dialog
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Laporan berhasil dikirim')),
           );
           // Optional: Navigasi ke halaman lain atau reset form
-        } else if (state is PenemuanError) {
+        } else if (state is LaporError) {
           // Tutup loading dan tampilkan error
           Navigator.of(context).pop(); // Tutup loading dialog
           ScaffoldMessenger.of(context).showSnackBar(

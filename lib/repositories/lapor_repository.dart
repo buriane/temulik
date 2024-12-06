@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/penemuan_model.dart';
+import '../models/lapor_model.dart';
 import 'package:path/path.dart' as path;
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 
-class PenemuanRepository {
+class LaporRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -30,9 +30,9 @@ class PenemuanRepository {
 
       // Generate unique filename dengan struktur yang lebih jelas
       final String fileName =
-          'penemuan_${currentUser.uid}_${DateTime.now().millisecondsSinceEpoch}${path.extension(imagePath)}';
+          'lapor_${currentUser.uid}_${DateTime.now().millisecondsSinceEpoch}${path.extension(imagePath)}';
       final Reference ref =
-          _storage.ref().child('penemuan_images/${currentUser.uid}/$fileName');
+          _storage.ref().child('lapor_images/${currentUser.uid}/$fileName');
 
       // Upload dengan mekanisme retry yang lebih baik
       final UploadTask uploadTask = ref.putFile(
@@ -106,21 +106,21 @@ class PenemuanRepository {
     return compressedFile;
   }
 
-  Future<void> addPenemuan(PenemuanModel penemuan) async {
+  Future<void> addLapor(LaporModel lapor) async {
     try {
       if (_auth.currentUser == null) {
         throw Exception('User tidak terautentikasi');
       }
 
-      final docRef = await _firestore.collection('penemuan').add({
-        ...penemuan.toMap(),
+      final docRef = await _firestore.collection('lapor').add({
+        ...lapor.toMap(),
         'userId': _auth.currentUser!.uid,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
       print('Document added with ID: ${docRef.id}');
     } catch (e) {
-      print('Error adding penemuan: $e');
+      print('Error adding lapor: $e');
       rethrow;
     }
   }
