@@ -189,7 +189,7 @@ class ItemInfo extends StatelessWidget {
         Text(
           item.length > 25 ? item.substring(0, 25) + '...' : item,
           style: const TextStyle(
-            fontSize: 20.0,
+            fontSize: 16.0,
             fontWeight: FontWeight.bold,
           ),
           overflow: TextOverflow.ellipsis,
@@ -283,7 +283,7 @@ class NameAndButton extends StatelessWidget {
             child: const Text('Lihat Detail'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.green,
-              padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(80.0),
               ),

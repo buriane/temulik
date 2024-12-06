@@ -147,8 +147,8 @@ class LeaderboardCard extends StatelessWidget {
         ),
         Text(
           faculty,
-          style: const TextStyle(
-            fontSize: 12.00,
+          style: TextStyle(
+            fontSize: 12.0,
             color: AppColors.coral,
             fontWeight: FontWeight.w400,
           ),
@@ -316,6 +316,8 @@ class StrokedText extends StatelessWidget {
   final String text;
   final double fontSize;
   final Color textColor;
+  final Color strokeColor;
+  final double strokeWidth;
   final FontWeight fontWeight;
 
   const StrokedText({
@@ -323,35 +325,86 @@ class StrokedText extends StatelessWidget {
     required this.text,
     required this.fontSize,
     this.textColor = Colors.white,
+    this.strokeColor = Colors.black,
+    this.strokeWidth = 3.0,
     this.fontWeight = FontWeight.bold,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            foreground: Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = 3.0
-              ..color = Colors.black,
-          ),
+    return CustomPaint(
+      painter: StrokeTextPainter(
+        text: text,
+        fontSize: fontSize,
+        textColor: textColor,
+        strokeColor: strokeColor,
+        strokeWidth: strokeWidth,
+        fontWeight: fontWeight,
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: Colors.transparent,
+          fontWeight: fontWeight,
         ),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: textColor,
-          ),
-        ),
-      ],
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
+}
+
+class StrokeTextPainter extends CustomPainter {
+  final String text;
+  final double fontSize;
+  final Color textColor;
+  final Color strokeColor;
+  final double strokeWidth;
+  final FontWeight fontWeight;
+
+  StrokeTextPainter({
+    required this.text,
+    required this.fontSize,
+    required this.textColor,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.fontWeight,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final textStyle = TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..color = strokeColor,
+    );
+
+    final textStyle2 = TextStyle(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: textColor,
+    );
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: textStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+
+    final textPainter2 = TextPainter(
+      text: TextSpan(text: text, style: textStyle2),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+
+    textPainter.paint(canvas, Offset.zero);
+    textPainter2.paint(canvas, Offset.zero);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
