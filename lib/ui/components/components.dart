@@ -1177,7 +1177,7 @@ class _PinPointInputState extends State<PinPointInput> {
                 Expanded(
                   child: Text(
                     _selectedLocation != null
-                        ? 'Lokasi dipilih'
+                        ? 'Lokasi berhasil dipilih'
                         : widget.hintText,
                     style: TextStyle(
                       color: _selectedLocation != null
