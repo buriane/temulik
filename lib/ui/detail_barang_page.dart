@@ -152,7 +152,7 @@ class DetailBarangPage extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => EditFormPage(
-                        activityData: {},
+                        activityData: activityData,
                       )),
             );
           }),
