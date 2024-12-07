@@ -1,15 +1,12 @@
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/constants/colors.dart';
-import 'package:temulik/repositories/lapor_repository.dart';
 import 'package:temulik/ui/components/batal_pencarian_components.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/edit_form_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
 import 'package:temulik/ui/components/form_selesai_components.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan ini
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailBarangPage extends StatelessWidget {
   final Map<String, dynamic> activityData;
@@ -142,32 +139,42 @@ class DetailBarangPage extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final isOwner = currentUserId == activityData['userId'];
+
     return Column(
       children: [
-        WhatsappButton(onPressed: () {}),
+        WhatsappButton(phoneNumber: activityData['noWhatsapp']),
         const SizedBox(height: 12.0),
-        EditButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EditFormPage(activityData: activityData),
-            ),
-          );
-        }),
-        const SizedBox(height: 12.0),
-        DoneButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FormPage()),
-          );
-        }),
-        const SizedBox(height: 12.0),
-        CancelButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CancelFormPage()),
-          );
-        })
+        if (isOwner) ...[
+          EditButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EditFormPage(
+                        activityData: {},
+                      )),
+            );
+          }),
+          const SizedBox(height: 12.0),
+          DoneButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FormPage()),
+            );
+          }),
+          const SizedBox(height: 12.0),
+          CancelButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CancelFormPage()),
+            );
+          }),
+        ] else ...[
+          AjukanButton(onPressed: () {
+            // TODO: Implement claim logic
+          }),
+        ],
       ],
     );
   }

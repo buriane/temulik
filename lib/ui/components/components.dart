@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:latlong2/latlong.dart';
 import 'package:temulik/ui/pin_map_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DoneButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -88,6 +89,45 @@ class CancelButton extends StatelessWidget {
   }
 }
 
+class AjukanButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const AjukanButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+          vertical: 20.0,
+        ),
+        backgroundColor: AppColors.blue,
+        overlayColor: AppColors.blue,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search,
+            color: Colors.white,
+            size: 20.0,
+          ),
+          const SizedBox(width: 8.0),
+          TextBold(
+            text: 'Ajukan Pencarian',
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class EditButton extends StatelessWidget {
   final VoidCallback onPressed;
   const EditButton({super.key, required this.onPressed});
@@ -128,9 +168,45 @@ class EditButton extends StatelessWidget {
 }
 
 class WhatsappButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final String phoneNumber;
 
-  const WhatsappButton({Key? key, required this.onPressed}) : super(key: key);
+  const WhatsappButton({
+    super.key,
+    required this.phoneNumber,
+  });
+
+  Future<void> _launchWhatsApp(BuildContext context) async {
+    try {
+      String formattedPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone =
+            '+62${formattedPhone.startsWith('0') ? formattedPhone.substring(1) : formattedPhone}';
+      }
+      final url = 'https://wa.me/${formattedPhone}';
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Tidak dapat membuka WhatsApp. Pastikan WhatsApp terinstall'),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error launching WhatsApp: $e'); // Debug log
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Terjadi kesalahan: ${e.toString()}'),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +227,7 @@ class WhatsappButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      onPressed: onPressed,
+      onPressed: () => _launchWhatsApp(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -164,7 +240,7 @@ class WhatsappButton extends StatelessWidget {
           ),
           const SizedBox(width: 8.0),
           TextBold(
-            text: 'Kontak Bersangkutan',
+            text: 'Hubungi via WhatsApp',
             color: AppColors.green,
           ),
         ],
@@ -1101,7 +1177,7 @@ class _PinPointInputState extends State<PinPointInput> {
                 Expanded(
                   child: Text(
                     _selectedLocation != null
-                        ? 'Lokasi dipilih'
+                        ? 'Lokasi berhasil dipilih'
                         : widget.hintText,
                     style: TextStyle(
                       color: _selectedLocation != null
