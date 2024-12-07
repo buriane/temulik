@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/components/batal_pencarian_components.dart';
 import 'package:temulik/ui/components/components.dart';
+import 'package:temulik/ui/edit_form_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
 import 'package:temulik/ui/components/form_selesai_components.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Tambahkan ini
@@ -141,43 +142,81 @@ class DetailBarangPage extends StatelessWidget {
       children: [
         WhatsappButton(onPressed: () {}),
         const SizedBox(height: 12.0),
+        EditButton(onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => EditFormPage()),
+          );
+        }),
+        const SizedBox(height: 12.0),
         DoneButton(onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => FormPage()),
           );
         }),
+        const SizedBox(height: 12.0),
+        CancelButton(onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CancelFormPage()),
+          );
+        })
       ],
     );
   }
 
   Widget _buildLeftDetails(
       BuildContext context, Map<String, dynamic> userData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDetailItem('Nama Pemilik', _buildOwnerButton(context, userData)),
-        const SizedBox(height: 12.0),
-        _buildDetailItem('Tanggal Kehilangan',
-            formatTanggal(activityData['tanggalKehilangan'])),
-        const SizedBox(height: 12.0),
-        _buildDetailItem(
-            'Lokasi Terakhir Terlihat', activityData['lokasi'] ?? '-'),
-      ],
+    return Flexible(
+      flex: 3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDetailItem(
+              'Nama Pemilik', _buildOwnerButton(context, userData)),
+          const SizedBox(height: 12.0),
+          _buildDetailItem('Tanggal Kehilangan',
+              formatTanggal(activityData['tanggalKehilangan'])),
+          const SizedBox(height: 12.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const TextTinyMedium(text: 'Lokasi Terakhir Terlihat'),
+              const SizedBox(height: 4.0),
+              Container(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: Text(
+                  activityData['lokasi'] ?? '-',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  overflow: TextOverflow.visible,
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildRightDetails() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDetailItem('Kategori', activityData['kategori'] ?? '-'),
-        const SizedBox(height: 12.0),
-        _buildDetailItem(
-            'Jam Kehilangan', formatJam(activityData['jamKehilangan'])),
-        const SizedBox(height: 12.0),
-        _buildDetailItem('Status Barang', _buildStatusBarang()),
-      ],
+    return Flexible(
+      flex: 2,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDetailItem('Kategori', activityData['kategori'] ?? '-'),
+          const SizedBox(height: 12.0),
+          _buildDetailItem(
+              'Jam Kehilangan', formatJam(activityData['jamKehilangan'])),
+          const SizedBox(height: 12.0),
+          _buildDetailItem('Status Barang', _buildStatusBarang()),
+        ],
+      ),
     );
   }
 

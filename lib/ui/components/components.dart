@@ -40,7 +40,85 @@ class DoneButton extends StatelessWidget {
           ),
           const SizedBox(width: 8.0),
           TextBold(
-            text: 'Selesai Pengajuan Barang',
+            text: 'Selesai Pencarian Barang',
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CancelButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const CancelButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+          vertical: 20.0,
+        ),
+        backgroundColor: AppColors.red,
+        overlayColor: AppColors.red,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.close,
+            color: Colors.white,
+            size: 20.0,
+          ),
+          const SizedBox(width: 8.0),
+          TextBold(
+            text: 'Batal Pencarian Barang',
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EditButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const EditButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 0.0,
+          vertical: 20.0,
+        ),
+        backgroundColor: AppColors.dark,
+        overlayColor: AppColors.dark,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.settings,
+            color: Colors.white,
+            size: 20.0,
+          ),
+          const SizedBox(width: 8.0),
+          TextBold(
+            text: 'Ubah Informasi Barang',
             color: Colors.white,
           ),
         ],
@@ -521,6 +599,7 @@ class SelectForm extends StatelessWidget {
         ButtonTheme(
           alignedDropdown: true,
           child: DropdownButtonFormField<String>(
+            isExpanded: true,
             value: value,
             icon: const Icon(Icons.keyboard_arrow_down),
             hint: Text(

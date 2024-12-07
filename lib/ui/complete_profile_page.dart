@@ -146,6 +146,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       DropdownButtonFormField<String>(
         value: _profile.faculty,
+        isExpanded: true,
         decoration: InputDecoration(labelText: 'Fakultas'),
         items: _faculties.map((String faculty) {
           return DropdownMenuItem(
@@ -153,8 +154,8 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
             child: Text(
               faculty,
               style: TextStyle(
-                color: Colors.black54,
-                fontSize: 13,
+                color: Colors.black,
+                fontSize: 16.0,
               ),
             ),
           );
@@ -172,6 +173,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       DropdownButtonFormField<String>(
         value: _profile.department,
+        isExpanded: true,
         decoration: InputDecoration(labelText: 'Jurusan'),
         dropdownColor: Colors.white,
         items: _profile.faculty == null
@@ -182,8 +184,8 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                   child: Text(
                     department,
                     style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 13,
+                      color: Colors.black,
+                      fontSize: 16.0,
                     ),
                   ),
                 );
