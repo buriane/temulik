@@ -145,7 +145,11 @@ class DetailBarangPage extends StatelessWidget {
         EditButton(onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => EditFormPage()),
+            MaterialPageRoute(
+              builder: (context) => EditFormPage(
+                activityData: activityData,
+              ),
+            ),
           );
         }),
         const SizedBox(height: 12.0),

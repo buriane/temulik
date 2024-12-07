@@ -1,11 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:temulik/ui/components/components.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/datas.dart';
+import 'package:temulik/ui/home_page.dart';
 
 class EditFormPage extends StatefulWidget {
-  const EditFormPage({super.key});
+  final Map<String, dynamic> activityData;
+
+  const EditFormPage({
+    super.key,
+    required this.activityData,
+  });
 
   @override
   State<EditFormPage> createState() => _EditFormPageState();
@@ -14,36 +21,223 @@ class EditFormPage extends StatefulWidget {
 class _EditFormPageState extends State<EditFormPage> {
   String? selectedValue;
   String? selectedValueFakultas;
-  String? _selectedFileName;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  String? _selectedImagePath;
   List<String> _selectedImages = [];
   bool _isChecked = false;
 
-  Future<void> _pickImageFile() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _namaBarangController = TextEditingController();
+  final TextEditingController _deskripsiController = TextEditingController();
+  final TextEditingController _pinPointController = TextEditingController();
+  final TextEditingController _noWhatsappController = TextEditingController();
+  final TextEditingController _imbalanController = TextEditingController();
 
-    if (result != null && result.files.isNotEmpty) {
-      setState(() {
-        _selectedFileName = result.files.single.name;
-        _selectedImagePath = result.files.single.path;
-      });
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi data dari activityData
+    _namaBarangController.text = widget.activityData['namaBarang'] ?? '';
+    _deskripsiController.text = widget.activityData['deskripsi'] ?? '';
+    _pinPointController.text = widget.activityData['pinPoint'] ?? '';
+    _noWhatsappController.text = widget.activityData['noWhatsapp'] ?? '';
+    _imbalanController.text = widget.activityData['imbalan'] ?? '';
+
+    selectedValue = widget.activityData['kategori'];
+    selectedValueFakultas = widget.activityData['lokasi'];
+    _selectedImages = List<String>.from(widget.activityData['imageUrls'] ?? []);
+
+    if (widget.activityData['tanggalKehilangan'] != null) {
+      _selectedDate = DateTime.parse(widget.activityData['tanggalKehilangan']);
     }
+
+    // Parse jam kehilangan dari format "HH:mm"
+    if (widget.activityData['jamKehilangan'] != null) {
+      final jamArray = widget.activityData['jamKehilangan'].split(':');
+      if (jamArray.length == 2) {
+        _selectedTime = TimeOfDay(
+            hour: int.parse(jamArray[0]), minute: int.parse(jamArray[1]));
+      }
+    }
+  }
+
+  Future<void> _updateBarang() async {
+    if (_validateForm()) {
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => Center(
+            child: CircularProgressIndicator(color: AppColors.green),
+          ),
+        );
+
+        final docRef = FirebaseFirestore.instance
+            .collection('activities')
+            .doc(widget.activityData['id']);
+
+        final updatedData = {
+          'namaBarang': _namaBarangController.text,
+          'kategori': selectedValue,
+          'deskripsi': _deskripsiController.text,
+          'imageUrls': _selectedImages,
+          'tanggalKehilangan': _selectedDate?.toIso8601String(),
+          // Format jam kehilangan sebagai string "HH:mm"
+          'jamKehilangan': _selectedTime != null
+              ? '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}'
+              : null,
+          'lokasi': selectedValueFakultas,
+          'pinPoint': _pinPointController.text,
+          'noWhatsapp': _noWhatsappController.text,
+          'imbalan': _imbalanController.text,
+          'updatedAt': FieldValue.serverTimestamp(),
+        };
+
+        await docRef.update(updatedData);
+
+        // Tutup loading dialog
+        if (mounted) Navigator.pop(context);
+
+        // Tampilkan dialog sukses
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 340),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightGreen,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: AppColors.green,
+                          size: 48,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Sukses!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkest,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Perubahan berhasil disimpan',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.dark.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HomePage(initialIndex: 3),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                          child: const Text(
+                            'OK',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      } catch (e) {
+        // Tutup loading dialog jika masih terbuka
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        // Tampilkan error
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Terjadi kesalahan: ${e.toString()}')),
+          );
+        }
+      }
+    }
+  }
+
+  bool _validateForm() {
+    if (_selectedImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Silakan unggah foto barang')),
+      );
+      return false;
+    }
+    if (selectedValue == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Silakan pilih kategori')),
+      );
+      return false;
+    }
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: LaporAppBar(
-        title: 'Informasi Barang',
+        title: 'Edit Informasi Barang',
+        onSubmit: _updateBarang,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 20.0,
             left: 20.0,
             right: 20.0,
             bottom: 20.0,
@@ -55,7 +249,7 @@ class _EditFormPageState extends State<EditFormPage> {
                 InputForm(
                   label: 'Nama Barang',
                   hintText: 'ex: Iphone 12 Pro Max',
-                  controller: TextEditingController(),
+                  controller: _namaBarangController,
                 ),
                 SizedBox(height: 16.0),
                 SelectForm(
@@ -77,7 +271,7 @@ class _EditFormPageState extends State<EditFormPage> {
                   onChanged: (value) {
                     print(value);
                   },
-                  controller: TextEditingController(),
+                  controller: _deskripsiController,
                 ),
                 SizedBox(height: 16.0),
                 ImagePickerForm(
@@ -141,20 +335,20 @@ class _EditFormPageState extends State<EditFormPage> {
                 PinPointInput(
                   label: 'Pin Point',
                   hintText: 'Tentukan Pin Point Lokasi',
-                  controller: TextEditingController(),
+                  controller: _pinPointController,
                   initialFaculty: selectedValueFakultas,
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
                   label: 'No. WhatsApp',
                   hintText: 'format: 08xxxxxxxxxx',
-                  controller: TextEditingController(),
+                  controller: _noWhatsappController,
                 ),
                 SizedBox(height: 16.0),
                 InputForm(
                   label: 'Imbalan',
                   hintText: 'ex: Rp500.000,00 (opsional)',
-                  controller: TextEditingController(),
+                  controller: _imbalanController,
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -199,7 +393,7 @@ class _EditFormPageState extends State<EditFormPage> {
                               ),
                             ),
                             TextSpan(
-                              text: " lapor barang hilang/temuan di Temulik.",
+                              text: " pengubahan informasi barang di Temulik.",
                               style: TextStyle(
                                 color: Colors.black,
                               ),
@@ -217,5 +411,15 @@ class _EditFormPageState extends State<EditFormPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _namaBarangController.dispose();
+    _deskripsiController.dispose();
+    _pinPointController.dispose();
+    _noWhatsappController.dispose();
+    _imbalanController.dispose();
+    super.dispose();
   }
 }

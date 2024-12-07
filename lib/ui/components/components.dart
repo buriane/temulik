@@ -765,9 +765,9 @@ class TimePickerForm extends StatelessWidget {
 class ImagePickerForm extends StatefulWidget {
   final String label;
   final String hintText;
-  final List<String> imagePaths; // Ubah menjadi List untuk multiple images
-  final Function(List<String>)
-      onImagesSelected; // Callback untuk multiple images
+  final List<String>
+      imagePaths; // Can contain both local paths and Firebase URLs
+  final Function(List<String>) onImagesSelected;
   final VoidCallback? onTap;
 
   const ImagePickerForm({
@@ -784,6 +784,10 @@ class ImagePickerForm extends StatefulWidget {
 }
 
 class _ImagePickerFormState extends State<ImagePickerForm> {
+  bool isFirebaseUrl(String path) {
+    return path.startsWith('http://') || path.startsWith('https://');
+  }
+
   Future<void> _pickImage(BuildContext context) async {
     if (widget.imagePaths.length >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -924,12 +928,48 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
                       padding: const EdgeInsets.only(right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          File(widget.imagePaths[index]),
-                          width: 100,
-                          height: 120,
-                          fit: BoxFit.cover,
-                        ),
+                        child: isFirebaseUrl(widget.imagePaths[index])
+                            ? Image.network(
+                                widget.imagePaths[index],
+                                width: 100,
+                                height: 120,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Container(
+                                    width: 100,
+                                    height: 120,
+                                    color: AppColors.grey.withOpacity(0.3),
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 100,
+                                    height: 120,
+                                    color: AppColors.grey.withOpacity(0.3),
+                                    child: const Icon(Icons.error),
+                                  );
+                                },
+                              )
+                            : Image.file(
+                                File(widget.imagePaths[index]),
+                                width: 100,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     Positioned(
@@ -991,27 +1031,52 @@ class PinPointInput extends StatefulWidget {
 class _PinPointInputState extends State<PinPointInput> {
   LatLng? _selectedLocation;
   String? _selectedFaculty;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFaculty = widget.initialFaculty;
+    _initializeLocation();
+  }
+
+  Future<void> _initializeLocation() async {
+    if (!_isInitialized && widget.controller.text.isNotEmpty) {
+      try {
+        // Parse the location string from controller
+        // Expected format: "latitude,longitude"
+        final parts = widget.controller.text.split(',');
+        if (parts.length == 2) {
+          final lat = double.parse(parts[0].trim());
+          final lng = double.parse(parts[1].trim());
+          setState(() {
+            _selectedLocation = LatLng(lat, lng);
+            _isInitialized = true;
+          });
+        }
+      } catch (e) {
+        print('Error parsing location: $e');
+      }
+    }
+  }
 
   void _pickLocation() async {
-    final result = await Navigator.push(
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (context) => PinMapPage(
           initialLocation: _selectedLocation,
-          selectedFaculty: widget.initialFaculty,
+          selectedFaculty: _selectedFaculty,
         ),
       ),
     );
 
-    if (result != null && result is Map) {
-      final LatLng location = result['location'];
-      final String? faculty = result['faculty'];
-
+    if (result != null && mounted) {
       setState(() {
-        _selectedLocation = location;
-        _selectedFaculty = faculty;
+        _selectedLocation = result['location'] as LatLng;
+        // Update the controller with the new location
         widget.controller.text =
-            '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
+            '${_selectedLocation!.latitude},${_selectedLocation!.longitude}';
       });
     }
   }
@@ -1022,49 +1087,47 @@ class _PinPointInputState extends State<PinPointInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextSmallMedium(text: widget.label),
-        ElevatedButton(
-          onPressed: _pickLocation,
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        const SizedBox(height: 8.0),
+        InkWell(
+          onTap: _pickLocation,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.grey),
+              borderRadius: BorderRadius.circular(8),
             ),
-          ),
-          child: Text(
-            _selectedLocation == null ? widget.hintText : 'Lokasi Dipilih',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16.0,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedLocation != null
+                        ? 'Lokasi dipilih'
+                        : widget.hintText,
+                    style: TextStyle(
+                      color: _selectedLocation != null
+                          ? AppColors.darkest
+                          : AppColors.darkGrey,
+                      fontSize: 16.0,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(Icons.location_on, color: AppColors.darkGrey),
+              ],
             ),
           ),
         ),
-        if (_selectedLocation != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  '${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)}',
-                  style: const TextStyle(
-                    color: Color(0xFF7C7C7C),
-                    fontSize: 12.0,
-                  ),
-                ),
-              ),
-              if (_selectedFaculty != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    'Fakultas: $_selectedFaculty',
-                    style: const TextStyle(
-                      color: Color(0xFF7C7C7C),
-                      fontSize: 12.0,
-                    ),
-                  ),
-                ),
-            ],
+        if (_selectedLocation != null) ...[
+          const SizedBox(height: 8),
+          Text(
+            'Koordinat: (${_selectedLocation!.latitude.toStringAsFixed(6)}, ${_selectedLocation!.longitude.toStringAsFixed(6)})',
+            style: const TextStyle(
+              color: AppColors.darkGrey,
+              fontSize: 12.0,
+            ),
           ),
+        ],
       ],
     );
   }
