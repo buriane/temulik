@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/batal_pencarian_components.dart';
@@ -138,34 +139,39 @@ class DetailBarangPage extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final isOwner = currentUserId == activityData['userId'];
+
     return Column(
       children: [
-        WhatsappButton(onPressed: () {}),
+        WhatsappButton(phoneNumber: activityData['noWhatsapp']),
         const SizedBox(height: 12.0),
-        EditButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => EditFormPage(
-                activityData: activityData,
-              ),
-            ),
-          );
-        }),
-        const SizedBox(height: 12.0),
-        DoneButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => FormPage()),
-          );
-        }),
-        const SizedBox(height: 12.0),
-        CancelButton(onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CancelFormPage()),
-          );
-        })
+        if (isOwner) ...[
+          EditButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditFormPage(activityData: {},)),
+            );
+          }),
+          const SizedBox(height: 12.0),
+          DoneButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FormPage()),
+            );
+          }),
+          const SizedBox(height: 12.0),
+          CancelButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CancelFormPage()),
+            );
+          }),
+        ] else ...[
+          AjukanButton(onPressed: () {
+            // TODO: Implement claim logic
+          }),
+        ],
       ],
     );
   }

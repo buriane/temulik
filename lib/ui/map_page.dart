@@ -9,7 +9,6 @@ import 'package:temulik/constants/colors.dart';
 import 'package:temulik/services/geolocation_mobile.dart';
 import 'package:temulik/models/faculty.dart';
 import 'package:temulik/ui/detail_barang_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
