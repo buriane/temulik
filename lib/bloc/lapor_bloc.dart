@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import '../models/lapor_model.dart';
@@ -15,6 +16,7 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
 
   LaporBloc(this._repository) : super(LaporInitial()) {
     on<SubmitLaporEvent>(_onSubmitLapor);
+    on<UpdateLaporEvent>(_onUpdateLapor);
   }
 
   Future<void> _onSubmitLapor(
@@ -49,7 +51,7 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
         namaBarang: event.namaBarang,
         kategori: event.kategori,
         deskripsi: event.deskripsi,
-        imageUrls: imageUrls, // Gunakan list URL gambar
+        imageUrls: imageUrls,
         tanggalKehilangan: event.tanggalKehilangan,
         jamKehilangan: event.jamKehilangan,
         lokasi: event.lokasi,
@@ -64,7 +66,53 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
       await _repository.addLapor(penemuan);
       emit(LaporSuccess());
     } catch (e) {
-      print('Error in bloc: $e');
+      emit(LaporError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateLapor(
+      UpdateLaporEvent event, Emitter<LaporState> emit) async {
+    emit(LaporLoading());
+    try {
+      // Validasi gambar
+      if (event.imagePaths.isEmpty) {
+        throw Exception('Minimal harus ada 1 gambar');
+      }
+
+      // Upload gambar baru jika ada
+      List<String> finalImageUrls = [];
+      for (String path in event.imagePaths) {
+        if (!path.startsWith('http')) {
+          // Ini gambar baru, perlu diupload
+          final imageUrl = await _repository.uploadImage(path);
+          finalImageUrls.add(imageUrl);
+        } else {
+          // Ini gambar yang sudah ada
+          finalImageUrls.add(path);
+        }
+      }
+
+      // Siapkan data update
+      final updatedData = {
+        'namaBarang': event.namaBarang,
+        'kategori': event.kategori,
+        'deskripsi': event.deskripsi,
+        'imageUrls': finalImageUrls,
+        'tanggalKehilangan': event.tanggalKehilangan?.toIso8601String(),
+        'jamKehilangan': event.jamKehilangan != null
+            ? '${event.jamKehilangan!.hour.toString().padLeft(2, '0')}:${event.jamKehilangan!.minute.toString().padLeft(2, '0')}'
+            : null,
+        'lokasi': event.lokasi,
+        'pinPoint': event.pinPoint,
+        'noWhatsapp': event.noWhatsapp,
+        'imbalan': event.imbalan,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      // Update ke Firestore
+      await _repository.updateLapor(event.id, updatedData);
+      emit(LaporSuccess());
+    } catch (e) {
       emit(LaporError(e.toString()));
     }
   }

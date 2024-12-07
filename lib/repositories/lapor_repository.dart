@@ -45,4 +45,21 @@ class LaporRepository {
       throw Exception('Gagal menyimpan laporan: ${e.toString()}');
     }
   }
+
+  Future<void> updateLapor(String id, Map<String, dynamic> data) async {
+    try {
+      final docRef = _firestore.collection('laporan').doc(id);
+
+      // Cek apakah dokumen ada
+      final docSnap = await docRef.get();
+      if (!docSnap.exists) {
+        throw Exception('Dokumen tidak ditemukan');
+      }
+
+      await docRef.update(data);
+    } catch (e) {
+      print('Error updating report: $e');
+      throw Exception('Gagal mengupdate laporan: ${e.toString()}');
+    }
+  }
 }

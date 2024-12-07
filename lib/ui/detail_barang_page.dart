@@ -1,5 +1,9 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/repositories/lapor_repository.dart';
 import 'package:temulik/ui/components/batal_pencarian_components.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/edit_form_page.dart';
@@ -146,9 +150,7 @@ class DetailBarangPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditFormPage(
-                activityData: activityData,
-              ),
+              builder: (context) => EditFormPage(activityData: activityData),
             ),
           );
         }),

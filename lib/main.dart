@@ -38,6 +38,7 @@ class MainApp extends StatelessWidget {
     required this.firestore,
     required this.storage,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -48,10 +49,9 @@ class MainApp extends StatelessWidget {
         BlocProvider<ProfileBloc>(
           create: (context) => ProfileBloc(),
         ),
-        BlocProvider(
+        BlocProvider<LaporBloc>(
           create: (context) => LaporBloc(LaporRepository(firestore, storage)),
-          child: PenemuanFormPage(),
-        )
+        ),
       ],
       child: MaterialApp(
         title: 'Temulik',

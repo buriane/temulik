@@ -7,6 +7,7 @@ abstract class LaporEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// Event untuk create baru
 class SubmitLaporEvent extends LaporEvent {
   final String namaBarang;
   final String kategori;
@@ -52,5 +53,46 @@ class SubmitLaporEvent extends LaporEvent {
         tipe,
         userId,
         status,
+      ];
+}
+
+// Event baru untuk update
+class UpdateLaporEvent extends LaporEvent {
+  final String id;
+  final String namaBarang;
+  final String kategori;
+  final String deskripsi;
+  final List<String> imagePaths;
+  final DateTime? tanggalKehilangan;
+  final TimeOfDay? jamKehilangan;
+  final String lokasi;
+  final String pinPoint;
+  final String noWhatsapp;
+  final String? imbalan;
+
+  const UpdateLaporEvent({
+    required this.id,
+    required this.namaBarang,
+    required this.kategori,
+    required this.deskripsi,
+    required this.imagePaths,
+    this.tanggalKehilangan,
+    this.jamKehilangan,
+    required this.lokasi,
+    required this.pinPoint,
+    required this.noWhatsapp,
+    this.imbalan,
+  });
+
+  @override
+  List<Object> get props => [
+        id,
+        namaBarang,
+        kategori,
+        deskripsi,
+        imagePaths,
+        lokasi,
+        pinPoint,
+        noWhatsapp,
       ];
 }
