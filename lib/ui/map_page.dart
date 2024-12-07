@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,6 +8,8 @@ import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/services/geolocation_mobile.dart';
 import 'package:temulik/models/faculty.dart';
+import 'package:temulik/ui/detail_barang_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -18,6 +21,8 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final MapController _mapController = MapController();
   final List<String> _selectedCategories = [];
+  final CollectionReference laporanRef =
+      FirebaseFirestore.instance.collection('laporan');
 
   @override
   void initState() {
@@ -203,7 +208,6 @@ class _MapPageState extends State<MapPage> {
                               ],
                             ),
                           ),
-
                           ...filteredFaculties.map((faculty) => Marker(
                                 width: 120,
                                 height: 80,
@@ -246,9 +250,48 @@ class _MapPageState extends State<MapPage> {
                               )),
                         ],
                       ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: laporanRef.snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const MarkerLayer(markers: []);
+                        }
+
+                        List<Marker> markers = [];
+                        for (var doc in snapshot.data!.docs) {
+                          final data = doc.data() as Map<String, dynamic>;
+                          final pinPointStr = data['pinPoint'] as String;
+                          final coordinates = pinPointStr.split(',');
+                          if (coordinates.length == 2) {
+                            final lat = double.parse(coordinates[0].trim());
+                            final lng = double.parse(coordinates[1].trim());
+
+                            markers.add(
+                              Marker(
+                                point: LatLng(lat, lng),
+                                width: 40,
+                                height: 40,
+                                child: GestureDetector(
+                                  onTap: () =>
+                                      _showLaporanDetail(context, data),
+                                  child: Icon(
+                                    Icons.place,
+                                    color: data['status'] == 'Dalam Proses'
+                                        ? Colors.red
+                                        : Colors.green,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+
+                        return MarkerLayer(markers: markers);
+                      },
+                    ),
                   ],
                 ),
-
                 Positioned(
                   top: 50,
                   left: 0,
@@ -258,7 +301,6 @@ class _MapPageState extends State<MapPage> {
                     child: _buildCategoryFilter(),
                   ),
                 ),
-
                 Positioned(
                   right: 16,
                   bottom: 16,
@@ -331,6 +373,17 @@ class _MapPageState extends State<MapPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showLaporanDetail(BuildContext context, Map<String, dynamic> laporanData) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailBarangPage(
+          activityData: laporanData,
+        ),
       ),
     );
   }
