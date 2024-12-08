@@ -62,4 +62,13 @@ class LaporRepository {
       throw Exception('Gagal mengupdate laporan: ${e.toString()}');
     }
   }
+
+  Future<void> completeLapor(String id, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection('laporan').doc(id).update(data);
+    } catch (e) {
+      print('Error completing report: $e');
+      throw Exception('Gagal menyelesaikan laporan: ${e.toString()}');
+    }
+  }
 }

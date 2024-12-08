@@ -5,6 +5,10 @@ import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/components.dart';
 
 class DoneFormPage extends StatefulWidget {
+  final String laporId;
+
+  const DoneFormPage({Key? key, required this.laporId}) : super(key: key);
+
   @override
   _DoneFormPageState createState() => _DoneFormPageState();
 }

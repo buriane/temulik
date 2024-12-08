@@ -17,6 +17,7 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
   LaporBloc(this._repository) : super(LaporInitial()) {
     on<SubmitLaporEvent>(_onSubmitLapor);
     on<UpdateLaporEvent>(_onUpdateLapor);
+    on<CompleteLaporEvent>(_onCompleteLapor);
   }
 
   Future<void> _onSubmitLapor(
@@ -111,6 +112,41 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
 
       // Update ke Firestore
       await _repository.updateLapor(event.id, updatedData);
+      emit(LaporSuccess());
+    } catch (e) {
+      emit(LaporError(e.toString()));
+    }
+  }
+
+  Future<void> _onCompleteLapor(
+      CompleteLaporEvent event, Emitter<LaporState> emit) async {
+    emit(LaporLoading());
+    try {
+      // Upload evidence images if they're not already URLs
+      List<String> finalImageUrls = [];
+      for (String path in event.evidenceImageUrls) {
+        if (!path.startsWith('http')) {
+          // Upload new image
+          final imageUrl = await _repository.uploadImage(path);
+          finalImageUrls.add(imageUrl);
+        } else {
+          // Keep existing URL
+          finalImageUrls.add(path);
+        }
+      }
+
+      final completionData = {
+        'status': 'Selesai',
+        'pahlawan': event.pahlawan,
+        'evidenceImageUrls': finalImageUrls,
+        'tanggalSelesai': event.tanggalSelesai.toIso8601String(),
+        'waktuSelesai':
+            '${event.waktuSelesai.hour.toString().padLeft(2, '0')}:${event.waktuSelesai.minute.toString().padLeft(2, '0')}',
+        'jenisPenemu': event.jenisPenemu,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      await _repository.completeLapor(event.id, completionData);
       emit(LaporSuccess());
     } catch (e) {
       emit(LaporError(e.toString()));

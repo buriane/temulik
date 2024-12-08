@@ -165,7 +165,10 @@ class DetailBarangPage extends StatelessWidget {
             DoneButton(onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DoneFormPage()),
+                MaterialPageRoute(
+                    builder: (context) => DoneFormPage(
+                          laporId: activityData['id'],
+                        )),
               );
             }),
             const SizedBox(height: 12.0),
