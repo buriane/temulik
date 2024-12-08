@@ -147,21 +147,25 @@ class _EditFormPageState extends State<EditFormPage> {
           Navigator.of(context).pop(); // tutup loading
           showDialog(
             context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return SuccessDialog(
-                onOkPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(initialIndex: 3),
-                    ),
-                    (route) => false,
-                  );
-                },
-              );
-            },
+            builder: (context) => SuccessDialog(
+              title: 'Berhasil!',
+              message: 'Laporan berhasil diubah',
+              iconColor: AppColors.green,
+              iconBackgroundColor: AppColors.green,
+              buttonColor: AppColors.green,
+              buttonText: 'Kembali',
+              icon: Icons.thumb_up,
+              onOkPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(initialIndex: 3),
+                  ),
+                  (route) => false,
+                );
+              },
+            ),
           );
         } else if (state is LaporError) {
           Navigator.of(context).pop(); // tutup loading

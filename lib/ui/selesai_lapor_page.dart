@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/repositories/lapor_repository.dart';
 import 'package:temulik/ui/components/components.dart';
+import 'package:temulik/ui/home_page.dart';
 
 class DoneFormPage extends StatefulWidget {
   final String laporId;
@@ -19,10 +23,82 @@ class _DoneFormPageState extends State<DoneFormPage> {
   List<String> _selectedImagesPath = [];
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  Map<String, dynamic>? _selectedUser;
 
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> users = [];
   bool isLoading = false;
+  bool _isSubmitting = false;
+
+  late final LaporBloc _laporBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _laporBloc = LaporBloc(LaporRepository(
+      FirebaseFirestore.instance,
+      FirebaseStorage.instance,
+    ));
+
+    _laporBloc.stream.listen((state) {
+      if (state is LaporLoading) {
+        setState(() {
+          _isSubmitting = true;
+        });
+      } else if (state is LaporSuccess) {
+        setState(() {
+          _isSubmitting = false;
+        });
+
+        // Pastikan context masih valid
+        if (!mounted) return;
+
+        // Tunda sebentar untuk memastikan state sudah diupdate
+        Future.delayed(Duration.zero, () {
+          showDialog(
+            context: context,
+            barrierDismissible:
+                false, // Prevent dialog from being dismissed by tapping outside
+            builder: (BuildContext context) => SuccessDialog(
+              title: 'Berhasil!',
+              message: 'Laporan berhasil diselesaikan.',
+              iconColor: AppColors.green,
+              iconBackgroundColor: AppColors.lightGreen,
+              buttonColor: AppColors.green,
+              buttonText: 'OK',
+              icon: Icons.thumb_up,
+              onOkPressed: () {
+                Navigator.of(context).pop(); // Pop dialog
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(initialIndex: 3),
+                  ),
+                  (route) => false,
+                );
+              },
+            ),
+          );
+        });
+      } else if (state is LaporError) {
+        setState(() {
+          _isSubmitting = false;
+        });
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.errorMessage)),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _laporBloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,14 +131,112 @@ class _DoneFormPageState extends State<DoneFormPage> {
                 padding: const EdgeInsets.symmetric(
                     horizontal: 20.0, vertical: 16.0),
               ),
-              onPressed: () {},
-              child: Text(
-                'Selesai',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-              ),
+              onPressed: _isSubmitting
+                  ? null
+                  : () {
+                      if (!_isChecked) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Harap setujui syarat & ketentuan terlebih dahulu')),
+                        );
+                        return;
+                      }
+
+                      if (_selectedPenemu == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Harap pilih jenis penemu')),
+                        );
+                        return;
+                      }
+
+                      if (_selectedImagesPath.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Harap lampirkan bukti penemuan barang')),
+                        );
+                        return;
+                      }
+
+                      if (_selectedDate == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Harap pilih tanggal penemuan')),
+                        );
+                        return;
+                      }
+
+                      if (_selectedTime == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Harap pilih waktu penemuan')),
+                        );
+                        return;
+                      }
+
+                      // Handle pahlawan berdasarkan jenis penemu
+                      String pahlawan = '';
+                      if (_selectedPenemu == 'Unsoed') {
+                        if (_selectedUser == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Harap pilih penemu Unsoed')),
+                          );
+                          return;
+                        }
+                        pahlawan = _selectedUser!['id'];
+                      }
+
+                      // Debug print untuk mengecek nilai
+                      print('Submitting form with:');
+                      print('Lapor ID: ${widget.laporId}');
+                      print('Pahlawan: $pahlawan');
+                      print('Jenis Penemu: $_selectedPenemu');
+                      print('Selected User: $_selectedUser');
+                      print('Images: $_selectedImagesPath');
+                      print('Date: $_selectedDate');
+                      print('Time: $_selectedTime');
+
+                      setState(() {
+                        _isSubmitting = true;
+                      });
+
+                      try {
+                        _laporBloc.add(CompleteLaporEvent(
+                          id: widget.laporId,
+                          pahlawan: pahlawan,
+                          evidenceImageUrls: _selectedImagesPath,
+                          tanggalSelesai: _selectedDate!,
+                          waktuSelesai: _selectedTime!,
+                          jenisPenemu: _selectedPenemu!,
+                        ));
+                      } catch (e) {
+                        setState(() {
+                          _isSubmitting = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e')),
+                        );
+                      }
+                    },
+              child: _isSubmitting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Selesai',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -94,6 +268,7 @@ class _DoneFormPageState extends State<DoneFormPage> {
                                 if (value == "non-Unsoed") {
                                   searchController.clear();
                                   users = [];
+                                  _selectedUser = null; // Reset selected user
                                 }
                               });
                             },
@@ -174,7 +349,11 @@ class _DoneFormPageState extends State<DoneFormPage> {
                     onUserSelected: (user) {
                       print(
                           'Selected user: ${user['fullName']} (${user['email']})');
-                      setState(() => users = []);
+                      setState(() {
+                        _selectedUser = user;
+                        searchController.text = user['fullName'];
+                        users = [];
+                      });
                     },
                   ),
                   SizedBox(height: 16),

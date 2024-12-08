@@ -1232,8 +1232,25 @@ class _PinPointInputState extends State<PinPointInput> {
 
 class SuccessDialog extends StatelessWidget {
   final VoidCallback onOkPressed;
+  final String title;
+  final String message;
+  final Color? iconColor;
+  final Color? iconBackgroundColor;
+  final Color? buttonColor;
+  final String buttonText;
+  final IconData icon;
 
-  const SuccessDialog({Key? key, required this.onOkPressed}) : super(key: key);
+  const SuccessDialog({
+    Key? key,
+    required this.onOkPressed,
+    this.title = 'Sukses!',
+    this.message = 'Operasi berhasil dilakukan',
+    this.iconColor,
+    this.iconBackgroundColor,
+    this.buttonColor,
+    this.buttonText = 'OK',
+    this.icon = Icons.check_circle,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -1260,33 +1277,34 @@ class SuccessDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Success Icon
+            // Icon Container
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.lightGreen,
+                color: iconBackgroundColor ?? AppColors.lightGreen,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.check_circle,
-                color: AppColors.green,
+                icon,
+                color: iconColor ?? AppColors.green,
                 size: 48,
               ),
             ),
             const SizedBox(height: 24),
             // Title
             Text(
-              'Sukses!',
+              title,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppColors.darkest,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             // Message
             Text(
-              'Laporan berhasil dikirim',
+              message,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -1294,12 +1312,12 @@ class SuccessDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            // OK Button
+            // Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.green,
+                  backgroundColor: buttonColor ?? AppColors.green,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1308,9 +1326,9 @@ class SuccessDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 onPressed: onOkPressed,
-                child: const Text(
-                  'OK',
-                  style: TextStyle(
+                child: Text(
+                  buttonText,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1491,20 +1509,20 @@ class UserSearchDropdown extends StatelessWidget {
   final String label;
   final String hintText;
   final TextEditingController controller;
-  final Function(String) onSearch;
-  final Function(Map<String, dynamic>) onUserSelected;
   final List<Map<String, dynamic>> users;
   final bool isLoading;
+  final Function(String) onSearch;
+  final Function(Map<String, dynamic>) onUserSelected;
 
   const UserSearchDropdown({
     Key? key,
     required this.label,
     required this.hintText,
     required this.controller,
+    required this.users,
+    required this.isLoading,
     required this.onSearch,
     required this.onUserSelected,
-    required this.users,
-    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -1514,32 +1532,18 @@ class UserSearchDropdown extends StatelessWidget {
       children: [
         TextSmallMedium(text: label),
         Container(
-          margin: const EdgeInsets.only(top: 4),
+          margin: const EdgeInsets.only(top: 8.0),
           child: Column(
             children: [
               TextFormField(
                 controller: controller,
-                onChanged: (value) => onSearch(value.toLowerCase()),
+                onChanged: onSearch,
                 decoration: InputDecoration(
                   hintText: hintText,
                   hintStyle: const TextStyle(
                     color: AppColors.darkGrey,
                     fontSize: 16.0,
                   ),
-                  prefixIcon:
-                      const Icon(Icons.search, color: AppColors.darkGrey),
-                  suffixIcon: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.green,
-                            ),
-                          ),
-                        )
-                      : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppColors.grey),
@@ -1548,106 +1552,37 @@ class UserSearchDropdown extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     borderSide: const BorderSide(color: AppColors.green),
                   ),
+                  suffixIcon: isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
               ),
               if (users.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.only(top: 4),
-                  constraints: const BoxConstraints(maxHeight: 200),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: AppColors.grey),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: ListView.builder(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: users.length,
                     itemBuilder: (context, index) {
                       final user = users[index];
-                      return InkWell(
-                        onTap: () {
-                          onUserSelected(user);
-                          controller.text = user['fullName'] ?? '';
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            border: index < users.length - 1
-                                ? const Border(
-                                    bottom: BorderSide(
-                                      color: AppColors.grey,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          child: Row(
-                            children: [
-                              if (user['photoUrl'] != null)
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: NetworkImage(user['photoUrl']),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                )
-                              else
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.grey,
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.person,
-                                      color: AppColors.darkGrey,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      user['fullName'] ?? 'Unnamed User',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.darkest,
-                                      ),
-                                    ),
-                                    if (user['email'] != null)
-                                      Text(
-                                        user['email'],
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.darkGrey,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      return ListTile(
+                        title: Text(user['fullName'] ?? ''),
+                        subtitle: Text(user['email'] ?? ''),
+                        onTap: () => onUserSelected(user),
                       );
                     },
                   ),

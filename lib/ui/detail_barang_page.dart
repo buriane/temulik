@@ -62,8 +62,10 @@ class DetailBarangPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Detail Barang Hilang',
+        title: Text(
+          activityData['tipe'] == 'kehilangan'
+              ? 'Detail Barang Hilang'
+              : 'Detail Barang Temuan',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

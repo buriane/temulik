@@ -105,7 +105,7 @@ class CompleteLaporEvent extends LaporEvent {
   final TimeOfDay waktuSelesai;
   final String jenisPenemu;
 
-  const CompleteLaporEvent({
+  CompleteLaporEvent({
     required this.id,
     required this.pahlawan,
     required this.evidenceImageUrls,
@@ -113,14 +113,4 @@ class CompleteLaporEvent extends LaporEvent {
     required this.waktuSelesai,
     required this.jenisPenemu,
   });
-
-  @override
-  List<Object> get props => [
-        id,
-        pahlawan,
-        evidenceImageUrls,
-        tanggalSelesai,
-        waktuSelesai,
-        jenisPenemu
-      ];
 }
