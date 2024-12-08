@@ -144,16 +144,15 @@ class DetailBarangPage extends StatelessWidget {
 
     return Column(
       children: [
-        WhatsappButton(phoneNumber: activityData['noWhatsapp']),
-        const SizedBox(height: 12.0),
         if (isOwner) ...[
           EditButton(onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => EditFormPage(
-                        activityData: activityData,
-                      )),
+                builder: (context) => EditFormPage(
+                  activityData: activityData,
+                ),
+              ),
             );
           }),
           const SizedBox(height: 12.0),
@@ -171,6 +170,8 @@ class DetailBarangPage extends StatelessWidget {
             );
           }),
         ] else ...[
+          WhatsappButton(phoneNumber: activityData['noWhatsapp']),
+          const SizedBox(height: 12.0),
           AjukanButton(onPressed: () {
             // TODO: Implement claim logic
           }),
