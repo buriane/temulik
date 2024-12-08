@@ -197,7 +197,6 @@ class WhatsappButton extends StatelessWidget {
         }
       }
     } catch (e) {
-      print('Error launching WhatsApp: $e'); // Debug log
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -395,7 +394,6 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
       height: widget.height,
       child: Stack(
         children: [
-          // Image Slideshow
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -418,7 +416,6 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
             },
           ),
 
-          // Indicator
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -465,11 +462,9 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
 class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final VoidCallback? onSubmit; // Tambahkan parameter onSubmit
+  final VoidCallback? onSubmit;
 
-  const LaporAppBar(
-      {super.key, required this.title, this.onSubmit // Tambahkan ke konstruktor
-      });
+  const LaporAppBar({super.key, required this.title, this.onSubmit});
 
   @override
   Widget build(BuildContext context) {
@@ -492,15 +487,13 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: ElevatedButton(
-            onPressed: onSubmit, // Gunakan onSubmit yang diterima
+            onPressed: onSubmit,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors
-                  .blue, // Bisa diganti dengan AppColors.green sesuai keinginan
+              backgroundColor: AppColors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(64.0),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             ),
             child: TextSmallMedium(
               text: 'Kirim',
@@ -823,9 +816,9 @@ class TimePickerForm extends StatelessWidget {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.light(
-                      primary: AppColors.green, // Aksen utama
-                      onPrimary: Colors.white, // Warna teks pada aksen utama
-                      onSurface: AppColors.dark, // Warna teks pada permukaan
+                      primary: AppColors.green,
+                      onPrimary: Colors.white,
+                      onSurface: AppColors.dark,
                     ),
                   ),
                   child: child!,
@@ -869,8 +862,7 @@ class TimePickerForm extends StatelessWidget {
 class ImagePickerForm extends StatefulWidget {
   final String label;
   final String hintText;
-  final List<String>
-      imagePaths; // Can contain both local paths and Firebase URLs
+  final List<String> imagePaths;
   final Function(List<String>) onImagesSelected;
   final VoidCallback? onTap;
 
@@ -1147,8 +1139,6 @@ class _PinPointInputState extends State<PinPointInput> {
   Future<void> _initializeLocation() async {
     if (!_isInitialized && widget.controller.text.isNotEmpty) {
       try {
-        // Parse the location string from controller
-        // Expected format: "latitude,longitude"
         final parts = widget.controller.text.split(',');
         if (parts.length == 2) {
           final lat = double.parse(parts[0].trim());
@@ -1178,7 +1168,6 @@ class _PinPointInputState extends State<PinPointInput> {
     if (result != null && mounted) {
       setState(() {
         _selectedLocation = result['location'] as LatLng;
-        // Update the controller with the new location
         widget.controller.text =
             '${_selectedLocation!.latitude},${_selectedLocation!.longitude}';
       });
