@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:latlong2/latlong.dart';
+import 'package:temulik/models/faculty.dart';
 import 'package:temulik/ui/pin_map_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -1314,6 +1318,168 @@ class SuccessDialog extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class MapButtons extends StatelessWidget {
+  final MapController mapController;
+  final MapState state;
+  final BuildContext context;
+
+  const MapButtons({
+    super.key,
+    required this.mapController,
+    required this.state,
+    required this.context,
+  });
+
+  void _showAccuracyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Petunjuk Meningkatkan Akurasi'),
+        content: const Text(
+          '1. Pastikan GPS/Location Services aktif\n'
+          '2. Izinkan akses lokasi di browser\n'
+          '3. Gunakan browser Chrome terbaru\n'
+          '4. Jika menggunakan WiFi, coba gunakan koneksi data seluler\n'
+          '5. Tunggu beberapa saat sampai akurasi meningkat',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 16,
+      bottom: 16,
+      child: Column(
+        children: [
+          if (state.showCompass)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: FloatingActionButton(
+                backgroundColor: Colors.white,
+                onPressed: () {
+                  mapController.rotate(0);
+                  context.read<MapBloc>().add(ToggleCompassEvent(false));
+                  context.read<MapBloc>().add(UpdateBearingEvent(0));
+                },
+                child: Transform.rotate(
+                  angle: state.bearing * (3.141592653589793 / 180),
+                  child: Icon(
+                    Icons.explore,
+                    color: AppColors.dark,
+                  ),
+                ),
+              ),
+            ),
+          FloatingActionButton(
+            backgroundColor: AppColors.blue,
+            onPressed: () {
+              context.read<MapBloc>().add(UpdateLocationEvent());
+              if (!state.isHighAccuracy) {
+                _showAccuracyDialog(context);
+              }
+              if (state.currentLocation != null) {
+                mapController.move(state.currentLocation!, 15);
+              }
+            },
+            child: state.isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(
+                    Icons.my_location,
+                    color: Colors.white,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FacultyFilter extends StatelessWidget {
+  final List<String> selectedCategories;
+  final Function(String, bool) onFacultySelected;
+  final MapController mapController;
+  final BuildContext context;
+  final bool singleSelect;
+
+  const FacultyFilter({
+    super.key,
+    required this.selectedCategories,
+    required this.onFacultySelected,
+    required this.mapController,
+    required this.context,
+    this.singleSelect = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 50,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          height: 50,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: Faculty.unsoedFaculties.length,
+            itemBuilder: (context, index) {
+              final faculty = Faculty.unsoedFaculties[index];
+              final isSelected = selectedCategories.contains(faculty.name);
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilterChip(
+                  label: Text(faculty.name),
+                  selected: isSelected,
+                  onSelected: (bool value) {
+                    final facultyLocation = LatLng(faculty.latitude, faculty.longitude);
+                    mapController.move(facultyLocation, 17);
+                    onFacultySelected(faculty.name, value);
+                    
+                    if (!singleSelect) {
+                      context.read<MapBloc>().add(
+                        FilterFacultiesEvent(selectedCategories),
+                      );
+                    }
+                  },
+                  selectedColor: AppColors.blue.withOpacity(0.2),
+                  checkmarkColor: AppColors.blue,
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

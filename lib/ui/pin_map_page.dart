@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/services/geolocation_mobile.dart';
-import 'package:temulik/models/faculty.dart';
+import 'package:temulik/ui/components/components.dart';
 
 class PinMapPage extends StatefulWidget {
   final LatLng? initialLocation;
@@ -32,42 +32,9 @@ class _PinMapPageState extends State<PinMapPage> {
     super.initState();
     _selectedFaculty = widget.selectedFaculty;
     
-    // If initial location is provided, use it
     if (widget.initialLocation != null) {
       _currentLocation = widget.initialLocation;
     }
-  }
-
-  Widget _buildCategoryFilter() {
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: Faculty.unsoedFaculties.length,
-        itemBuilder: (context, index) {
-          final faculty = Faculty.unsoedFaculties[index];
-          final isSelected = _selectedFaculty == faculty.name;
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: FilterChip(
-              label: Text(faculty.name),
-              selected: isSelected,
-              onSelected: (bool value) {
-                setState(() {
-                  _selectedFaculty = value ? faculty.name : null;
-                  final facultyLocation = 
-                      LatLng(faculty.latitude, faculty.longitude);
-                  _mapController.move(facultyLocation, 17);
-                });
-              },
-              selectedColor: AppColors.blue.withOpacity(0.2),
-              checkmarkColor: AppColors.blue,
-            ),
-          );
-        },
-      ),
-    );
   }
 
   @override
@@ -78,7 +45,6 @@ class _PinMapPageState extends State<PinMapPage> {
       child: BlocConsumer<MapBloc, MapState>(
         listener: (context, state) {
           if (state.currentLocation != null) {
-            // If no initial location was provided, use current location
             if (_currentLocation == null) {
               _currentLocation = state.currentLocation;
               _mapController.move(state.currentLocation!, 15);
@@ -121,8 +87,6 @@ class _PinMapPageState extends State<PinMapPage> {
                     ),
                   ],
                 ),
-
-                // Pinpoint in center of screen
                 const Center(
                   child: Icon(
                     Icons.place,
@@ -130,23 +94,22 @@ class _PinMapPageState extends State<PinMapPage> {
                     size: 50,
                   ),
                 ),
-
-                Positioned(
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildCategoryFilter(),
-                  ),
+                FacultyFilter(
+                  selectedCategories: _selectedFaculty != null ? [_selectedFaculty!] : [],
+                  onFacultySelected: (facultyName, value) {
+                    setState(() {
+                      _selectedFaculty = value ? facultyName : null;
+                    });
+                  },
+                  mapController: _mapController,
+                  context: context,
+                  singleSelect: true,
                 ),
-
                 Positioned(
                   right: 16,
                   bottom: 16,
                   child: Column(
                     children: [
-                      // Location Button
                       FloatingActionButton(
                         backgroundColor: AppColors.blue,
                         onPressed: () {
@@ -175,6 +138,11 @@ class _PinMapPageState extends State<PinMapPage> {
                     ],
                   ),
                 ),
+                MapButtons(
+                  mapController: _mapController,
+                  state: state,
+                  context: context
+                ),
               ],
             ),
             bottomSheet: Container(
@@ -182,7 +150,6 @@ class _PinMapPageState extends State<PinMapPage> {
               padding: const EdgeInsets.all(16),
               child: ElevatedButton(
                 onPressed: () {
-                  // Return selected location and faculty
                   final selectedLocation = _mapController.camera.center;
                   Navigator.pop(context, {
                     'location': selectedLocation,

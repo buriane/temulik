@@ -8,6 +8,7 @@ import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/services/geolocation_mobile.dart';
 import 'package:temulik/models/faculty.dart';
+import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/detail_barang_page.dart';
 
 class MapPage extends StatefulWidget {
@@ -33,66 +34,6 @@ class _MapPageState extends State<MapPage> {
             );
       }
     });
-  }
-
-  void _showAccuracyDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Petunjuk Meningkatkan Akurasi'),
-        content: const Text(
-          '1. Pastikan GPS/Location Services aktif\n'
-          '2. Izinkan akses lokasi di browser\n'
-          '3. Gunakan browser Chrome terbaru\n'
-          '4. Jika menggunakan WiFi, coba gunakan koneksi data seluler\n'
-          '5. Tunggu beberapa saat sampai akurasi meningkat',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryFilter() {
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: Faculty.unsoedFaculties.length,
-        itemBuilder: (context, index) {
-          final faculty = Faculty.unsoedFaculties[index];
-          final isSelected = _selectedCategories.contains(faculty.name);
-
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: FilterChip(
-              label: Text(faculty.name),
-              selected: isSelected,
-              onSelected: (bool value) {
-                setState(() {
-                  _selectedCategories.clear();
-                  if (value) {
-                    _selectedCategories.add(faculty.name);
-                  }
-                  final facultyLocation =
-                      LatLng(faculty.latitude, faculty.longitude);
-                  _mapController.move(facultyLocation, 17);
-                  context.read<MapBloc>().add(
-                        FilterFacultiesEvent(_selectedCategories),
-                      );
-                });
-              },
-              selectedColor: AppColors.blue.withOpacity(0.2),
-              checkmarkColor: AppColors.blue,
-            ),
-          );
-        },
-      ),
-    );
   }
 
   @override
@@ -291,82 +232,23 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ],
                 ),
-                Positioned(
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildCategoryFilter(),
-                  ),
+                FacultyFilter(
+                  selectedCategories: _selectedCategories,
+                  onFacultySelected: (facultyName, value) {
+                    setState(() {
+                      _selectedCategories.clear();
+                      if (value) {
+                        _selectedCategories.add(facultyName);
+                      }
+                    });
+                  },
+                  mapController: _mapController,
+                  context: context,
                 ),
-                Positioned(
-                  right: 16,
-                  bottom: 16,
-                  child: Column(
-                    children: [
-                      if (state.showCompass)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: FloatingActionButton(
-                            backgroundColor: Colors.white,
-                            onPressed: () {
-                              _mapController.rotate(0);
-                              context
-                                  .read<MapBloc>()
-                                  .add(ToggleCompassEvent(false));
-                              context
-                                  .read<MapBloc>()
-                                  .add(UpdateBearingEvent(0));
-                            },
-                            child: Transform.rotate(
-                              angle: state.bearing * (3.141592653589793 / 180),
-                              child: Icon(
-                                Icons.explore,
-                                color: AppColors.dark,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                      // Location Button
-                      FloatingActionButton(
-                        backgroundColor: AppColors.blue,
-                        onPressed: () {
-                          context.read<MapBloc>().add(UpdateLocationEvent());
-                          if (!state.isHighAccuracy) {
-                            _showAccuracyDialog();
-                          }
-                          if (state.currentLocation != null) {
-                            _mapController.move(state.currentLocation!, 15);
-                          }
-                        },
-                        child: state.isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Icon(
-                                Icons.my_location,
-                                color: Colors.white,
-                              ),
-                      ),
-                    ],
-                  ),
+                MapButtons(
+                  mapController: _mapController,
+                  state: state,
+                  context: context
                 ),
               ],
             ),

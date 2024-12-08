@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/repositories/lapor_repository.dart';
+import 'package:temulik/ui/complete_profile_page.dart';
 import 'package:temulik/ui/home_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import 'app_theme.dart';
@@ -19,7 +20,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Inisialisasi Firebase instances
   final firestore = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
 
@@ -60,7 +60,25 @@ class MainApp extends StatelessWidget {
             fontFamily: 'DMSans',
           ),
         ),
-        home: HomePage(),
+         home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (state is AuthAuthenticated) {
+              return const HomePage();
+            } else if (state is AuthNeedsProfile) {
+              return CompleteProfilePage();
+            } else if (state is AuthError) {
+              return LoginPage(error: state.message);
+            } else {
+              return const LoginPage();
+            }
+          },
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );
