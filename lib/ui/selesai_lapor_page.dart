@@ -3,12 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:file_picker/file_picker.dart';
 
-class FormPage extends StatefulWidget {
+class DoneFormPage extends StatefulWidget {
   @override
-  _FormPageState createState() => _FormPageState();
+  _DoneFormPageState createState() => _DoneFormPageState();
 }
 
-class _FormPageState extends State<FormPage> {
+class _DoneFormPageState extends State<DoneFormPage> {
   String? _selectedPenemu;
   bool _isChecked = false;
   String? _selectedFileName;

@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
-import 'package:temulik/ui/components/batal_pencarian_components.dart';
+import 'package:temulik/ui/batal_lapor_page.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/edit_form_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
-import 'package:temulik/ui/components/form_selesai_components.dart';
+import 'package:temulik/ui/selesai_lapor_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailBarangPage extends StatelessWidget {
@@ -160,7 +160,7 @@ class DetailBarangPage extends StatelessWidget {
           DoneButton(onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FormPage()),
+              MaterialPageRoute(builder: (context) => DoneFormPage()),
             );
           }),
           const SizedBox(height: 12.0),

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/activity_components.dart';
-import 'package:temulik/ui/components/datas.dart';
 
 class ActivityPage extends StatelessWidget {
   const ActivityPage({super.key});
@@ -56,7 +55,7 @@ class ActivityContent extends StatelessWidget {
                   .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              print('Error: ${snapshot.error}'); // Tambahkan debugging
+              print('Error: ${snapshot.error}');
               return Center(child: Text('Error: ${snapshot.error}'));
             }
 
@@ -65,7 +64,7 @@ class ActivityContent extends StatelessWidget {
             }
 
             final documents = snapshot.data?.docs ?? [];
-            print('Jumlah dokumen: ${documents.length}'); // Tambahkan debugging
+            print('Jumlah dokumen: ${documents.length}');
 
             if (documents.isEmpty) {
               return const Center(child: Text('Tidak ada data'));
@@ -73,12 +72,12 @@ class ActivityContent extends StatelessWidget {
 
             return ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 40.0),
               itemCount: documents.length,
               itemBuilder: (context, index) {
                 final data = documents[index].data() as Map<String, dynamic>;
-                // Tambahkan ID dokumen ke data
                 data['id'] = documents[index].id;
-                print('Data $index: $data'); // Tambahkan debugging
+                print('Data $index: $data');
                 return ActivityCard(activityData: data);
               },
             );

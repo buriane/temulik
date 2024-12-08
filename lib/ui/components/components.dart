@@ -521,12 +521,14 @@ class InputForm extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final TextInputType keyboardType;
 
   const InputForm({
     super.key,
     required this.label,
     required this.hintText,
     required this.controller,
+    this.keyboardType = TextInputType.text,
     this.validator,
   });
 
@@ -537,6 +539,7 @@ class InputForm extends StatelessWidget {
       children: [
         TextSmallMedium(text: label),
         TextFormField(
+          keyboardType: keyboardType,
           controller: controller,
           validator: validator,
           decoration: InputDecoration(
@@ -743,6 +746,19 @@ class DatePickerForm extends StatelessWidget {
               initialDate: selectedDate ?? DateTime.now(),
               firstDate: DateTime(2000),
               lastDate: DateTime.now(),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: ColorScheme.light(
+                      primary: AppColors.green,
+                      onPrimary: Colors.white,
+                      onSurface: AppColors.dark,
+                      outline: AppColors.green,
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
             );
             if (picked != null && onChanged != null) {
               onChanged!(picked);
@@ -803,6 +819,18 @@ class TimePickerForm extends StatelessWidget {
             final TimeOfDay? picked = await showTimePicker(
               context: context,
               initialTime: selectedTime ?? TimeOfDay.now(),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: ColorScheme.light(
+                      primary: AppColors.green, // Aksen utama
+                      onPrimary: Colors.white, // Warna teks pada aksen utama
+                      onSurface: AppColors.dark, // Warna teks pada permukaan
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
             );
             if (picked != null && onChanged != null) {
               onChanged!(picked);
@@ -1205,6 +1233,100 @@ class _PinPointInputState extends State<PinPointInput> {
           ),
         ],
       ],
+    );
+  }
+}
+
+class SuccessDialog extends StatelessWidget {
+  final VoidCallback onOkPressed;
+
+  const SuccessDialog({Key? key, required this.onOkPressed}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 340),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              offset: const Offset(0, 4),
+              blurRadius: 12,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Success Icon
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.lightGreen,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.check_circle,
+                color: AppColors.green,
+                size: 48,
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Title
+            Text(
+              'Sukses!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.darkest,
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Message
+            Text(
+              'Laporan berhasil dikirim',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: AppColors.dark.withOpacity(0.8),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // OK Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: onOkPressed,
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
