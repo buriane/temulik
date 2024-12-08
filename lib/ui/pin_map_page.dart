@@ -12,11 +12,7 @@ class PinMapPage extends StatefulWidget {
   final LatLng? initialLocation;
   final String? selectedFaculty;
 
-  const PinMapPage({
-    super.key, 
-    this.initialLocation, 
-    this.selectedFaculty
-  });
+  const PinMapPage({super.key, this.initialLocation, this.selectedFaculty});
 
   @override
   State<PinMapPage> createState() => _PinMapPageState();
@@ -31,7 +27,7 @@ class _PinMapPageState extends State<PinMapPage> {
   void initState() {
     super.initState();
     _selectedFaculty = widget.selectedFaculty;
-    
+
     if (widget.initialLocation != null) {
       _currentLocation = widget.initialLocation;
     }
@@ -95,7 +91,8 @@ class _PinMapPageState extends State<PinMapPage> {
                   ),
                 ),
                 FacultyFilter(
-                  selectedCategories: _selectedFaculty != null ? [_selectedFaculty!] : [],
+                  selectedCategories:
+                      _selectedFaculty != null ? [_selectedFaculty!] : [],
                   onFacultySelected: (facultyName, value) {
                     setState(() {
                       _selectedFaculty = value ? facultyName : null;
@@ -139,16 +136,22 @@ class _PinMapPageState extends State<PinMapPage> {
                   ),
                 ),
                 MapButtons(
-                  mapController: _mapController,
-                  state: state,
-                  context: context
-                ),
+                    mapController: _mapController,
+                    state: state,
+                    context: context),
               ],
             ),
             bottomSheet: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
                 onPressed: () {
                   final selectedLocation = _mapController.camera.center;
                   Navigator.pop(context, {

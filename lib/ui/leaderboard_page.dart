@@ -67,7 +67,10 @@ class LeaderboardContent extends StatelessWidget {
               future: _getLeaderboardData(), // Ambil data leaderboard
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: AppColors.green,
+                  ));
                 }
 
                 if (snapshot.hasError) {

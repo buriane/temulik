@@ -56,19 +56,69 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
   }
 
   bool _validateForm() {
-    if (_selectedImages == null) {
+    String? errorMessage;
+
+    // Validasi Nama Barang
+    if (_namaBarangController.text.isEmpty) {
+      errorMessage = 'Nama barang tidak boleh kosong';
+    }
+    // Validasi Kategori
+    else if (selectedValue == null) {
+      errorMessage = 'Silakan pilih kategori';
+    }
+    // Validasi Deskripsi
+    else if (_deskripsiController.text.isEmpty) {
+      errorMessage = 'Deskripsi barang tidak boleh kosong';
+    }
+    // Validasi Foto
+    else if (_selectedImages.isEmpty) {
+      errorMessage = 'Silakan unggah foto barang';
+    }
+    // Validasi Tanggal
+    else if (_selectedDate == null) {
+      errorMessage = 'Silakan pilih tanggal penemuan';
+    }
+    // Validasi Waktu
+    else if (_selectedTime == null) {
+      errorMessage = 'Silakan pilih waktu penemuan';
+    }
+    // Validasi Lokasi
+    else if (selectedValueFakultas == null) {
+      errorMessage = 'Silakan pilih lokasi fakultas';
+    }
+    // Validasi Pin Point
+    else if (_pinPointController.text.isEmpty) {
+      errorMessage = 'Silakan tentukan pin point lokasi';
+    }
+    // Validasi WhatsApp
+    else if (_noWhatsappController.text.isEmpty) {
+      errorMessage = 'Nomor WhatsApp tidak boleh kosong';
+    } else if (!RegExp(r'^08[0-9]{8,11}$')
+        .hasMatch(_noWhatsappController.text)) {
+      errorMessage = 'Format nomor WhatsApp tidak valid (contoh: 08xxxxxxxxxx)';
+    }
+    // Validasi Persetujuan
+    else if (!_isChecked) {
+      errorMessage =
+          'Anda harus menyetujui Syarat & Ketentuan serta Kebijakan Privasi';
+    }
+
+    // Jika ada error, tampilkan pesan
+    if (errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Silakan unggah foto barang')),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
       return false;
     }
-    if (selectedValue == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Silakan pilih kategori')),
-      );
-      return false;
-    }
-    // Validasi lainnya bisa ditambahkan
+
     return true;
   }
 
@@ -113,7 +163,10 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
           // Tutup loading dan tampilkan error
           Navigator.of(context).pop(); // Tutup loading dialog
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage)),
+            SnackBar(
+              content: Text(state.errorMessage),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       },

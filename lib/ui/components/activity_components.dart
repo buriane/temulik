@@ -304,7 +304,10 @@ class NameAndButton extends StatelessWidget {
                 return const SizedBox(
                   width: 10,
                   height: 10,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.green,
+                  ),
                 );
               }
 

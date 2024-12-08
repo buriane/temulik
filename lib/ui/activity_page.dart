@@ -60,7 +60,9 @@ class ActivityContent extends StatelessWidget {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.green),
+              );
             }
 
             final documents = snapshot.data?.docs ?? [];

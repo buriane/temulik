@@ -1043,6 +1043,7 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
                                     color: AppColors.grey.withOpacity(0.3),
                                     child: Center(
                                       child: CircularProgressIndicator(
+                                        color: AppColors.green,
                                         value: loadingProgress
                                                     .expectedTotalBytes !=
                                                 null
@@ -1479,7 +1480,12 @@ class FacultyFilter extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: FilterChip(
-                  label: Text(faculty.name),
+                  label: Text(
+                    faculty.name,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
+                  ),
                   selected: isSelected,
                   onSelected: (bool value) {
                     final facultyLocation =
@@ -1493,8 +1499,16 @@ class FacultyFilter extends StatelessWidget {
                           );
                     }
                   },
-                  selectedColor: AppColors.blue.withOpacity(0.2),
-                  checkmarkColor: AppColors.blue,
+                  selectedColor: AppColors.green,
+                  backgroundColor: Colors.white,
+                  showCheckmark: false,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  elevation: 4,
+                  shadowColor: Colors.black.withOpacity(0.8),
+                  pressElevation: 8,
+                  side: BorderSide.none,
                 ),
               );
             },
@@ -1594,3 +1608,4 @@ class UserSearchDropdown extends StatelessWidget {
     );
   }
 }
+
