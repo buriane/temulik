@@ -110,7 +110,9 @@ class DetailBarangPage extends StatelessWidget {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(
+            color: AppColors.green,
+          );
         }
 
         final userData = snapshot.data?.data() as Map<String, dynamic>? ?? {};

@@ -200,7 +200,9 @@ class ProfileAvatar extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: AppColors.green,
+                ),
               );
             }
 
@@ -217,6 +219,7 @@ class ProfileAvatar extends StatelessWidget {
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CircularProgressIndicator(
+                    color: AppColors.green,
                     value: loadingProgress.expectedTotalBytes != null
                         ? loadingProgress.cumulativeBytesLoaded /
                             loadingProgress.expectedTotalBytes!

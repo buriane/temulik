@@ -419,7 +419,6 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
               );
             },
           ),
-
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -497,7 +496,8 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(64.0),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             ),
             child: TextSmallMedium(
               text: 'Kirim',
@@ -1043,6 +1043,7 @@ class _ImagePickerFormState extends State<ImagePickerForm> {
                                     color: AppColors.grey.withOpacity(0.3),
                                     child: Center(
                                       child: CircularProgressIndicator(
+                                        color: AppColors.green,
                                         value: loadingProgress
                                                     .expectedTotalBytes !=
                                                 null
@@ -1461,21 +1462,35 @@ class FacultyFilter extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: FilterChip(
-                  label: Text(faculty.name),
+                  label: Text(
+                    faculty.name,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
+                  ),
                   selected: isSelected,
                   onSelected: (bool value) {
-                    final facultyLocation = LatLng(faculty.latitude, faculty.longitude);
+                    final facultyLocation =
+                        LatLng(faculty.latitude, faculty.longitude);
                     mapController.move(facultyLocation, 17);
                     onFacultySelected(faculty.name, value);
-                    
+
                     if (!singleSelect) {
                       context.read<MapBloc>().add(
-                        FilterFacultiesEvent(selectedCategories),
-                      );
+                            FilterFacultiesEvent(selectedCategories),
+                          );
                     }
                   },
-                  selectedColor: AppColors.blue.withOpacity(0.2),
-                  checkmarkColor: AppColors.blue,
+                  selectedColor: AppColors.green,
+                  backgroundColor: Colors.white,
+                  showCheckmark: false,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  elevation: 4,
+                  shadowColor: Colors.black.withOpacity(0.8),
+                  pressElevation: 8,
+                  side: BorderSide.none,
                 ),
               );
             },

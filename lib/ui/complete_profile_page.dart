@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:temulik/constants/colors.dart';
 import '../bloc/profile_bloc.dart';
 import 'home_page.dart';
 
@@ -284,12 +285,11 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Lengkapi Profil',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+        title: Text(
+          'Lengkapi Profil',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        centerTitle: false, // Ini akan membuat title berada di kiri
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
@@ -382,6 +382,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                             if (loadingProgress == null) return child;
                             return Center(
                               child: CircularProgressIndicator(
+                                color: AppColors.green,
                                 value: loadingProgress.expectedTotalBytes !=
                                         null
                                     ? loadingProgress.cumulativeBytesLoaded /

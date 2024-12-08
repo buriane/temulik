@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:temulik/constants/colors.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 import 'complete_profile_page.dart';
@@ -76,7 +77,9 @@ class LoginPage extends StatelessWidget {
                   Image.asset('assets/logo.png', width: 150, height: 150),
                   SizedBox(height: 60),
                   if (state is AuthLoading)
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                      color: AppColors.green,
+                    )
                   else
                     ElevatedButton(
                       child: Text(
@@ -88,7 +91,8 @@ class LoginPage extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       ),
                       onPressed: () {
                         context.read<AuthBloc>().add(SignInWithGoogle());
