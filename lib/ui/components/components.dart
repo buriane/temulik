@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:latlong2/latlong.dart';
+import 'package:temulik/models/faculty.dart';
 import 'package:temulik/ui/pin_map_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -197,7 +201,6 @@ class WhatsappButton extends StatelessWidget {
         }
       }
     } catch (e) {
-      print('Error launching WhatsApp: $e'); // Debug log
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -395,7 +398,6 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
       height: widget.height,
       child: Stack(
         children: [
-          // Image Slideshow
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -418,7 +420,6 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
             },
           ),
 
-          // Indicator
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -465,11 +466,9 @@ class _CustomImageSliderState extends State<CustomImageSlider> {
 
 class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final VoidCallback? onSubmit; // Tambahkan parameter onSubmit
+  final VoidCallback? onSubmit;
 
-  const LaporAppBar(
-      {super.key, required this.title, this.onSubmit // Tambahkan ke konstruktor
-      });
+  const LaporAppBar({super.key, required this.title, this.onSubmit});
 
   @override
   Widget build(BuildContext context) {
@@ -492,15 +491,13 @@ class LaporAppBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 20.0),
           child: ElevatedButton(
-            onPressed: onSubmit, // Gunakan onSubmit yang diterima
+            onPressed: onSubmit,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors
-                  .blue, // Bisa diganti dengan AppColors.green sesuai keinginan
+              backgroundColor: AppColors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(64.0),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
             ),
             child: TextSmallMedium(
               text: 'Kirim',
@@ -823,9 +820,9 @@ class TimePickerForm extends StatelessWidget {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     colorScheme: ColorScheme.light(
-                      primary: AppColors.green, // Aksen utama
-                      onPrimary: Colors.white, // Warna teks pada aksen utama
-                      onSurface: AppColors.dark, // Warna teks pada permukaan
+                      primary: AppColors.green,
+                      onPrimary: Colors.white,
+                      onSurface: AppColors.dark,
                     ),
                   ),
                   child: child!,
@@ -869,8 +866,7 @@ class TimePickerForm extends StatelessWidget {
 class ImagePickerForm extends StatefulWidget {
   final String label;
   final String hintText;
-  final List<String>
-      imagePaths; // Can contain both local paths and Firebase URLs
+  final List<String> imagePaths;
   final Function(List<String>) onImagesSelected;
   final VoidCallback? onTap;
 
@@ -1147,8 +1143,6 @@ class _PinPointInputState extends State<PinPointInput> {
   Future<void> _initializeLocation() async {
     if (!_isInitialized && widget.controller.text.isNotEmpty) {
       try {
-        // Parse the location string from controller
-        // Expected format: "latitude,longitude"
         final parts = widget.controller.text.split(',');
         if (parts.length == 2) {
           final lat = double.parse(parts[0].trim());
@@ -1178,7 +1172,6 @@ class _PinPointInputState extends State<PinPointInput> {
     if (result != null && mounted) {
       setState(() {
         _selectedLocation = result['location'] as LatLng;
-        // Update the controller with the new location
         widget.controller.text =
             '${_selectedLocation!.latitude},${_selectedLocation!.longitude}';
       });
@@ -1331,175 +1324,164 @@ class SuccessDialog extends StatelessWidget {
   }
 }
 
-class UserSearchDropdown extends StatelessWidget {
-  final String label;
-  final String hintText;
-  final TextEditingController controller;
-  final Function(String) onSearch;
-  final Function(Map<String, dynamic>) onUserSelected;
-  final List<Map<String, dynamic>> users;
-  final bool isLoading;
+class MapButtons extends StatelessWidget {
+  final MapController mapController;
+  final MapState state;
+  final BuildContext context;
 
-  const UserSearchDropdown({
-    Key? key,
-    required this.label,
-    required this.hintText,
-    required this.controller,
-    required this.onSearch,
-    required this.onUserSelected,
-    required this.users,
-    this.isLoading = false,
-  }) : super(key: key);
+  const MapButtons({
+    super.key,
+    required this.mapController,
+    required this.state,
+    required this.context,
+  });
+
+  void _showAccuracyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Petunjuk Meningkatkan Akurasi'),
+        content: const Text(
+          '1. Pastikan GPS/Location Services aktif\n'
+          '2. Izinkan akses lokasi di browser\n'
+          '3. Gunakan browser Chrome terbaru\n'
+          '4. Jika menggunakan WiFi, coba gunakan koneksi data seluler\n'
+          '5. Tunggu beberapa saat sampai akurasi meningkat',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextSmallMedium(text: label),
-        Container(
-          margin: const EdgeInsets.only(top: 4),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: controller,
-                onChanged: (value) => onSearch(value.toLowerCase()),
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  hintStyle: const TextStyle(
-                    color: AppColors.darkGrey,
-                    fontSize: 16.0,
+    return Positioned(
+      right: 16,
+      bottom: 16,
+      child: Column(
+        children: [
+          if (state.showCompass)
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  prefixIcon:
-                      const Icon(Icons.search, color: AppColors.darkGrey),
-                  suffixIcon: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.green,
-                            ),
-                          ),
-                        )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: AppColors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: AppColors.green),
+                ],
+              ),
+              child: FloatingActionButton(
+                backgroundColor: Colors.white,
+                onPressed: () {
+                  mapController.rotate(0);
+                  context.read<MapBloc>().add(ToggleCompassEvent(false));
+                  context.read<MapBloc>().add(UpdateBearingEvent(0));
+                },
+                child: Transform.rotate(
+                  angle: state.bearing * (3.141592653589793 / 180),
+                  child: Icon(
+                    Icons.explore,
+                    color: AppColors.dark,
                   ),
                 ),
               ),
-              if (users.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  constraints: const BoxConstraints(maxHeight: 200),
-                  decoration: BoxDecoration(
+            ),
+          FloatingActionButton(
+            backgroundColor: AppColors.blue,
+            onPressed: () {
+              context.read<MapBloc>().add(UpdateLocationEvent());
+              if (!state.isHighAccuracy) {
+                _showAccuracyDialog(context);
+              }
+              if (state.currentLocation != null) {
+                mapController.move(state.currentLocation!, 15);
+              }
+            },
+            child: state.isLoading
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(
+                    Icons.my_location,
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.grey),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      final user = users[index];
-                      return InkWell(
-                        onTap: () {
-                          onUserSelected(user);
-                          controller.text = user['fullName'] ?? '';
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            border: index < users.length - 1
-                                ? const Border(
-                                    bottom: BorderSide(
-                                      color: AppColors.grey,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          child: Row(
-                            children: [
-                              if (user['photoUrl'] != null)
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image: NetworkImage(user['photoUrl']),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                )
-                              else
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  margin: const EdgeInsets.only(right: 12),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.grey,
-                                  ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.person,
-                                      color: AppColors.darkGrey,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      user['fullName'] ?? 'Unnamed User',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.darkest,
-                                      ),
-                                    ),
-                                    if (user['email'] != null)
-                                      Text(
-                                        user['email'],
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: AppColors.darkGrey,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FacultyFilter extends StatelessWidget {
+  final List<String> selectedCategories;
+  final Function(String, bool) onFacultySelected;
+  final MapController mapController;
+  final BuildContext context;
+  final bool singleSelect;
+
+  const FacultyFilter({
+    super.key,
+    required this.selectedCategories,
+    required this.onFacultySelected,
+    required this.mapController,
+    required this.context,
+    this.singleSelect = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 50,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SizedBox(
+          height: 50,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: Faculty.unsoedFaculties.length,
+            itemBuilder: (context, index) {
+              final faculty = Faculty.unsoedFaculties[index];
+              final isSelected = selectedCategories.contains(faculty.name);
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FilterChip(
+                  label: Text(faculty.name),
+                  selected: isSelected,
+                  onSelected: (bool value) {
+                    final facultyLocation = LatLng(faculty.latitude, faculty.longitude);
+                    mapController.move(facultyLocation, 17);
+                    onFacultySelected(faculty.name, value);
+                    
+                    if (!singleSelect) {
+                      context.read<MapBloc>().add(
+                        FilterFacultiesEvent(selectedCategories),
                       );
-                    },
-                  ),
+                    }
+                  },
+                  selectedColor: AppColors.blue.withOpacity(0.2),
+                  checkmarkColor: AppColors.blue,
                 ),
-            ],
+              );
+            },
           ),
         ),
-      ],
+      ),
     );
   }
 }

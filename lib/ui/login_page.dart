@@ -6,6 +6,8 @@ import 'complete_profile_page.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatelessWidget {
+  final String? error;
+  const LoginPage({Key? key, this.error}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

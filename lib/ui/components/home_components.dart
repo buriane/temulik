@@ -12,6 +12,7 @@ import 'package:temulik/ui/components/setting_page_components.dart';
 import 'package:temulik/ui/kehilangan_form_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import '../../bloc/profile_bloc.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HomeContent extends StatelessWidget {
   final int selectedIndex;
@@ -175,56 +176,62 @@ class ProfileAvatar extends StatelessWidget {
   }
 
   Widget _buildProfileImage(ProfileState profileState) {
-    if (profileState is ProfileComplete &&
-        profileState.profile.photoUrl != null) {
-      return ClipOval(
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey[200], // Background color jika gambar loading
-          ),
-          child: Image.network(
-            profileState.profile.photoUrl!,
-            width: 44,
-            height: 44,
-            fit: BoxFit.cover,
-            headers: {
-              // If you have an auth token
-              'Authorization':
-                  'Bearer ${FirebaseAuth.instance.currentUser?.getIdToken()}',
-            },
-            loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              print('Detailed image loading error: $error');
-              print('Error stacktrace: $stackTrace');
-              return Icon(Icons.person, color: Colors.grey);
-            },
-          ),
-        ),
-      );
-    } else {
-      return Container(
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) {
+      return const Icon(Icons.person, color: Colors.grey);
+    }
+
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('users')
+        .child(userId)
+        .child('profile.jpg');
+
+    return ClipOval(
+      child: Container(
         width: 44,
         height: 44,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.grey[200],
         ),
-        child: Icon(Icons.person, color: Colors.grey),
-      );
-    }
+        child: FutureBuilder<String>(
+          future: storageRef.getDownloadURL(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (snapshot.hasError || !snapshot.hasData) {
+              return const Icon(Icons.person, color: Colors.grey);
+            }
+
+            return Image.network(
+              snapshot.data!,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.person, color: Colors.grey);
+              },
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
