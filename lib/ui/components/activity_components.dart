@@ -222,7 +222,7 @@ class ItemInfo extends StatelessWidget {
       children: [
         Text(
           namaBarang.length > 20
-              ? namaBarang.substring(0, 20) + '...'
+              ? namaBarang.substring(0, 18) + '...'
               : namaBarang,
           style: const TextStyle(
             fontSize: 16.0,

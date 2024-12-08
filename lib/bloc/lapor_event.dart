@@ -96,3 +96,31 @@ class UpdateLaporEvent extends LaporEvent {
         noWhatsapp,
       ];
 }
+
+class CompleteLaporEvent extends LaporEvent {
+  final String id;
+  final String pahlawan;
+  final List<String> evidenceImageUrls;
+  final DateTime tanggalSelesai;
+  final TimeOfDay waktuSelesai;
+  final String jenisPenemu;
+
+  const CompleteLaporEvent({
+    required this.id,
+    required this.pahlawan,
+    required this.evidenceImageUrls,
+    required this.tanggalSelesai,
+    required this.waktuSelesai,
+    required this.jenisPenemu,
+  });
+
+  @override
+  List<Object> get props => [
+        id,
+        pahlawan,
+        evidenceImageUrls,
+        tanggalSelesai,
+        waktuSelesai,
+        jenisPenemu
+      ];
+}
