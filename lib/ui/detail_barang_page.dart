@@ -141,39 +141,45 @@ class DetailBarangPage extends StatelessWidget {
   Widget _buildButtons(BuildContext context) {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     final isOwner = currentUserId == activityData['userId'];
+    final isSelesai = activityData['status'] == 'Selesai';
+    final isBatal = activityData['status'] == 'Batal';
 
     return Column(
       children: [
-        WhatsappButton(phoneNumber: activityData['noWhatsapp']),
-        const SizedBox(height: 12.0),
-        if (isOwner) ...[
-          EditButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => EditFormPage(
-                        activityData: activityData,
-                      )),
-            );
-          }),
-          const SizedBox(height: 12.0),
-          DoneButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => DoneFormPage()),
-            );
-          }),
-          const SizedBox(height: 12.0),
-          CancelButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CancelFormPage()),
-            );
-          }),
-        ] else ...[
-          AjukanButton(onPressed: () {
-            // TODO: Implement claim logic
-          }),
+        if (!isSelesai && !isBatal) ...[
+          if (!isOwner) ...[
+            WhatsappButton(phoneNumber: activityData['noWhatsapp']),
+            const SizedBox(height: 12.0),
+          ],
+          if (isOwner) ...[
+            EditButton(onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditFormPage(
+                          activityData: activityData,
+                        )),
+              );
+            }),
+            const SizedBox(height: 12.0),
+            DoneButton(onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DoneFormPage()),
+              );
+            }),
+            const SizedBox(height: 12.0),
+            CancelButton(onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CancelFormPage()),
+              );
+            }),
+          ] else ...[
+            AjukanButton(onPressed: () {
+              // TODO: Implement claim logic
+            }),
+          ],
         ],
       ],
     );

@@ -1330,3 +1330,176 @@ class SuccessDialog extends StatelessWidget {
     );
   }
 }
+
+class UserSearchDropdown extends StatelessWidget {
+  final String label;
+  final String hintText;
+  final TextEditingController controller;
+  final Function(String) onSearch;
+  final Function(Map<String, dynamic>) onUserSelected;
+  final List<Map<String, dynamic>> users;
+  final bool isLoading;
+
+  const UserSearchDropdown({
+    Key? key,
+    required this.label,
+    required this.hintText,
+    required this.controller,
+    required this.onSearch,
+    required this.onUserSelected,
+    required this.users,
+    this.isLoading = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextSmallMedium(text: label),
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: controller,
+                onChanged: (value) => onSearch(value.toLowerCase()),
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  hintStyle: const TextStyle(
+                    color: AppColors.darkGrey,
+                    fontSize: 16.0,
+                  ),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.darkGrey),
+                  suffixIcon: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.green,
+                            ),
+                          ),
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: AppColors.green),
+                  ),
+                ),
+              ),
+              if (users.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.grey),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: users.length,
+                    itemBuilder: (context, index) {
+                      final user = users[index];
+                      return InkWell(
+                        onTap: () {
+                          onUserSelected(user);
+                          controller.text = user['fullName'] ?? '';
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            border: index < users.length - 1
+                                ? const Border(
+                                    bottom: BorderSide(
+                                      color: AppColors.grey,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          child: Row(
+                            children: [
+                              if (user['photoUrl'] != null)
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image: NetworkImage(user['photoUrl']),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  margin: const EdgeInsets.only(right: 12),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.grey,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.person,
+                                      color: AppColors.darkGrey,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user['fullName'] ?? 'Unnamed User',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.darkest,
+                                      ),
+                                    ),
+                                    if (user['email'] != null)
+                                      Text(
+                                        user['email'],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.darkGrey,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
