@@ -101,6 +101,7 @@ class LeaderboardCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // _buildWatermark(),
           _buildUserInfo(),
           _buildPointsDisplay(),
         ],
@@ -161,19 +162,47 @@ class LeaderboardCard extends StatelessWidget {
 
   Widget _buildPointsDisplay() {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16.0,
-        vertical: 3.0,
-      ),
+      width: 60.0,
       decoration: _buildPointsDecoration(),
-      child: Center(
-        child: StrokedText(
-          text: points.toString(),
-          fontSize: 20.0,
-          textColor: AppColors.lavender,
-          fontWeight: FontWeight.w800,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+            child: StrokedText(
+              text: points.toString(),
+              fontSize: 20.0,
+              textColor: AppColors.lavender,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  BoxDecoration _buildPointsDecoration() {
+    return BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [
+          Color(0xFF8D9EB8),
+          Color(0xFFA1B1C8),
+        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+      borderRadius: BorderRadius.circular(4.0),
+      border: Border.all(
+        color: AppColors.sky,
+        width: 2.0,
+      ),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black,
+          spreadRadius: -16.0,
+          blurRadius: 20.0,
+        ),
+      ],
     );
   }
 
@@ -207,30 +236,6 @@ class LeaderboardCard extends StatelessWidget {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),
-    );
-  }
-
-  BoxDecoration _buildPointsDecoration() {
-    return BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [
-          Color(0xFF8D9EB8),
-          Color(0xFFA1B1C8),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ),
-      borderRadius: BorderRadius.circular(4.0),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black,
-        ),
-        BoxShadow(
-          color: Colors.black,
-          spreadRadius: -16.0,
-          blurRadius: 20.0,
-        ),
-      ],
     );
   }
 }
@@ -276,6 +281,8 @@ class RankDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = _getRankColors();
     return Container(
+      width: 40.0,
+      height: 40.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4.0),
         border: Border.all(
@@ -284,10 +291,6 @@ class RankDisplay extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 3.0,
-        ),
         decoration: BoxDecoration(
           color: colors[0],
           borderRadius: BorderRadius.circular(4.0),
@@ -301,10 +304,16 @@ class RankDisplay extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Center(
-          child: StrokedText(
-            text: rank.toString(),
-            fontSize: 20.0,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: StrokedText(
+                text: rank.toString(),
+                fontSize: 20.0,
+              ),
+            ),
           ),
         ),
       ),

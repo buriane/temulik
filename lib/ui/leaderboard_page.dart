@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
-import 'package:temulik/ui/components/datas.dart';
 import 'package:temulik/ui/components/leaderboard_components.dart';
 
 class LeaderboardPage extends StatelessWidget {
@@ -43,7 +42,9 @@ class AllTimeLeaderboard extends StatelessWidget {
 class LeaderboardContent extends StatelessWidget {
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
-  final String leaderboardData; // 'monthly' atau 'allTime'
+  final CollectionReference pahlawan =
+      FirebaseFirestore.instance.collection('pahlawan');
+  final String leaderboardData;
 
   LeaderboardContent({
     super.key,
@@ -63,8 +64,8 @@ class LeaderboardContent extends StatelessWidget {
         Expanded(
           child: Container(
             color: AppColors.sky,
-            child: FutureBuilder<QuerySnapshot>(
-              future: _getLeaderboardData(), // Ambil data leaderboard
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _getLeaderboardStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -80,20 +81,43 @@ class LeaderboardContent extends StatelessWidget {
                 }
 
                 if (snapshot.hasData) {
-                  final leaderboard = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: leaderboard.length,
-                    itemBuilder: (context, index) {
-                      var userData =
-                          leaderboard[index].data() as Map<String, dynamic>;
-                      return LeaderboardCard(
-                        rank: index + 1,
-                        name: userData['fullName'],
-                        faculty: userData['faculty'],
-                        points: userData['points'] ?? 0,
-                        image: userData['photoUrl'] ?? 'assets/profile.png',
-                        onTap: () => _showUserDetail(context, userData),
-                      );
+                  return FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _processLeaderboardData(snapshot.data!),
+                    builder: (context, futureSnapshot) {
+                      if (futureSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          color: AppColors.green,
+                        ));
+                      }
+
+                      if (futureSnapshot.hasError) {
+                        return Center(
+                          child: Text('Error: ${futureSnapshot.error}'),
+                        );
+                      }
+
+                      if (futureSnapshot.hasData) {
+                        final leaderboard = futureSnapshot.data!;
+                        return ListView.builder(
+                          itemCount: leaderboard.length,
+                          itemBuilder: (context, index) {
+                            var userData = leaderboard[index];
+                            return LeaderboardCard(
+                              rank: index + 1,
+                              name: userData['fullName'],
+                              faculty: userData['faculty'],
+                              points: userData['points'],
+                              image:
+                                  userData['photoUrl'] ?? 'assets/profile.png',
+                              onTap: () => _showUserDetail(context, userData),
+                            );
+                          },
+                        );
+                      }
+
+                      return const Center(child: Text('No Data Available'));
                     },
                   );
                 }
@@ -107,8 +131,43 @@ class LeaderboardContent extends StatelessWidget {
     );
   }
 
-  Future<QuerySnapshot> _getLeaderboardData() async {
-    return users.limit(10).get(); // Ambil 10 user pertama tanpa filter
+  Stream<QuerySnapshot> _getLeaderboardStream() {
+    if (leaderboardData == 'monthly') {
+      final now = DateTime.now();
+      final startOfMonth = DateTime(now.year, now.month, 1);
+      return pahlawan
+          .where('tanggalSelesai',
+              isGreaterThanOrEqualTo: startOfMonth.toIso8601String())
+          .snapshots();
+    } else {
+      return pahlawan.snapshots();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _processLeaderboardData(
+      QuerySnapshot snapshot) async {
+    final Map<String, int> userPoints = {};
+    for (var doc in snapshot.docs) {
+      final userId = doc['userId'];
+      final tanggalSelesai = DateTime.parse(doc['tanggalSelesai']);
+      if (leaderboardData == 'monthly' &&
+          tanggalSelesai.isBefore(DateTime.now()
+              .subtract(Duration(days: DateTime.now().day - 1)))) {
+        continue;
+      }
+      userPoints[userId] = (userPoints[userId] ?? 0) + 1;
+    }
+
+    final List<Map<String, dynamic>> leaderboard = [];
+    final usersSnapshot = await users.get();
+    for (var userDoc in usersSnapshot.docs) {
+      final userData = userDoc.data() as Map<String, dynamic>;
+      userData['points'] = userPoints[userDoc.id] ?? 0;
+      leaderboard.add(userData);
+    }
+
+    leaderboard.sort((a, b) => b['points'].compareTo(a['points']));
+    return leaderboard;
   }
 
   void _showUserDetail(BuildContext context, Map<String, dynamic> userData) {
