@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:temulik/bloc/lapor_bloc.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/models/pahlawan_model.dart';
 import 'package:temulik/repositories/lapor_repository.dart';
 import 'package:temulik/ui/components/components.dart';
 import 'package:temulik/ui/home_page.dart';
@@ -49,6 +50,13 @@ class _DoneFormPageState extends State<DoneFormPage> {
         setState(() {
           _isSubmitting = false;
         });
+
+        final pahlawan = PahlawanModel(
+          userId: _selectedUser!['id'],
+          laporId: widget.laporId,
+          tanggalSelesai: DateTime.now(),
+        );
+        _laporBloc.add(AddPahlawanEvent(pahlawan: pahlawan));
 
         // Pastikan context masih valid
         if (!mounted) return;

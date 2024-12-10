@@ -114,3 +114,12 @@ class CompleteLaporEvent extends LaporEvent {
     required this.jenisPenemu,
   });
 }
+
+class AddPahlawanEvent extends LaporEvent {
+  final PahlawanModel pahlawan;
+
+  AddPahlawanEvent({required this.pahlawan});
+
+  @override
+  List<Object> get props => [pahlawan];
+}

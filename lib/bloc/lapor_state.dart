@@ -21,3 +21,5 @@ class LaporError extends LaporState {
   @override
   List<Object> get props => [errorMessage];
 }
+
+class PahlawanAdded extends LaporState {}

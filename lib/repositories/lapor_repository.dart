@@ -3,6 +3,7 @@ import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:temulik/models/pahlawan_model.dart';
 import '../models/lapor_model.dart';
 
 class LaporRepository {
@@ -69,6 +70,15 @@ class LaporRepository {
     } catch (e) {
       print('Error completing report: $e');
       throw Exception('Gagal menyelesaikan laporan: ${e.toString()}');
+    }
+  }
+
+  Future<void> addPahlawan(PahlawanModel pahlawan) async {
+    try {
+      await _firestore.collection('pahlawan').add(pahlawan.toMap());
+    } catch (e) {
+      print('Error adding pahlawan: $e');
+      throw Exception('Gagal menambahkan pahlawan: ${e.toString()}');
     }
   }
 }

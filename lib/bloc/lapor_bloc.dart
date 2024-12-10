@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:temulik/models/pahlawan_model.dart';
 import '../models/lapor_model.dart';
 import '../repositories/lapor_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -18,6 +19,7 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
     on<SubmitLaporEvent>(_onSubmitLapor);
     on<UpdateLaporEvent>(_onUpdateLapor);
     on<CompleteLaporEvent>(_onCompleteLapor);
+    on<AddPahlawanEvent>(_onAddPahlawan);
   }
 
   Future<void> _onSubmitLapor(
@@ -148,6 +150,17 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
 
       await _repository.completeLapor(event.id, completionData);
       emit(LaporSuccess());
+    } catch (e) {
+      emit(LaporError(e.toString()));
+    }
+  }
+
+  Future<void> _onAddPahlawan(
+      AddPahlawanEvent event, Emitter<LaporState> emit) async {
+    emit(LaporLoading());
+    try {
+      await _repository.addPahlawan(event.pahlawan);
+      emit(PahlawanAdded());
     } catch (e) {
       emit(LaporError(e.toString()));
     }
