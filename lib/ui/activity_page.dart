@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/activity_components.dart';
@@ -42,16 +43,26 @@ class ActivityContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      return const Center(child: Text('User not logged in'));
+    }
+
     return Expanded(
       child: Container(
         color: AppColors.lightGrey,
         child: StreamBuilder<QuerySnapshot>(
           stream: statusFilter == 'Selesai|Dibatalkan'
-              ? FirebaseFirestore.instance.collection('laporan').where('status',
-                  whereIn: ['Selesai', 'Dibatalkan']).snapshots()
+              ? FirebaseFirestore.instance
+                  .collection('laporan')
+                  .where('status', whereIn: ['Selesai', 'Dibatalkan'])
+                  .where('userId', isEqualTo: userId)
+                  .snapshots()
               : FirebaseFirestore.instance
                   .collection('laporan')
                   .where('status', isEqualTo: 'Dalam Proses')
+                  .where('userId', isEqualTo: userId)
                   .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
