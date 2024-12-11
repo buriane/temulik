@@ -146,7 +146,7 @@ class DetailBarangPage extends StatelessWidget {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     final isOwner = currentUserId == activityData['userId'];
     final isSelesai = activityData['status'] == 'Selesai';
-    final isBatal = activityData['status'] == 'Batal';
+    final isBatal = activityData['status'] == 'Dibatalkan';
 
     return Column(
       children: [
@@ -170,16 +170,21 @@ class DetailBarangPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DoneFormPage(
-                          laporId: activityData['id'],
-                        )),
+                  builder: (context) => DoneFormPage(
+                    laporId: activityData['id'],
+                  ),
+                ),
               );
             }),
             const SizedBox(height: 12.0),
             CancelButton(onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CancelFormPage()),
+                MaterialPageRoute(
+                  builder: (context) => CancelFormPage(
+                    laporId: activityData['id'],
+                  ),
+                ),
               );
             }),
           ] else ...[

@@ -20,6 +20,7 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
     on<UpdateLaporEvent>(_onUpdateLapor);
     on<CompleteLaporEvent>(_onCompleteLapor);
     on<AddPahlawanEvent>(_onAddPahlawan);
+    on<CancelLaporEvent>(_onCancelLapor);
   }
 
   Future<void> _onSubmitLapor(
@@ -161,6 +162,36 @@ class LaporBloc extends Bloc<LaporEvent, LaporState> {
     try {
       await _repository.addPahlawan(event.pahlawan);
       emit(PahlawanAdded());
+    } catch (e) {
+      emit(LaporError(e.toString()));
+    }
+  }
+
+  void _onCancelLapor(CancelLaporEvent event, Emitter<LaporState> emit) async {
+    emit(LaporLoading());
+    try {
+      // Upload evidence images if they're not already URLs
+      List<String> finalImageUrls = [];
+      for (String path in event.evidenceImageUrls) {
+        if (!path.startsWith('http')) {
+          // Upload new image
+          final imageUrl = await _repository.uploadImage(path);
+          finalImageUrls.add(imageUrl);
+        } else {
+          // Keep existing URL
+          finalImageUrls.add(path);
+        }
+      }
+
+      final cancellationData = {
+        'status': 'Dibatalkan',
+        'evidenceImageUrls': finalImageUrls,
+        'alasanBatal': event.alasanBatal,
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+
+      await _repository.cancelLapor(event.id, cancellationData);
+      emit(LaporCancelled());
     } catch (e) {
       emit(LaporError(e.toString()));
     }

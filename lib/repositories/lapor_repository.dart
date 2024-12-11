@@ -81,4 +81,13 @@ class LaporRepository {
       throw Exception('Gagal menambahkan pahlawan: ${e.toString()}');
     }
   }
+
+  Future<void> cancelLapor(String id, Map<String, dynamic> data) async {
+    try {
+      await _firestore.collection('laporan').doc(id).update(data);
+    } catch (e) {
+      print('Error cancelling report: $e');
+      throw Exception('Gagal membatalkan laporan: ${e.toString()}');
+    }
+  }
 }

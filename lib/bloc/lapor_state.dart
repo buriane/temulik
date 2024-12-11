@@ -23,3 +23,5 @@ class LaporError extends LaporState {
 }
 
 class PahlawanAdded extends LaporState {}
+
+class LaporCancelled extends LaporState {}

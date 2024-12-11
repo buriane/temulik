@@ -123,3 +123,18 @@ class AddPahlawanEvent extends LaporEvent {
   @override
   List<Object> get props => [pahlawan];
 }
+
+class CancelLaporEvent extends LaporEvent {
+  final String id;
+  final List<String> evidenceImageUrls;
+  final String alasanBatal;
+
+  CancelLaporEvent({
+    required this.id,
+    required this.evidenceImageUrls,
+    required this.alasanBatal,
+  });
+
+  @override
+  List<Object> get props => [id, evidenceImageUrls, alasanBatal];
+}

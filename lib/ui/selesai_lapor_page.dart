@@ -184,7 +184,6 @@ class _DoneFormPageState extends State<DoneFormPage> {
                         return;
                       }
 
-                      // Handle pahlawan berdasarkan jenis penemu
                       String pahlawan = '';
                       if (_selectedPenemu == 'Unsoed') {
                         if (_selectedUser == null) {
@@ -196,16 +195,6 @@ class _DoneFormPageState extends State<DoneFormPage> {
                         }
                         pahlawan = _selectedUser!['id'];
                       }
-
-                      // Debug print untuk mengecek nilai
-                      print('Submitting form with:');
-                      print('Lapor ID: ${widget.laporId}');
-                      print('Pahlawan: $pahlawan');
-                      print('Jenis Penemu: $_selectedPenemu');
-                      print('Selected User: $_selectedUser');
-                      print('Images: $_selectedImagesPath');
-                      print('Date: $_selectedDate');
-                      print('Time: $_selectedTime');
 
                       setState(() {
                         _isSubmitting = true;
