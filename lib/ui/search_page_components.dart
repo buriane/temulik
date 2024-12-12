@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
-import 'package:temulik/ui/components/other_laptop_components.dart';
+import 'package:temulik/ui/detail_category_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SearchPage extends StatefulWidget {
@@ -102,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => LaptopLainnya()),
+                            builder: (context) => DetailCategoryPage()),
                       );
                     }),
                     SizedBox(width: 32),

@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:temulik/bloc/map_bloc.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:latlong2/latlong.dart';
 import 'package:temulik/models/faculty.dart';
@@ -1608,4 +1607,3 @@ class UserSearchDropdown extends StatelessWidget {
     );
   }
 }
-

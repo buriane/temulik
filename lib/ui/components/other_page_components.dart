@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:temulik/ui/components/other_laptop_components.dart';
+import 'package:temulik/ui/detail_category_page.dart';
 
 class LainnyaPage extends StatelessWidget {
   @override
@@ -18,18 +18,18 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16), // Increased spacing
-          _buildCategoryItem(
-              context, 'Laptop', 'assets/categories/laptop.png', LaptopLainnya()),
+          _buildCategoryItem(context, 'Laptop', 'assets/categories/laptop.png',
+              DetailCategoryPage()),
           _buildCategoryItem(
               context, 'Headset', 'assets/categories/headset.png', Scaffold()),
           _buildCategoryItem(
               context, 'Charger', 'assets/categories/charger.png', Scaffold()),
-          _buildCategoryItem(
-              context, 'Handphone', 'assets/categories/handphone.png', Scaffold()),
+          _buildCategoryItem(context, 'Handphone',
+              'assets/categories/handphone.png', Scaffold()),
           _buildCategoryItem(
               context, 'Speaker', 'assets/categories/speaker.png', Scaffold()),
-          _buildCategoryItem(
-              context, 'Powerbank', 'assets/categories/powerbank.png', Scaffold()),
+          _buildCategoryItem(context, 'Powerbank',
+              'assets/categories/powerbank.png', Scaffold()),
           SizedBox(height: 24), // Increased section spacing
 
           // Kendaraan dan Aksesori Section
@@ -42,8 +42,8 @@ class LainnyaPage extends StatelessWidget {
               context, 'Motor', 'assets/categories/motor.png', Scaffold()),
           _buildCategoryItem(
               context, 'Helm', 'assets/categories/helm.png', Scaffold()),
-          _buildCategoryItem(
-              context, 'Kunci Kendaraan', 'assets/categories/kunci.png', Scaffold()),
+          _buildCategoryItem(context, 'Kunci Kendaraan',
+              'assets/categories/kunci.png', Scaffold()),
           SizedBox(height: 24),
 
           // Barang Pribadi Section
@@ -52,10 +52,12 @@ class LainnyaPage extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-          _buildCategoryItem(context, 'Jam', 'assets/categories/jam.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Jam', 'assets/categories/jam.png', Scaffold()),
           _buildCategoryItem(
               context, 'Dompet', 'assets/categories/dompet.png', Scaffold()),
-          _buildCategoryItem(context, 'Tas', 'assets/categories/tas.png', Scaffold()),
+          _buildCategoryItem(
+              context, 'Tas', 'assets/categories/tas.png', Scaffold()),
           _buildCategoryItem(
               context, 'Kunci', 'assets/categories/kuncikos.png', Scaffold()),
           _buildCategoryItem(

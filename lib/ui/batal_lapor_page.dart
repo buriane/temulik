@@ -125,8 +125,9 @@ class _CancelFormPageState extends State<CancelFormPage> {
                       if (_selectedImagesPath.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text(
-                                  'Harap lampirkan bukti pembatalan barang')),
+                            content:
+                                Text('Harap lampirkan bukti pembatalan barang'),
+                          ),
                         );
                         return;
                       }
@@ -134,7 +135,8 @@ class _CancelFormPageState extends State<CancelFormPage> {
                       if (_alasanController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Harap isi alasan pembatalan')),
+                            content: Text('Harap isi alasan pembatalan'),
+                          ),
                         );
                         return;
                       }
@@ -154,7 +156,9 @@ class _CancelFormPageState extends State<CancelFormPage> {
                           _isSubmitting = false;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
+                          SnackBar(
+                            content: Text('Error: $e'),
+                          ),
                         );
                       }
                     },

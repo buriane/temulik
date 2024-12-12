@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/activity_page.dart';
 import 'package:temulik/ui/leaderboard_page.dart';
 import 'package:temulik/ui/map_page.dart';
 import '../bloc/auth_bloc.dart';
-import '../bloc/profile_bloc.dart';
 import 'login_page.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'components/home_components.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,9 +37,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onItemTapped(int index) {
-    // Ubah fungsi ini
     if (index != 2) {
-      // Jika bukan tombol temulik
       setState(() {
         _selectedIndex = index;
       });
@@ -65,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             HomeContent(selectedIndex: _selectedIndex),
             MapPage(),
-            Container(), // Kosongkan saja, karena kita tidak akan pindah ke sini
+            Container(),
             ActivityPage(),
             LeaderboardPage(),
           ],
@@ -73,9 +68,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: Builder(
         builder: (context) => CustomFloatingActionButton(
-          onTap: () {
-            // Tidak perlu melakukan apa-apa di sini
-          },
+          onTap: () {},
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

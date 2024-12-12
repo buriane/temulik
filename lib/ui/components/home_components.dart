@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:temulik/constants/colors.dart';
-import 'package:temulik/ui/components/laptop_section_components.dart';
-import 'package:temulik/ui/components/motorcycle_section_components.dart';
+import 'package:temulik/ui/components/laporan_slider_component.dart';
 import 'package:temulik/ui/components/other_page_components.dart';
-import 'package:temulik/ui/components/other_laptop_components.dart';
-import 'package:temulik/ui/components/search_page_components.dart';
-import 'package:temulik/ui/components/setting_page_components.dart';
+import 'package:temulik/ui/detail_category_page.dart';
+import 'package:temulik/ui/search_page_components.dart';
+import 'package:temulik/ui/setting_page_components.dart';
 import 'package:temulik/ui/kehilangan_form_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
 import '../../bloc/profile_bloc.dart';
@@ -58,8 +57,8 @@ class HomeContent extends StatelessWidget {
                   CategoryGrid(buildGridItem: _buildGridItem),
                   WhatsAppButton(),
                   AdvertisementBanner(),
-                  LaptopSection(),
-                  MotorcycleSection(),
+                  LaporanSlider(kategori: 'Laptop'),
+                  LaporanSlider(kategori: 'Motor'),
                   ShowMoreButton(),
                 ],
               ),
@@ -505,7 +504,7 @@ class CategoryGrid extends StatelessWidget {
           buildGridItem('Laptop', 'assets/categories/laptop.png', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => LaptopLainnya()),
+              MaterialPageRoute(builder: (context) => DetailCategoryPage()),
             );
           }),
           buildGridItem('Headset', 'assets/categories/headset.png', () {
@@ -625,7 +624,6 @@ class AdvertisementBanner extends StatelessWidget {
   }
 }
 
-// Custom Page Route Animation
 class CustomPageRoute extends PageRouteBuilder {
   final Widget child;
 
@@ -657,7 +655,6 @@ class CustomPageRoute extends PageRouteBuilder {
   }
 }
 
-// Modified CustomFloatingActionButton
 class CustomFloatingActionButton extends StatefulWidget {
   final VoidCallback onTap;
 

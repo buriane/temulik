@@ -18,7 +18,7 @@ class Laptop {
   });
 }
 
-class LaptopLainnya extends StatelessWidget {
+class DetailCategoryPage extends StatelessWidget {
   final List<Laptop> laptops = [
     Laptop(
         title: 'Dell Inspiron 7000 Series',
@@ -189,9 +189,7 @@ class LaptopLainnya extends StatelessWidget {
                     bottom: 12,
                     right: 12,
                     child: GestureDetector(
-                      onTap: () {
-                        // Tambahkan aksi
-                      },
+                      onTap: () {},
                       child: const Icon(
                         Icons.more_horiz,
                         color: Colors.black,
