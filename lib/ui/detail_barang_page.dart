@@ -152,8 +152,28 @@ class DetailBarangPage extends StatelessWidget {
       children: [
         if (!isSelesai && !isBatal) ...[
           if (!isOwner) ...[
-            WhatsappButton(phoneNumber: activityData['noWhatsapp']),
-            const SizedBox(height: 12.0),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(activityData['userId'])
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final ownerName =
+                      snapshot.data?.get('fullName') as String? ?? '';
+                  return Column(
+                    children: [
+                      WhatsappButton(
+                        phoneNumber: activityData['noWhatsapp'],
+                        ownerName: ownerName,
+                      ),
+                      const SizedBox(height: 12.0),
+                    ],
+                  );
+                }
+                return const CircularProgressIndicator();
+              },
+            ),
           ],
           if (isOwner) ...[
             EditButton(onPressed: () {

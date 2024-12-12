@@ -172,29 +172,41 @@ class EditButton extends StatelessWidget {
 
 class WhatsappButton extends StatelessWidget {
   final String phoneNumber;
+  final String ownerName;
 
   const WhatsappButton({
     super.key,
     required this.phoneNumber,
+    required this.ownerName,
   });
 
   Future<void> _launchWhatsApp(BuildContext context) async {
     try {
+      // Format the phone number
       String formattedPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
       if (!formattedPhone.startsWith('+')) {
-        formattedPhone =
-            '+62${formattedPhone.startsWith('0') ? formattedPhone.substring(1) : formattedPhone}';
+        formattedPhone = formattedPhone.startsWith('0')
+            ? '+62${formattedPhone.substring(1)}'
+            : '+62$formattedPhone';
       }
-      final url = 'https://wa.me/${formattedPhone}';
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      // Create WhatsApp URL with a pre-filled message
+      final url =
+          Uri.parse('https://wa.me/$formattedPhone?text=Halo, $ownerName');
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.externalApplication,
+        );
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
-                  'Tidak dapat membuka WhatsApp. Pastikan WhatsApp terinstall'),
+                'Tidak dapat membuka WhatsApp. Pastikan WhatsApp terinstall',
+              ),
+              backgroundColor: Colors.red,
             ),
           );
         }
@@ -204,6 +216,7 @@ class WhatsappButton extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Terjadi kesalahan: ${e.toString()}'),
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -219,7 +232,7 @@ class WhatsappButton extends StatelessWidget {
           vertical: 20.0,
         ),
         backgroundColor: Colors.transparent,
-        overlayColor: AppColors.green,
+        overlayColor: AppColors.green.withOpacity(0.1),
         elevation: 0,
         side: BorderSide(
           color: AppColors.green,
@@ -239,6 +252,7 @@ class WhatsappButton extends StatelessWidget {
               AppColors.green,
               BlendMode.srcIn,
             ),
+            height: 24, // Menambahkan ukuran tetap untuk ikon
           ),
           const SizedBox(width: 8.0),
           TextBold(

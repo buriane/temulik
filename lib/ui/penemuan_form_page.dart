@@ -31,13 +31,13 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
 
   void _submitPenemuan() async {
     if (_validateForm()) {
-      if (_selectedImages != null) {
+      if (_selectedImages != []) {
         context.read<LaporBloc>().add(
               SubmitLaporEvent(
                 namaBarang: _namaBarangController.text,
                 kategori: selectedValue ?? '',
                 deskripsi: _deskripsiController.text,
-                imagePaths: _selectedImages!, // Kirim path langsung
+                imagePaths: _selectedImages,
                 tanggalKehilangan: _selectedDate ?? DateTime.now(),
                 jamKehilangan: _selectedTime ?? TimeOfDay.now(),
                 lokasi: selectedValueFakultas ?? '',
@@ -93,7 +93,7 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
     // Validasi WhatsApp
     else if (_noWhatsappController.text.isEmpty) {
       errorMessage = 'Nomor WhatsApp tidak boleh kosong';
-    } else if (!RegExp(r'^08[0-9]{8,11}$')
+    } else if (!RegExp(r'^08[0-9]{8,13}$')
         .hasMatch(_noWhatsappController.text)) {
       errorMessage = 'Format nomor WhatsApp tidak valid (contoh: 08xxxxxxxxxx)';
     }

@@ -10,6 +10,7 @@ import 'package:temulik/ui/search_page_components.dart';
 import 'package:temulik/ui/setting_page_components.dart';
 import 'package:temulik/ui/kehilangan_form_page.dart';
 import 'package:temulik/ui/penemuan_form_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../bloc/profile_bloc.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -574,14 +575,32 @@ class CategoryGrid extends StatelessWidget {
 class WhatsAppButton extends StatelessWidget {
   const WhatsAppButton({Key? key}) : super(key: key);
 
+  // Remove the separate method and move the logic directly to onPressed
   @override
   Widget build(BuildContext context) {
+    // context is available in build method
     return Transform.translate(
       offset: Offset(0, -30),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            final Uri url =
+                Uri.parse('https://chat.whatsapp.com/Ew7ksadZFrt8Xr3XjOPP8B');
+            try {
+              if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                throw Exception('Could not launch WhatsApp');
+              }
+            } catch (e) {
+              print('Error launching WhatsApp: $e');
+              if (context.mounted) {
+                // Check if context is still valid
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Could not open WhatsApp')),
+                );
+              }
+            }
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.green,
             foregroundColor: Colors.white,
