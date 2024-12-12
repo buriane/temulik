@@ -102,28 +102,53 @@ class _SearchPageState extends State<SearchPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => DetailCategoryPage()),
+                            builder: (context) =>
+                                DetailCategoryPage(kategori: 'Laptop')),
                       );
                     }),
                     SizedBox(width: 32),
                     _buildPopularCategory(
                         'Headset', 'assets/categories/headset.png', () {
-                      // Tambahkan navigasi untuk Headset jika diperlukan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailCategoryPage(kategori: 'Headset'),
+                        ),
+                      );
                     }),
                     SizedBox(width: 32),
                     _buildPopularCategory(
                         'Motor', 'assets/categories/motor.png', () {
-                      // Tambahkan navigasi untuk Motor jika diperlukan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailCategoryPage(kategori: 'Motor'),
+                        ),
+                      );
                     }),
                     SizedBox(width: 32),
                     _buildPopularCategory(
                         'Charger', 'assets/categories/charger.png', () {
-                      // Tambahkan navigasi untuk Charger jika diperlukan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailCategoryPage(kategori: 'Charger'),
+                        ),
+                      );
                     }),
                     SizedBox(width: 32),
                     _buildPopularCategory(
                         'Handphone', 'assets/categories/handphone.png', () {
-                      // Tambahkan navigasi untuk Handphone jika diperlukan
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetailCategoryPage(kategori: 'Handphone'),
+                        ),
+                      );
                     }),
                   ],
                 ),

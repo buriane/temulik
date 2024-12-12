@@ -504,31 +504,65 @@ class CategoryGrid extends StatelessWidget {
           buildGridItem('Laptop', 'assets/categories/laptop.png', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DetailCategoryPage()),
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Laptop'),
+              ),
             );
           }),
           buildGridItem('Headset', 'assets/categories/headset.png', () {
-            print('Headset tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Headset'),
+              ),
+            );
           }),
           buildGridItem('Motor', 'assets/categories/motor.png', () {
-            print('Motor tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Motor'),
+              ),
+            );
           }),
           buildGridItem('Charger', 'assets/categories/charger.png', () {
-            print('Charger tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Charger'),
+              ),
+            );
           }),
           buildGridItem('Handphone', 'assets/categories/handphone.png', () {
-            print('Handphone tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Handphone'),
+              ),
+            );
           }),
           buildGridItem('Dompet', 'assets/categories/dompet.png', () {
-            print('Dompet tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Dompet'),
+              ),
+            );
           }),
           buildGridItem('Kunci', 'assets/categories/kunci.png', () {
-            print('Kunci tapped');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Kunci'),
+              ),
+            );
           }),
           buildGridItem('Lainnya', 'assets/categories/lainnya.png', () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => LainnyaPage()),
+              MaterialPageRoute(
+                builder: (context) => DetailCategoryPage(kategori: 'Lainnya'),
+              ),
             );
           }),
         ],

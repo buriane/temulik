@@ -1,63 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-class Laptop {
-  final String image;
-  final String status;
-  final String title;
-  final String location;
-  final String date;
-  final String type;
-
-  Laptop({
-    required this.image,
-    required this.status,
-    required this.title,
-    required this.location,
-    required this.date,
-    required this.type,
-  });
-}
+import 'package:temulik/constants/colors.dart';
+import 'package:intl/intl.dart';
+import 'package:temulik/ui/detail_barang_page.dart';
 
 class DetailCategoryPage extends StatelessWidget {
-  final List<Laptop> laptops = [
-    Laptop(
-        title: 'Dell Inspiron 7000 Series',
-        image: 'assets/laptop/dell.png',
-        status: 'Kehilangan',
-        location: 'Pendopo bawah, PKM Unsoed',
-        date: '12 Agustus 2024, 14:40',
-        type: 'lost'),
-    Laptop(
-        title: 'Acer Nitro 5',
-        image: 'assets/laptop/acernitro.png',
-        status: 'Penemuan',
-        location: 'PII FMIPA',
-        date: '13 Agustus 2024, 10:40',
-        type: 'found'),
-    Laptop(
-      title: 'HP Pavillion Gaming 15',
-      image: 'assets/laptop/hppavillion.png',
-      status: 'Penemuan',
-      location: 'FISIP',
-      date: '14 Agustus 2024, 08:40',
-      type: 'found',
-    ),
-    Laptop(
-      title: 'Laptop Advan Soulmate 1405',
-      image: 'assets/laptop/advan.png',
-      status: 'Kehilangan',
-      location: 'Pendopo bawah, PKM Unsoed',
-      date: '12 Agustus 2024, 14.40',
-      type: 'lost',
-    ),
-  ];
+  final String kategori;
+  DetailCategoryPage({required this.kategori});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Laptop',
+          kategori,
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
@@ -65,140 +21,184 @@ class DetailCategoryPage extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 3 / 5,
-          ),
-          itemCount: laptops.length,
-          itemBuilder: (context, index) {
-            final laptop = laptops[index];
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 12,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+        padding: const EdgeInsets.all(12.0),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('laporan')
+              .where('status', isEqualTo: 'Dalam Proses')
+              .where('kategori', isEqualTo: kategori)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Gagal memuat data'));
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                  child: CircularProgressIndicator(color: AppColors.green));
+            }
+
+            final documents = snapshot.data?.docs ?? [];
+
+            if (documents.isEmpty) {
+              return Center(child: Text('Tidak ada data'));
+            }
+
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12.0,
+                crossAxisSpacing: 12.0,
+                childAspectRatio: 3 / 5,
               ),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                        child: Image.asset(
-                          laptop.image,
-                          height: 160,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+              itemCount: documents.length,
+              itemBuilder: (context, index) {
+                final item = documents[index].data() as Map<String, dynamic>;
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetailBarangPage(activityData: item),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 12,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      children: [
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 5,
+                            ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
                               ),
-                              decoration: BoxDecoration(
-                                color: laptop.type == 'lost'
-                                    ? const Color(0xFFB60000)
-                                    : const Color(0xFF1B6DF4),
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: Text(
-                                laptop.status,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              child: Image.network(
+                                item['imageUrls'][0],
+                                height: 160,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              laptop.title,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/loct.png',
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    laptop.location,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey[600],
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: item['tipe'] == 'kehilangan'
+                                          ? AppColors.red
+                                          : AppColors.blue,
+                                      borderRadius: BorderRadius.circular(40),
+                                    ),
+                                    child: Text(
+                                      item['tipe'].replaceFirst(item['tipe'][0],
+                                          item['tipe'][0].toUpperCase()),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    item['namaBarang'],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/calendar.png',
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  laptop.date,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/loct.png',
+                                        width: 14,
+                                        height: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          item['lokasi'],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/calendar.png',
+                                        width: 14,
+                                        height: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          DateFormat('dd MMMM yyyy').format(
+                                                DateTime.parse(
+                                                    item['tanggalKehilangan']),
+                                              ) +
+                                              ', ' +
+                                              item['jamKehilangan'],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600],
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 12,
-                    right: 12,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: const Icon(
-                        Icons.more_horiz,
-                        color: Colors.black,
-                        size: 10,
-                      ),
+                        Positioned(
+                          bottom: 12,
+                          right: 12,
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.more_horiz,
+                              color: Colors.black,
+                              size: 10,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             );
           },
         ),
