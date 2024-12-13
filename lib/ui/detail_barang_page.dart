@@ -9,12 +9,18 @@ import 'package:temulik/ui/selesai_lapor_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailBarangPage extends StatelessWidget {
-  final Map<String, dynamic> activityData;
+  final String docId;
 
   const DetailBarangPage({
     super.key,
-    required this.activityData,
+    required this.docId,
   });
+
+  Future<Map<String, dynamic>> _fetchActivityData() async {
+    final docSnapshot =
+        await FirebaseFirestore.instance.collection('laporan').doc(docId).get();
+    return docSnapshot.data() as Map<String, dynamic>;
+  }
 
   // Fungsi helper untuk format tanggal
   String formatTanggal(String tanggal) {
@@ -60,34 +66,75 @@ class DetailBarangPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          activityData['tipe'] == 'kehilangan'
-              ? 'Detail Barang Hilang'
-              : 'Detail Barang Temuan',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImageSlider(),
-              const SizedBox(height: 20.0),
-              _buildItemName(),
-              const SizedBox(height: 12.0),
-              _buildDetailsSection(context),
-            ],
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _fetchActivityData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Loading...'),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Error'),
+            ),
+            body: Center(
+              child: Text('Error: ${snapshot.error}'),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('No Data'),
+            ),
+            body: const Center(
+              child: Text('No Data Available'),
+            ),
+          );
+        }
+
+        final activityData = snapshot.data!;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              activityData['tipe'] == 'kehilangan'
+                  ? 'Detail Barang Hilang'
+                  : 'Detail Barang Temuan',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-      ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImageSlider(activityData),
+                  const SizedBox(height: 20.0),
+                  _buildItemName(activityData),
+                  const SizedBox(height: 12.0),
+                  _buildDetailsSection(context, activityData),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildImageSlider() {
+  Widget _buildImageSlider(Map<String, dynamic> activityData) {
     return CustomImageSlider(
       height: 225.0,
       imageUrls: activityData['imageUrls'] ?? [],
@@ -95,12 +142,13 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildItemName() {
+  Widget _buildItemName(Map<String, dynamic> activityData) {
     return TextBold(
         text: activityData['namaBarang'] ?? 'Tidak Ada Nama Barang');
   }
 
-  Widget _buildDetailsSection(BuildContext context) {
+  Widget _buildDetailsSection(
+      BuildContext context, Map<String, dynamic> activityData) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -126,23 +174,24 @@ class DetailBarangPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildLeftDetails(context, userData),
-                _buildRightDetails(),
+                _buildLeftDetails(context, userData, activityData),
+                _buildRightDetails(activityData),
               ],
             ),
             const SizedBox(height: 12.0),
-            _buildDescription(),
+            _buildDescription(activityData),
             const SizedBox(height: 12.0),
-            _buildReward(),
+            _buildReward(activityData),
             const SizedBox(height: 20.0),
-            _buildButtons(context),
+            _buildButtons(context, activityData),
           ],
         );
       },
     );
   }
 
-  Widget _buildButtons(BuildContext context) {
+  Widget _buildButtons(
+      BuildContext context, Map<String, dynamic> activityData) {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     final isOwner = currentUserId == activityData['userId'];
     final isSelesai = activityData['status'] == 'Selesai';
@@ -208,17 +257,52 @@ class DetailBarangPage extends StatelessWidget {
               );
             }),
           ] else ...[
-            AjukanButton(onPressed: () {
-              // TODO: Implement claim logic
-            }),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('pencarian')
+                  .where('laporId', isEqualTo: docId)
+                  .where('userId',
+                      isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                final bool sudahMengajukan =
+                    snapshot.hasData && snapshot.data!.docs.isNotEmpty;
+
+                return AjukanButton(
+                  isAjukan: !sudahMengajukan,
+                  onPressed: () async {
+                    final pencarianRef =
+                        FirebaseFirestore.instance.collection('pencarian');
+                    final currentUser = FirebaseAuth.instance.currentUser;
+
+                    if (sudahMengajukan) {
+                      // Hapus dokumen pencarian
+                      final docId = snapshot.data!.docs.first.id;
+                      await pencarianRef.doc(docId).delete();
+                    } else {
+                      // Tambah dokumen pencarian baru
+                      await pencarianRef.add({
+                        'laporId': docId,
+                        'userId': currentUser?.uid,
+                        'createdAt': FieldValue.serverTimestamp(),
+                      });
+                    }
+                  },
+                );
+              },
+            ),
           ],
         ],
       ],
     );
   }
 
-  Widget _buildLeftDetails(
-      BuildContext context, Map<String, dynamic> userData) {
+  Widget _buildLeftDetails(BuildContext context, Map<String, dynamic> userData,
+      Map<String, dynamic> activityData) {
     return Flexible(
       flex: 3,
       child: Column(
@@ -254,7 +338,7 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRightDetails() {
+  Widget _buildRightDetails(Map<String, dynamic> activityData) {
     return Flexible(
       flex: 2,
       child: Column(
@@ -265,13 +349,13 @@ class DetailBarangPage extends StatelessWidget {
           _buildDetailItem(
               'Jam Kehilangan', formatJam(activityData['jamKehilangan'])),
           const SizedBox(height: 12.0),
-          _buildDetailItem('Status Barang', _buildStatusBarang()),
+          _buildDetailItem('Status Barang', _buildStatusBarang(activityData)),
         ],
       ),
     );
   }
 
-  Widget _buildStatusBarang() {
+  Widget _buildStatusBarang(Map<String, dynamic> activityData) {
     Color statusColor;
     switch (activityData['status']) {
       case 'Dalam Proses':
@@ -297,7 +381,7 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(Map<String, dynamic> activityData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -308,7 +392,7 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildReward() {
+  Widget _buildReward(Map<String, dynamic> activityData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

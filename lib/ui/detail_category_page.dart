@@ -53,13 +53,13 @@ class DetailCategoryPage extends StatelessWidget {
               itemCount: documents.length,
               itemBuilder: (context, index) {
                 final item = documents[index].data() as Map<String, dynamic>;
+                final docId = documents[index].id;
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            DetailBarangPage(activityData: item),
+                        builder: (context) => DetailBarangPage(docId: docId),
                       ),
                     );
                   },

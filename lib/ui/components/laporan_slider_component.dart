@@ -96,14 +96,14 @@ class LaporanSlider extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: documents.length,
                 itemBuilder: (context, index) {
+                  final docId = documents[index].id;
                   final item = documents[index].data() as Map<String, dynamic>;
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              DetailBarangPage(activityData: item),
+                          builder: (context) => DetailBarangPage(docId: docId),
                         ),
                       );
                     },

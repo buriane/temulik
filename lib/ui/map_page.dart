@@ -200,6 +200,7 @@ class _MapPageState extends State<MapPage> {
                         List<Marker> markers = [];
                         for (var doc in snapshot.data!.docs) {
                           final data = doc.data() as Map<String, dynamic>;
+                          final docId = doc.id;
                           final pinPointStr = data['pinPoint'] as String;
                           final coordinates = pinPointStr.split(',');
                           if (coordinates.length == 2) {
@@ -213,7 +214,7 @@ class _MapPageState extends State<MapPage> {
                                 height: 40,
                                 child: GestureDetector(
                                   onTap: () =>
-                                      _showLaporanDetail(context, data),
+                                      _showLaporanDetail(context, docId),
                                   child: Icon(
                                     Icons.place,
                                     color: data['status'] == 'Dalam Proses'
@@ -246,10 +247,9 @@ class _MapPageState extends State<MapPage> {
                   context: context,
                 ),
                 MapButtons(
-                  mapController: _mapController,
-                  state: state,
-                  context: context
-                ),
+                    mapController: _mapController,
+                    state: state,
+                    context: context),
               ],
             ),
           );
@@ -258,12 +258,12 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void _showLaporanDetail(BuildContext context, Map<String, dynamic> laporanData) {
+  void _showLaporanDetail(BuildContext context, String docId) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => DetailBarangPage(
-          activityData: laporanData,
+          docId: docId,
         ),
       ),
     );

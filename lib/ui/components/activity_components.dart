@@ -60,10 +60,12 @@ class _TabActivityState extends State<TabActivity> {
 
 class ActivityCard extends StatelessWidget {
   final Map<String, dynamic> activityData;
+  final String docId;
 
   const ActivityCard({
     super.key,
     required this.activityData,
+    required this.docId,
   });
 
   @override
@@ -144,7 +146,10 @@ class ActivityCard extends StatelessWidget {
             namaBarang: activityData['namaBarang'],
             status: activityData['status'],
             kategori: activityData['kategori']),
-        NameAndButton(activityData: activityData),
+        NameAndButton(
+          activityData: activityData,
+          docId: docId,
+        ),
       ],
     );
   }
@@ -279,10 +284,12 @@ class ItemInfo extends StatelessWidget {
 
 class NameAndButton extends StatelessWidget {
   final Map<String, dynamic> activityData;
+  final String docId;
 
   const NameAndButton({
     super.key,
     required this.activityData,
+    required this.docId,
   });
 
   @override
@@ -342,7 +349,7 @@ class NameAndButton extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) {
                     return DetailBarangPage(
-                      activityData: activityData,
+                      docId: docId,
                     );
                   },
                 ),

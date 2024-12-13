@@ -91,7 +91,10 @@ class ActivityContent extends StatelessWidget {
                 final data = documents[index].data() as Map<String, dynamic>;
                 data['id'] = documents[index].id;
                 print('Data $index: $data');
-                return ActivityCard(activityData: data);
+                return ActivityCard(
+                  activityData: data,
+                  docId: documents[index].id,
+                );
               },
             );
           },

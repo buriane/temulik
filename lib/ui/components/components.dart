@@ -92,41 +92,108 @@ class CancelButton extends StatelessWidget {
   }
 }
 
-class AjukanButton extends StatelessWidget {
+class AjukanButton extends StatefulWidget {
   final VoidCallback onPressed;
-  const AjukanButton({super.key, required this.onPressed});
+  final bool isAjukan;
+
+  const AjukanButton({
+    super.key,
+    required this.onPressed,
+    this.isAjukan = true,
+  });
+
+  @override
+  _AjukanButtonState createState() => _AjukanButtonState();
+}
+
+class _AjukanButtonState extends State<AjukanButton>
+    with SingleTickerProviderStateMixin {
+  late bool _isAjukan;
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+  late Animation<double> _iconRotationAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAjukan = widget.isAjukan;
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _colorAnimation = ColorTween(
+      begin: AppColors.blue,
+      end: AppColors.red,
+    ).animate(_controller);
+
+    _iconRotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_controller);
+
+    if (!_isAjukan) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleButton() {
+    setState(() {
+      _isAjukan = !_isAjukan;
+      if (_isAjukan) {
+        _controller.reverse();
+      } else {
+        _controller.forward();
+      }
+    });
+    widget.onPressed();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 0.0,
-          vertical: 20.0,
-        ),
-        backgroundColor: AppColors.blue,
-        overlayColor: AppColors.blue,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search,
-            color: Colors.white,
-            size: 20.0,
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 0.0,
+              vertical: 20.0,
+            ),
+            backgroundColor: _colorAnimation.value,
+            overlayColor: _colorAnimation.value,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
-          const SizedBox(width: 8.0),
-          TextBold(
-            text: 'Ajukan Pencarian',
-            color: Colors.white,
+          onPressed: _toggleButton,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RotationTransition(
+                turns: _iconRotationAnimation,
+                child: Icon(
+                  _isAjukan ? Icons.search : Icons.cancel,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              TextBold(
+                text: _isAjukan ? 'Ajukan Pencarian' : 'Batal Ajukan Pencarian',
+                color: Colors.white,
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
