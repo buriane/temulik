@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:temulik/constants/colors.dart';
 import '../bloc/profile_bloc.dart';
-import 'home_page.dart';
 
 final List<String> _faculties = [
   'Fakultas Pertanian',
@@ -110,8 +109,8 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
   @override
   void initState() {
     super.initState();
+    _profile = UserProfile(email: '');
     context.read<ProfileBloc>().add(LoadProfile());
-    _profile = context.read<ProfileBloc>().state.profile;
   }
 
   List<Widget> _buildFormFields(ProfileState state) {
@@ -119,7 +118,20 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       _buildPhotoUploadWidget(state),
       TextFormField(
         initialValue: _profile.fullName,
-        decoration: InputDecoration(labelText: 'Nama Lengkap'),
+        decoration: InputDecoration(
+          labelText: 'Nama Lengkap',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Masukkan nama lengkap Anda';
@@ -136,7 +148,20 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       TextFormField(
         initialValue: _profile.nim,
-        decoration: InputDecoration(labelText: 'NIM'),
+        decoration: InputDecoration(
+          labelText: 'NIM',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty) return 'Masukkan NIM Anda';
           if (!RegExp(r'^[A-Z][0-9][A-Z][0-9]{6}$').hasMatch(value))
@@ -146,9 +171,22 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         onSaved: (value) => _profile = _profile.copyWith(nim: value),
       ),
       DropdownButtonFormField<String>(
-        value: _profile.faculty,
+        value: _faculties.contains(_profile.faculty) ? _profile.faculty : null,
         isExpanded: true,
-        decoration: InputDecoration(labelText: 'Fakultas'),
+        decoration: InputDecoration(
+          labelText: 'Fakultas',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         items: _faculties.map((String faculty) {
           return DropdownMenuItem(
             value: faculty,
@@ -173,9 +211,25 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         onSaved: (value) => _profile = _profile.copyWith(faculty: value),
       ),
       DropdownButtonFormField<String>(
-        value: _profile.department,
+        value: _profile.faculty != null &&
+                _departments[_profile.faculty]!.contains(_profile.department)
+            ? _profile.department
+            : null,
         isExpanded: true,
-        decoration: InputDecoration(labelText: 'Jurusan'),
+        decoration: InputDecoration(
+          labelText: 'Jurusan',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         dropdownColor: Colors.white,
         items: _profile.faculty == null
             ? []
@@ -203,7 +257,20 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       TextFormField(
         initialValue: _profile.year?.toString(),
-        decoration: InputDecoration(labelText: 'Angkatan'),
+        decoration: InputDecoration(
+          labelText: 'Angkatan',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         keyboardType: TextInputType.number,
         validator: (value) {
           if (value == null || value.isEmpty)
@@ -219,20 +286,48 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       ),
       TextFormField(
         initialValue: _profile.whatsapp,
-        decoration: InputDecoration(labelText: 'No. WhatsApp'),
+        decoration: InputDecoration(
+          labelText: 'No. WhatsApp',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         keyboardType: TextInputType.phone,
         validator: (value) {
-          if (value == null || value.isEmpty)
+          if (value == null || value.isEmpty) {
             return 'Masukkan nomor WhatsApp Anda';
-          if (!RegExp(r'^62\d{9,12}$').hasMatch(value))
+          }
+          if (!RegExp(r'^08\d{8,11}$').hasMatch(value)) {
             return 'Format nomor WhatsApp tidak valid';
+          }
           return null;
         },
         onSaved: (value) => _profile = _profile.copyWith(whatsapp: value),
       ),
       TextFormField(
         initialValue: _profile.address,
-        decoration: InputDecoration(labelText: 'Alamat Rumah/Kos'),
+        decoration: InputDecoration(
+          labelText: 'Alamat Rumah/Kos',
+          errorStyle: TextStyle(color: Colors.red),
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+        ),
         validator: (value) {
           if (value == null || value.isEmpty)
             return 'Masukkan alamat rumah/kos Anda';
@@ -310,8 +405,6 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
               ),
             );
           }
-
-          // Update state lokal
           if (state is ProfileIncomplete || state is ProfileComplete) {
             setState(() {
               _profile = state.profile;
@@ -320,21 +413,31 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Wrap(
-                  runSpacing: 10.0,
-                  children: [
-                    Center(child: _buildPhotoUploadWidget(state)),
-                    ...(_buildFormFields(state).sublist(1))
-                  ],
+          if (state is ProfileLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is ProfileIncomplete || state is ProfileComplete) {
+            return SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Wrap(
+                    runSpacing: 10.0,
+                    children: [
+                      Center(child: _buildPhotoUploadWidget(state)),
+                      ...(_buildFormFields(state).sublist(1))
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.green),
+            );
+          }
         },
       ),
     );

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/leaderboard_components.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LeaderboardPage extends StatelessWidget {
   const LeaderboardPage({super.key});
@@ -194,6 +195,50 @@ class UserDetail extends StatelessWidget {
     required this.userData,
   });
 
+  Future<void> _launchWhatsApp(
+      BuildContext context, String phoneNumber, String ownerName) async {
+    try {
+      // Format the phone number
+      String formattedPhone = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = formattedPhone.startsWith('0')
+            ? '+62${formattedPhone.substring(1)}'
+            : '+62$formattedPhone';
+      }
+
+      // Create WhatsApp URL with a pre-filled message
+      final url =
+          Uri.parse('https://wa.me/$formattedPhone?text=Halo, $ownerName');
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Tidak dapat membuka WhatsApp. Pastikan WhatsApp terinstall',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Terjadi kesalahan: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -203,7 +248,7 @@ class UserDetail extends StatelessWidget {
         children: [
           _buildHandleBar(),
           const SizedBox(height: 12.0),
-          _buildUserProfile(),
+          _buildUserProfile(context),
         ],
       ),
     );
@@ -221,12 +266,12 @@ class UserDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildUserProfile() {
+  Widget _buildUserProfile(BuildContext context) {
     return Column(
       children: [
         _buildProfileImage(),
         const SizedBox(height: 12.0),
-        _buildUserInfo(),
+        _buildUserInfo(context),
       ],
     );
   }
@@ -252,7 +297,7 @@ class UserDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(BuildContext context) {
     const textStyle = TextStyle(
       color: AppColors.dark,
       fontSize: 16,
@@ -273,20 +318,24 @@ class UserDetail extends StatelessWidget {
         const SizedBox(height: 3.0),
         Text(userData['faculty'], style: textStyle),
         const SizedBox(height: 3.0),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              userData['whatsapp'],
-              style: textStyle.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 4),
-            const Icon(
-              Icons.open_in_new,
-              size: 20,
-              color: AppColors.dark,
-            ),
-          ],
+        GestureDetector(
+          onTap: () => _launchWhatsApp(
+              context, userData['whatsapp'], userData['fullName']),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                userData['whatsapp'],
+                style: textStyle.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.open_in_new,
+                size: 20,
+                color: AppColors.dark,
+              ),
+            ],
+          ),
         ),
       ],
     );
