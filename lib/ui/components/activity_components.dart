@@ -120,7 +120,7 @@ class ActivityCard extends StatelessWidget {
     }
   }
 
-// Kemudian ubah _buildTimeDateRow menjadi:
+  // Kemudian ubah _buildTimeDateRow menjadi:
   Widget _buildTimeDateRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
