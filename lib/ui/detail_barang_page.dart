@@ -225,37 +225,43 @@ class DetailBarangPage extends StatelessWidget {
             ),
           ],
           if (isOwner) ...[
-            EditButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditFormPage(
-                          activityData: activityData,
-                        )),
-              );
-            }),
+            EditButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EditFormPage(
+                            activityData: activityData,
+                          )),
+                );
+              },
+            ),
             const SizedBox(height: 12.0),
-            DoneButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DoneFormPage(
-                    laporId: activityData['id'],
+            DoneButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DoneFormPage(
+                      laporId: docId,
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
             const SizedBox(height: 12.0),
-            CancelButton(onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CancelFormPage(
-                    laporId: activityData['id'],
+            CancelButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CancelFormPage(
+                      laporId: docId,
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
           ] else ...[
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -285,11 +291,13 @@ class DetailBarangPage extends StatelessWidget {
                       await pencarianRef.doc(docId).delete();
                     } else {
                       // Tambah dokumen pencarian baru
-                      await pencarianRef.add({
-                        'laporId': docId,
-                        'userId': currentUser?.uid,
-                        'createdAt': FieldValue.serverTimestamp(),
-                      });
+                      await pencarianRef.add(
+                        {
+                          'laporId': docId,
+                          'userId': currentUser?.uid,
+                          'createdAt': FieldValue.serverTimestamp(),
+                        },
+                      );
                     }
                   },
                 );

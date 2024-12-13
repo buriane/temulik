@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -308,7 +309,7 @@ class BannerSection extends StatelessWidget {
 }
 
 class LocationStatsCard extends StatelessWidget {
-  const LocationStatsCard({Key? key}) : super(key: key);
+  LocationStatsCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -416,25 +417,34 @@ class LocationStatsCard extends StatelessWidget {
                         height: 37,
                       ),
                       SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Kehilangan',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.dark,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '4 kali',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('laporan')
+                            .where('tipe', isEqualTo: 'kehilangan')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          final count = snapshot.data?.docs.length ?? 0;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Kehilangan',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.dark,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                count.toString() + ' kali',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -452,25 +462,34 @@ class LocationStatsCard extends StatelessWidget {
                         height: 37,
                       ),
                       SizedBox(width: 8),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Penemuan',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.dark,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '12 kali',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('laporan')
+                            .where('tipe', isEqualTo: 'penemuan')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          final count = snapshot.data?.docs.length ?? 0;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Penemuan',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.dark,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                count.toString() + ' kali',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),

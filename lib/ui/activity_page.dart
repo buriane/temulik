@@ -135,8 +135,7 @@ class _ActivityContentState extends State<ActivityContent> {
         return data;
       }).toList();
 
-      final pencarianSnapshot =
-          await pencarianStream.first; // Get the latest snapshot
+      final pencarianSnapshot = await pencarianStream.first;
       final pencarianData =
           await Future.wait(pencarianSnapshot.docs.map((doc) async {
         final pencarian = doc.data();
