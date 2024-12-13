@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:temulik/constants/colors.dart';
 import 'package:temulik/ui/components/laporan_slider_component.dart';
 import 'package:temulik/ui/components/other_page_components.dart';
@@ -308,8 +310,85 @@ class BannerSection extends StatelessWidget {
   }
 }
 
-class LocationStatsCard extends StatelessWidget {
+class LocationStatsCard extends StatefulWidget {
   LocationStatsCard({Key? key}) : super(key: key);
+
+  @override
+  State<LocationStatsCard> createState() => _LocationStatsCardState();
+}
+
+class _LocationStatsCardState extends State<LocationStatsCard> {
+  String _location = 'Memuat lokasi...';
+  bool _isLoading = true;
+  bool _hasError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+    });
+
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Izin lokasi ditolak');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Izin lokasi ditolak permanen');
+      }
+
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Layanan lokasi tidak aktif');
+      }
+
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 5),
+        ),
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String locationName = place.subLocality?.toUpperCase() ??
+            place.locality?.toUpperCase() ??
+            place.subAdministrativeArea?.toUpperCase() ??
+            'LOKASI TIDAK DIKETAHUI';
+        setState(() {
+          _location = locationName;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _hasError = true;
+        _isLoading = false;
+        if (e.toString().contains('denied')) {
+          _location = 'IZIN LOKASI DIPERLUKAN';
+        } else if (e.toString().contains('tidak aktif')) {
+          _location = 'GPS TIDAK AKTIF';
+        } else {
+          _location = 'LOKASI TIDAK TERSEDIA';
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -355,13 +434,35 @@ class LocationStatsCard extends StatelessWidget {
                             height: 20,
                           ),
                           SizedBox(width: 8),
-                          Text(
-                            'PURWOKERTO UTARA',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                          if (_isLoading)
+                            SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.green),
+                              ),
+                            )
+                          else
+                            Text(
+                              _location,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: _hasError
+                                    ? AppColors.red
+                                    : AppColors.darkest,
+                              ),
                             ),
-                          ),
+                          if (_hasError)
+                            IconButton(
+                              icon: Icon(Icons.refresh, size: 20),
+                              onPressed: _getCurrentLocation,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              color: AppColors.green,
+                            ),
                         ],
                       ),
                     ],
@@ -385,13 +486,24 @@ class LocationStatsCard extends StatelessWidget {
                             height: 20,
                           ),
                           SizedBox(width: 4),
-                          Text(
-                            '98',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.darkest,
-                            ),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('pahlawan')
+                                .where('userId',
+                                    isEqualTo:
+                                        FirebaseAuth.instance.currentUser?.uid)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              final count = snapshot.data?.docs.length ?? 0;
+                              return Text(
+                                count.toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.darkest,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
