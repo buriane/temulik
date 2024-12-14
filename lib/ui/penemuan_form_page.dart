@@ -226,7 +226,7 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                   ),
                   SizedBox(height: 16.0),
                   DatePickerForm(
-                    label: 'Tanggal Kehilangan Barang',
+                    label: 'Tanggal Penemuan Barang',
                     hintText: 'Pilih Tanggal',
                     selectedDate: _selectedDate,
                     onChanged: (date) {
@@ -237,7 +237,7 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
                   ),
                   SizedBox(height: 16.0),
                   TimePickerForm(
-                    label: 'Jam Kehilangan Barang',
+                    label: 'Jam Penemuan Barang',
                     hintText: 'Pilih Jam',
                     selectedTime: _selectedTime,
                     onChanged: (time) {
