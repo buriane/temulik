@@ -11,11 +11,13 @@ import 'package:temulik/ui/components/datas.dart';
 import 'package:temulik/ui/home_page.dart';
 
 class EditFormPage extends StatefulWidget {
+  final String docId;
   final Map<String, dynamic> activityData;
 
   const EditFormPage({
     super.key,
     required this.activityData,
+    required this.docId,
   });
 
   @override
@@ -68,7 +70,7 @@ class _EditFormPageState extends State<EditFormPage> {
   Future<void> _updateBarang() async {
     if (_validateForm()) {
       _laporBloc.add(UpdateLaporEvent(
-        id: widget.activityData['id'],
+        id: widget.docId,
         namaBarang: _namaBarangController.text,
         kategori: selectedValue!,
         deskripsi: _deskripsiController.text,
@@ -150,7 +152,7 @@ class _EditFormPageState extends State<EditFormPage> {
             builder: (context) => SuccessDialog(
               title: 'Berhasil!',
               message: 'Laporan berhasil diubah',
-              iconColor: AppColors.green,
+              iconColor: Colors.white,
               iconBackgroundColor: AppColors.green,
               buttonColor: AppColors.green,
               buttonText: 'Kembali',

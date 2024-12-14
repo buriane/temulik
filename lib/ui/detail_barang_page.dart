@@ -232,6 +232,7 @@ class DetailBarangPage extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => EditFormPage(
                             activityData: activityData,
+                            docId: docId,
                           )),
                 );
               },
