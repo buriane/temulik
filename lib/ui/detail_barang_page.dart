@@ -175,7 +175,7 @@ class DetailBarangPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildLeftDetails(context, userData, activityData),
-                _buildRightDetails(activityData),
+                _buildRightDetails(context, activityData),
               ],
             ),
             const SizedBox(height: 12.0),
@@ -347,7 +347,8 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRightDetails(Map<String, dynamic> activityData) {
+  Widget _buildRightDetails(
+      BuildContext context, Map<String, dynamic> activityData) {
     return Flexible(
       flex: 2,
       child: Column(
@@ -358,13 +359,22 @@ class DetailBarangPage extends StatelessWidget {
           _buildDetailItem(
               'Jam Kehilangan', formatJam(activityData['jamKehilangan'])),
           const SizedBox(height: 12.0),
-          _buildDetailItem('Status Barang', _buildStatusBarang(activityData)),
+          Row(
+            children: [
+              _buildDetailItem(
+                'Status Barang',
+                _buildStatusBarang(context, activityData),
+                isInfo: true,
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusBarang(Map<String, dynamic> activityData) {
+  Widget _buildStatusBarang(
+      BuildContext context, Map<String, dynamic> activityData) {
     Color statusColor;
     switch (activityData['status']) {
       case 'Dalam Proses':
@@ -377,17 +387,538 @@ class DetailBarangPage extends StatelessWidget {
         statusColor = AppColors.red;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: statusColor,
-        borderRadius: BorderRadius.circular(100.0),
-      ),
-      child: TextSmallBold(
-        text: activityData['status'] ?? '-',
-        color: Colors.white,
+    return GestureDetector(
+      onTap: () => _showStatusDetail(context, activityData),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+        decoration: BoxDecoration(
+          color: statusColor,
+          borderRadius: BorderRadius.circular(100.0),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextSmallBold(
+              text: activityData['status'] ?? '-',
+              color: Colors.white,
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _showStatusDetail(
+      BuildContext context, Map<String, dynamic> activityData) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.only(bottom: 80.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Konten berbeda berdasarkan status
+              _buildModalContent(context, activityData),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModalContent(
+      BuildContext context, Map<String, dynamic> activityData) {
+    switch (activityData['status']) {
+      case 'Dalam Proses':
+        return _buildDalamProsesModal(docId);
+      case 'Selesai':
+        return _buildSelesaiModal(context, activityData);
+      case 'Dibatalkan':
+        return _buildDibatalkanModal(context, activityData);
+      default:
+        return const SizedBox();
+    }
+  }
+
+  Widget _buildDalamProsesModal(String docId) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('pencarian')
+          .where('laporId', isEqualTo: docId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text('Terjadi kesalahan'),
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(color: AppColors.green),
+            ),
+          );
+        }
+
+        final searches = snapshot.data?.docs ?? [];
+
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.green.withOpacity(0.1),
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.green.withOpacity(0.2)),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: AppColors.green),
+                    const SizedBox(width: 8),
+                    TextBold(
+                      text: 'Daftar Pengajuan Pencarian',
+                      color: AppColors.green,
+                    ),
+                  ],
+                ),
+              ),
+              searches.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.person_search,
+                            size: 48,
+                            color: AppColors.green.withOpacity(0.5),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Belum ada yang mencari',
+                            style: TextStyle(
+                              color: AppColors.green.withOpacity(0.8),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: searches.length,
+                        itemBuilder: (context, index) {
+                          final search =
+                              searches[index].data() as Map<String, dynamic>;
+                          return FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(search['userId'])
+                                .get(),
+                            builder: (context, userSnapshot) {
+                              if (!userSnapshot.hasData)
+                                return const SizedBox();
+
+                              final userData = userSnapshot.data!.data()
+                                  as Map<String, dynamic>;
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: AppColors.green.withOpacity(0.2),
+                                  ),
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  leading: CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor:
+                                        AppColors.green.withOpacity(0.1),
+                                    backgroundImage: NetworkImage(
+                                        userData['photoUrl'] ?? ''),
+                                  ),
+                                  title: Text(
+                                    userData['fullName'] ?? '-',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${userData['nim']} - ${userData['faculty']}',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      Text(
+                                        _formatDateTime(
+                                            search['createdAt']?.toDate()),
+                                        style: TextStyle(
+                                          color:
+                                              AppColors.green.withOpacity(0.8),
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSelesaiModal(
+      BuildContext context, Map<String, dynamic> activityData) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.green.withOpacity(0.1),
+              border: Border(
+                bottom: BorderSide(color: AppColors.green.withOpacity(0.2)),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle, color: AppColors.green),
+                const SizedBox(width: 8),
+                TextBold(
+                  text: 'Detail Penyelesaian',
+                  color: AppColors.green,
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(16),
+              children: [
+                if (activityData['evidenceImageUrls']?.isNotEmpty ?? false) ...[
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.green.withOpacity(0.2),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CustomImageSlider(
+                        imageUrls: activityData['evidenceImageUrls'],
+                        height: 200,
+                        autoPlay: false,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                _buildInfoCard(
+                  title: 'Informasi Penyelesaian',
+                  content: [
+                    _buildInfoRow(
+                        'Jenis Penemu', activityData['jenisPenemu'] ?? '-'),
+                    _buildInfoRow('Tanggal Selesai',
+                        activityData['tanggalSelesai'] ?? '-'),
+                    _buildInfoRow(
+                        'Waktu Selesai', activityData['waktuSelesai'] ?? '-'),
+                  ],
+                ),
+                if (activityData['pahlawan'] != null) ...[
+                  const SizedBox(height: 16),
+                  FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(activityData['pahlawan'])
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+
+                      final userData =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      return _buildInfoCard(
+                        title: 'Informasi Pahlawan',
+                        content: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              radius: 24,
+                              backgroundColor: AppColors.green.withOpacity(0.1),
+                              backgroundImage:
+                                  NetworkImage(userData['photoUrl'] ?? ''),
+                            ),
+                            title: Text(
+                              userData['fullName'] ?? '-',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              '${userData['nim']} - ${userData['faculty']}',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDibatalkanModal(
+      BuildContext context, Map<String, dynamic> activityData) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.7,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.red.withOpacity(0.1),
+              border: Border(
+                bottom: BorderSide(color: AppColors.red.withOpacity(0.2)),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.cancel, color: AppColors.red),
+                const SizedBox(width: 8),
+                TextBold(
+                  text: 'Detail Pembatalan',
+                  color: AppColors.red,
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(16),
+              children: [
+                if (activityData['evidenceImageUrls']?.isNotEmpty ?? false) ...[
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.red.withOpacity(0.2),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CustomImageSlider(
+                        imageUrls: activityData['evidenceImageUrls'],
+                        height: 200,
+                        autoPlay: false,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                _buildInfoCard(
+                  title: 'Alasan Pembatalan',
+                  content: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        activityData['alasanBatal'] ?? '-',
+                        style: TextStyle(
+                          color: Colors.grey[800],
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                  color: AppColors.red,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required List<Widget> content,
+    Color color = AppColors.green,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: color, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: content,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                color: AppColors.darkest,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return '-';
+
+    // Format tanggal dan waktu ke format yang lebih readable
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = _getIndonesianMonth(dateTime.month);
+    final year = dateTime.year;
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+
+    return '$day $month $year, $hour:$minute';
+  }
+
+  String _getIndonesianMonth(int month) {
+    const months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+    return months[month - 1];
   }
 
   Widget _buildDescription(Map<String, dynamic> activityData) {
@@ -412,11 +943,25 @@ class DetailBarangPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailItem(String label, dynamic content) {
+  Widget _buildDetailItem(String label, dynamic content,
+      {bool isInfo = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextTinyMedium(text: label),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            TextTinyMedium(text: label),
+            if (isInfo) ...[
+              SizedBox(width: 4.0),
+              const Icon(
+                Icons.info_outline_rounded,
+                size: 12.0,
+                color: AppColors.darkest,
+              ),
+            ]
+          ],
+        ),
         const SizedBox(height: 4.0),
         if (content is String)
           TextSmallBold(text: content)
