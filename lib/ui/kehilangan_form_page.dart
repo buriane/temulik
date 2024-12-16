@@ -284,6 +284,7 @@ class _KehilanganFormPageState extends State<KehilanganFormPage> {
                     label: 'No. WhatsApp',
                     hintText: 'format: 08xxxxxxxxxx',
                     controller: _noWhatsappController,
+                    keyboardType: TextInputType.phone,
                   ),
                   SizedBox(height: 16.0),
                   InputForm(
