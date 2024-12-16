@@ -148,6 +148,7 @@ class LeaderboardContent extends StatelessWidget {
   Future<List<Map<String, dynamic>>> _processLeaderboardData(
       QuerySnapshot snapshot) async {
     final Map<String, int> userPoints = {};
+    // Hitung point untuk setiap user
     for (var doc in snapshot.docs) {
       final userId = doc['userId'];
       final tanggalSelesai = DateTime.parse(doc['tanggalSelesai']);
@@ -161,12 +162,25 @@ class LeaderboardContent extends StatelessWidget {
 
     final List<Map<String, dynamic>> leaderboard = [];
     final usersSnapshot = await users.get();
+
+    // Hanya proses user yang memiliki data lengkap
     for (var userDoc in usersSnapshot.docs) {
       final userData = userDoc.data() as Map<String, dynamic>;
-      userData['points'] = userPoints[userDoc.id] ?? 0;
-      leaderboard.add(userData);
+
+      // Pastikan semua field yang dibutuhkan ada dan tidak null
+      if (userData['fullName'] != null && userData['faculty'] != null) {
+        userData['points'] = userPoints[userDoc.id] ?? 0;
+
+        // Tambahkan default value untuk field yang mungkin null
+        userData['photoUrl'] = userData['photoUrl'] ?? 'assets/profile.png';
+        userData['whatsapp'] = userData['whatsapp'] ?? '-';
+        userData['nim'] = userData['nim'] ?? '-';
+
+        leaderboard.add(userData);
+      }
     }
 
+    // Sort berdasarkan points
     leaderboard.sort((a, b) => b['points'].compareTo(a['points']));
     return leaderboard;
   }

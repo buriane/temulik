@@ -142,7 +142,7 @@ class _PenemuanFormPageState extends State<PenemuanFormPage> {
             builder: (context) => SuccessDialog(
               title: 'Berhasil!',
               message: 'Laporan berhasil dikirim',
-              iconColor: AppColors.green,
+              iconColor: Colors.white,
               iconBackgroundColor: AppColors.green,
               buttonColor: AppColors.green,
               buttonText: 'Kembali',

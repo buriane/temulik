@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/components/components.dart';
+import 'package:temulik/ui/home_page.dart';
 import '../bloc/profile_bloc.dart';
 
 final List<String> _faculties = [
@@ -389,12 +391,26 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileComplete && !_isInitialLoad) {
-            // Tampilkan SnackBar ketika update berhasil
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Profil berhasil diperbarui'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 2),
+            showDialog(
+              context: context,
+              builder: (context) => SuccessDialog(
+                title: 'Berhasil!',
+                message: 'Informasi berhasil diubah',
+                iconColor: Colors.white,
+                iconBackgroundColor: AppColors.green,
+                buttonColor: AppColors.green,
+                buttonText: 'Kembali ke Home',
+                icon: Icons.thumb_up,
+                onOkPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ),
+                    (route) => false,
+                  );
+                },
               ),
             );
           } else if (state is ProfileError) {
