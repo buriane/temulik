@@ -245,6 +245,8 @@ final List<Map<String, dynamic>> activities = [
 
 final List<String> categories = [
   'Laptop',
+  'Headset',
+  'Charger',
   'Handphone',
   'Dompet',
   'Helm',
