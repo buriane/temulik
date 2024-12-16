@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:temulik/constants/colors.dart';
+import 'package:temulik/ui/home_page.dart';
 import '../bloc/profile_bloc.dart';
 
 final List<String> _faculties = [
@@ -395,6 +396,11 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
                 content: Text('Profil berhasil diperbarui'),
                 backgroundColor: Colors.green,
                 duration: Duration(seconds: 2),
+              ),
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HomePage(),
               ),
             );
           } else if (state is ProfileError) {
