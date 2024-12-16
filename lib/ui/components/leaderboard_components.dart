@@ -132,7 +132,8 @@ class LeaderboardCard extends StatelessWidget {
       ),
       child: CircleAvatar(
         radius: _avatarRadius,
-        backgroundImage: NetworkImage(image),
+        backgroundImage: NetworkImage(image ??
+            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'),
         backgroundColor: Colors.white,
       ),
     );
@@ -143,11 +144,11 @@ class LeaderboardCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         StrokedText(
-          text: name.length > 20 ? name.substring(0, 20) + '...' : name,
+          text: name.length > 20 ? name.substring(0, 20) + '...' : name ?? '-',
           fontSize: 16.0,
         ),
         Text(
-          faculty,
+          faculty ?? '-',
           style: TextStyle(
             fontSize: 12.0,
             color: AppColors.coral,
@@ -245,7 +246,7 @@ class RankDisplay extends StatelessWidget {
 
   const RankDisplay({
     super.key,
-    required this.rank,
+    this.rank = 0,
   });
 
   List<Color> _getRankColors() {
