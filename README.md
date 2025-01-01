@@ -30,3 +30,14 @@ kalo run :
 ```
 flutter run -d edge --web-renderer html
 ```
+PPT PKM:
+https://www.canva.com/design/DAGVrDNFWlg/YXn-PAlcDoeVTgBQpqqxVw/edit?utm_content=DAGVrDNFWlg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+PPT MPI:
+https://www.canva.com/design/DAGW_lZi5hw/hJr9a5a2KCSZPBvc8GkpXA/edit?utm_content=DAGW_lZi5hw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+PPT Proposal Pemmob:
+https://www.canva.com/design/DAGSMEtYqsI/cwZO2EVbcYo4AnORa04kfg/edit?utm_content=DAGSMEtYqsI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+PPT Progres:
+https://www.canva.com/design/DAGWyCdfTCQ/oXOpouYJEPdUagfQlkikpA/edit?utm_content=DAGWyCdfTCQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
